@@ -9,32 +9,34 @@
 #include <HardwareSerial.h>
 #include <SoftwareSerial.h>
 
-#include <settings.h>
-#include <aglora/aglora.h>
-#include <utils/memory/manager.h>
-#include <utils/memory/sram.h>
-#include <utils/memory/eeprom.h>
-#include <utils/crc.h>
-#include <hardware/gps/gps.h>
-#include <hardware/lora/ebyte-e220.h>
-#include <hardware/ble/ble.h>
+#include "settings/settings.h"
+#include "aglora/aglora.h"
+// #include <utils/memory/manager.h>
+// #include <utils/memory/sram.h>
+// #include <utils/memory/eeprom.h>
+//#include <utils/crc.h>
+//#include <hardware/gps/gps.h>
+//#include <hardware/lora/ebyte-e220.h>
+//#include <hardware/ble/ble.h>
 
-GPS gps(GPS_PIN_RX, GPS_PIN_TX);
-LORA lora;
-BLE ble;
-MEMORY memory;
+//GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED);
+//LORA lora;
+//BLE ble;
+//MEMORY memory;
 
-AGLORA aglora(&gps, &lora, &ble, &memory);
+AGLORA aglora;
+
+DATA loraDataPacket;
 
 // ========== BEGIN ==========
 void setup()
 {
   Serial.begin(9600);
   // Start modules
-  ble.setup();    // Bluetooth Low Energy
-  gps.setup();    // GPS
-  lora.setup();   // LoRa
-  memory.setup(); // SRAM or EEPROM
+//  ble.setup();    // Bluetooth Low Energy
+//  gps.setup();    // GPS
+//  lora.setup();   // LoRa
+//  memory.setup(); // SRAM or EEPROM
 
   aglora.hello(); // Beautifully print Hello from AGloRa :-)
 }
@@ -48,11 +50,13 @@ void loop()
   if (_timeToSendMyLocation < millis())
   {
     aglora.updateSensors(&loraDataPacket);  // read additional sensors
-    aglora.updateLocation(&gps, &loraDataPacket);
-    lora.send(&loraDataPacket); // send location to other trackers
+ //   aglora.updateLocation(&gps, &loraDataPacket);
+    //lora.send(&loraDataPacket); // send location to other trackers
     _timeToSendMyLocation += DATA_PACKET_INTERVAL;
   }
-
+  
+  
+  /*
   if (lora.hasNewData(&loraDataPacket))
   { // listening and send to BLE
     if(memory.checkUnique(&loraDataPacket)) // Check the name and time of the point
@@ -77,4 +81,6 @@ void loop()
   }
 
   ble.read(aglora.request); // check requests from app
+
+  */
 }

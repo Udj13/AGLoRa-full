@@ -1,32 +1,21 @@
-#include "../utils/memory/manager.h"
+#ifndef AGLORA_INCLUDED
+#define AGLORA_INCLUDED
+
+#include <Arduino.h>
+#include "../settings/settings.h"
+
 
 class AGLORA
 {
 public:
+  AGLORA();
   void hello();
-  void request(String 
-  request);
+  void updateSensors(DATA * loraDataPacket);
+//  void updateLocation(GPS *gps, DATA * loraDataPacket);
+
+//  void request(String request);
 };
 
 
-
-
-  void AGLORA::hello()
-  {
-#if DEBUG_MODE
-    Serial.println(F("All initializations completed."));
-    Serial.println();
-    for (int i = 0; i < 25; i++)
-    {
-      Serial.print(F("-"));
-      delay(100);
-    }
-    Serial.println();
-    Serial.println(F("AGLORA tracker started..."));
 #endif
-  }
 
-
-void AGLORA::request(String * request){
-  storageManager(request);
-};

@@ -7,7 +7,7 @@
 class GPS
 {
 public:
-    GPS(uint8_t pinRx, uint8_t pinTx);
+    GPS(uint8_t pinRx, uint8_t pinTx, long speed);
     void setup();
     void displayGPSInfo();
     TinyGPSPlus module;
@@ -15,6 +15,6 @@ public:
 
 
 private:
-    void sendCommand(const String command);
     bool _debugMode;
+
 };

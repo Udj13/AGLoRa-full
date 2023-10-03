@@ -32,6 +32,8 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 // ========================================
 // ==== Settings LEVEL 1 (required) =======
 // ========================================
+#ifndef SETTINGS_INCLUDED
+#define SETTINGS_INCLUDED
 
 #include <TinyGPSPlus.h>      // install from Arduino IDE
 // Docs: http://arduiniana.org/libraries/tinygpsplus/
@@ -42,10 +44,10 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 // The first thing you need is to set up a tracker name and modules connections:
 
 // ========== NAME =======================
-#define NAME_LENGTH 6                // The same value for all devices
-char MY_NAME[NAME_LENGTH] = "Rick";  // Name of current tracker, NAME_LENGTH characters
+#define NAME_LENGTH 6             // The same value for all devices
+#define NAME "Rick"               // Name of current tracker, NAME_LENGTH characters
 // Example:
-// char MY_NAME[NAME_LENGTH] = "Morty"; // All names length should be no longer than NAME_LENGTH
+// #define NAME = "Morty"; // All names length should be no longer than NAME_LENGTH
 // ========== WIRING =====================
 #define LORA_PIN_RX 2
 #define LORA_PIN_TX 3
@@ -55,6 +57,9 @@ char MY_NAME[NAME_LENGTH] = "Rick";  // Name of current tracker, NAME_LENGTH cha
 
 #define GPS_PIN_RX 7
 #define GPS_PIN_TX 8
+
+// ========== MODULES SETTING=============
+#define GPS_SPEED 9600
 
 // Then install "EByte LoRa E220 by Renzo Mischianty" library
 // and "TinyGPSPlus by Mikal Hart" library
@@ -93,72 +98,26 @@ struct DATA {
   unsigned char minute;
   unsigned char second;
 
-  unsigned char ttl; // time to live (mesh network)
-
   unsigned char sat;
 
   // Add more data fields here if you need
   // ...
+  unsigned char battery;
   // unsigned char speed;
-  // unsigned char battery;
   // unsigned char sensor1;
+  // unsigned char sensor2;
   // ...
+
+  unsigned char ttl; // time to live (for mesh network)
 };
-
-
 
 /*
 This is a function that sends data to the app.
 Data packets are sent using OsmAnd-like protocol:
 id=name&lat={0}&lon={1}&timestamp={2}&speed={3}&altitude={4}
 */
-void sendPackageToBluetooth(DATA *package) {
-
-  Serial.print(F("&name="));  //other tracker's name
-  Serial.print(package->id);  //NAME_LENGTH bytes
-
-  Serial.print(F("&lat="));       // cordinates
-  Serial.print(package->lat, 6);  // latitude
-  Serial.print(F("&lon="));       // record separator
-  Serial.print(package->lon, 6);  // longitute
-
-  //Date and time format: 2023-06-07T15:21:00Z
-  Serial.print(F("&timestamp="));      // record separator
-  Serial.print(package->year + 2000);  // year
-  Serial.print(F("-"));                // data separator
-  if (package->month < 10) Serial.print(F("0"));
-  Serial.print(package->month);        // month
-  Serial.print(F("-"));                // data separator
-  if (package->day < 10) Serial.print(F("0"));
-  Serial.print(package->day);          // day
-  Serial.print(F("T"));                // record separator
-  if (package->hour < 10) Serial.print(F("0"));
-  Serial.print(package->hour);         // hour
-  Serial.print(F(":"));                // time separator
-  if (package->minute < 10) Serial.print(F("0"));
-  Serial.print(package->minute);       // minute
-  Serial.print(F(":"));                // time separator
-  if (package->second < 10) Serial.print(F("0"));
-  Serial.print(package->second);       // second
-  Serial.print(F("Z"));                // UTC
-
-  // Sensors and additional data
-  Serial.print(F("&sat="));    //record separator
-  Serial.print(package->sat);  // satellites  1 byte
-
-  // Add more data here if you need ...
-  // Serial.print("&speed=");       // data's name in app
-  // Serial.print(package->speed);   // value
-
-  // Serial.print("&batt=");
-  // Serial.print(package->battery);
-
-  // Serial.print("&alienSensor=");
-  // Serial.print(package->sensor1);
-
-  Serial.println();   // record separator "\r\n" 
-                      //and end of transmission
-}
+void sendToPhone(DATA *package); 
+// find it in the code and customize if you need
 
 
 // ========================================
@@ -189,5 +148,5 @@ void sendPackageToBluetooth(DATA *package) {
 // ========== END OF SETTINGS ==============
 // =========================================
 
-
+#endif
 

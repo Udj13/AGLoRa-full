@@ -1,7 +1,6 @@
 #include <Arduino.h>
 
 // ========== LORA section ==========
-DATA loraDataPacket;
 SoftwareSerial lora_ss(LORA_PIN_RX, LORA_PIN_TX);
 LoRa_E220 e220ttl(&lora_ss, 6, 4, 5); // AUX M0 M1
 // LoRa_E220 e220ttl(&lora_ss); // Config without connect AUX and M0 M1

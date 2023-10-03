@@ -2,9 +2,10 @@
 
 // ================= GPS SECTION =================================
 
-GPS::GPS(uint8_t pinRx, uint8_t pinTx) : port(pinRx, pinTx)
+GPS::GPS(uint8_t pinRx, uint8_t pinTx,  long speed) : port(pinRx, pinTx)
 {
-//    _debugMode = debugMode;
+    port.begin(speed);
+    pinMode(LED_BUILTIN, OUTPUT); // GPS valid indicator
 }
 
 void GPS::setup()
@@ -12,8 +13,6 @@ void GPS::setup()
 #if DEBUG_MODE
     Serial.println(F("[GPS: Start GPS configuration.]"));
 #endif
-    port.begin(9600);
-    pinMode(LED_BUILTIN, OUTPUT); // GPS valid indicator
 }
 
 void GPS::displayGPSInfo()
