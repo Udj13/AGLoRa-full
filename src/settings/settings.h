@@ -72,7 +72,7 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 // "debug mode" through the serial port.
 // Don't forget to disconnect the bluetooth module.
 // Then open “Tools” -> ”Serial monitor” in Arduino IDE.
-#define DEBUG_MODE false  // change "false" to "true" to enable
+#define DEBUG_MODE true  // change "false" to "true" to enable
 
 // ========================================
 // ==== Settings LEVEL 2 (optional) =======
@@ -85,7 +85,7 @@ you should add it to this section.
 Note that all software version must be the same for all trackers.
 */
 struct DATA {
-  char id[NAME_LENGTH];  // name
+  char name[NAME_LENGTH];  // name
 
   float lat;  // coordinates
   float lon;

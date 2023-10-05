@@ -8,7 +8,7 @@ id=name&lat={0}&lon={1}&timestamp={2}&speed={3}&altitude={4}
 void sendToPhone(DATA *package) {
 
   Serial.print(F("&name="));  //other tracker's name
-  Serial.print(package->id);  //NAME_LENGTH bytes
+  Serial.print(package->name);  //NAME_LENGTH bytes
 
   Serial.print(F("&lat="));       // cordinates
   Serial.print(package->lat, 6);  // latitude

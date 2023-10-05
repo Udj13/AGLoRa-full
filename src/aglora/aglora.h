@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "../settings/settings.h"
+#include "../hardware/gps/gps.h"
 
 
 class AGLORA
@@ -11,9 +12,12 @@ public:
   AGLORA();
   void hello();
   void updateSensors(DATA * loraDataPacket);
-//  void updateLocation(GPS *gps, DATA * loraDataPacket);
+  bool updateLocation(GPS *gps, DATA * loraDataPacket);
 
 //  void request(String request);
+
+private:
+  void printPackage(DATA * loraDataPacket);
 };
 
 
