@@ -20,72 +20,14 @@ void AGLORA::hello()
 #endif
 }
 
-/// Udpate sensors in loraDataPacket
-void AGLORA::updateSensors(DATA *data)
+void AGLORA::clearDataPacket(DATA *loraDataPacket)
 {
-  data->battery = 100; // just for example
-}
-
-/// Udpate GPS coordinates in loraDataPacket
-/// return true is success (the coordinates are valid)
-bool AGLORA::updateLocation(GPS *gps, DATA *loraDataPacket)
-{
-  gps->port.listen(); // switch to gps software serial
-
-  bool newData = false;
-  // For three seconds we parse GPS data and report some key values
-  for (unsigned long start = millis(); millis() - start < 3000;)
-  {
-    while (gps->port.available() > 0)
-      if (gps->module.encode(gps->port.read()))
-      {
-        newData = true;
-      }
-  }
-  digitalWrite(LED_BUILTIN, LOW);
-
-  if (newData && gps->module.location.isValid() && gps->module.date.isValid() && gps->module.time.isValid())
-  {
-    digitalWrite(LED_BUILTIN, HIGH); // GPS is valid
-
-    // data set
-    loraDataPacket->lat = gps->module.location.lat();
-    loraDataPacket->lon = gps->module.location.lng();
-    loraDataPacket->sat = gps->module.satellites.value();
-
-    loraDataPacket->year = gps->module.date.year() - 2000;
-    loraDataPacket->month = gps->module.date.month();
-    loraDataPacket->day = gps->module.date.day();
-
-    loraDataPacket->hour = gps->module.time.hour();
-    loraDataPacket->minute = gps->module.time.minute();
-    loraDataPacket->second = gps->module.time.second();
-
-    strcpy(loraDataPacket->name, NAME);
-
+  memset(&loraDataPacket, 0, sizeof(loraDataPacket));
+  strcpy(loraDataPacket->name, NAME);
+  loraDataPacket->ttl = TTL;
 #if DEBUG_MODE
-    gps->printGPSInfo();
+  Serial.println(F("[AGLoRa: new loraDataPacket prepared]"));
 #endif
-
-    return true; // success
-  }
-  else
-  {
-#if DEBUG_MODE
-    Serial.println();
-    Serial.println(F("[GPS: No valid data.]"));
-#endif
-    return false;
-  }
-
-  if (gps->module.charsProcessed() < 10)
-  {
-#if DEBUG_MODE
-    Serial.println();
-    Serial.println(F("[GPS: No characters received from GPS, check wiring!]"));
-#endif
-    return false;
-  }
 }
 
 // void AGLORA::request(String * request){
@@ -97,8 +39,8 @@ void AGLORA::printPackage(DATA *loraDataPacket)
   // DEBUG_MODE
 #if DEBUG_MODE // dump out what was just received
   Serial.println();
-  Serial.println(F("[LoRa: New data received.]"));
-  Serial.print(F("ID: "));
+  Serial.println(F("[AGLoRa: loraDataPacket now contains:]"));
+  Serial.print(F("Name: "));
   Serial.print(loraDataPacket->name);
   Serial.print(F(", lat: "));
   Serial.print(loraDataPacket->lat, 6);

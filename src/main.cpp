@@ -15,16 +15,15 @@
 // #include <utils/memory/manager.h>
 // #include <utils/memory/sram.h>
 // #include <utils/memory/eeprom.h>
-//#include <utils/crc.h>
-//#include <hardware/lora/ebyte-e220.h>
-//#include <hardware/ble/ble.h>
-
-GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED);
-//LORA lora;
-//BLE ble;
-//MEMORY memory;
+// #include <utils/crc.h>
+// #include <hardware/lora/ebyte-e220.h>
+// #include <hardware/ble/ble.h>
 
 AGLORA aglora;
+GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED, LED_BUILTIN);
+// LORA lora;
+// BLE ble;
+// MEMORY memory;
 
 DATA loraDataPacket;
 
@@ -33,31 +32,31 @@ void setup()
 {
   Serial.begin(9600);
   // Start modules
-  gps.setup();    // GPS
-
-//  ble.setup();    // Bluetooth Low Energy
-//  lora.setup();   // LoRa
-//  memory.setup(); // SRAM or EEPROM
+  gps.setup(); // GPS
+  //  ble.setup();    // Bluetooth Low Energy
+  //  lora.setup();   // LoRa
+  //  memory.setup(); // SRAM or EEPROM
 
   aglora.hello(); // Beautifully print Hello from AGloRa :-)
 }
 
 // ========== MAIN LOOP ==========
-unsigned long _timeToSendMyLocation = millis() + DATA_PACKET_INTERVAL;
+unsigned long _timeToSendMyLocation = millis() + DATA_SENDING_INTERVAL;
 unsigned long _timeOfLastReceivedPacket;
 
 void loop()
 {
   if (_timeToSendMyLocation < millis())
   {
-    aglora.updateSensors(&loraDataPacket);  // read additional sensors
-    aglora.updateLocation(&gps, &loraDataPacket);
-    //lora.send(&loraDataPacket); // send location to other trackers
-    _timeToSendMyLocation += DATA_PACKET_INTERVAL;
-    //lora.listen();
+    aglora.clearDataPacket(&loraDataPacket); // clear structure before reading new data
+    aglora.updateSensors(&loraDataPacket); // add sensors
+    gps.updateLocation(&loraDataPacket);  // add locations
+    aglora.printPackage(&loraDataPacket);
+    // lora.send(&loraDataPacket); // send location to other trackers
+    _timeToSendMyLocation += DATA_SENDING_INTERVAL;
+    // lora.listen(); //switch software serial
   }
-  
-  
+
   /*
   if (lora.hasNewData(&loraDataPacket))
   { // listening and send to BLE
@@ -70,7 +69,7 @@ void loop()
         lora.send(&loraDataPacket);
       }
     }
-    
+
     _timeOfLastReceivedPacket = millis(); // if you got data, update the checker
   }
 

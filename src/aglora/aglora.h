@@ -11,13 +11,13 @@ class AGLORA
 public:
   AGLORA();
   void hello();
+  void clearDataPacket(DATA * loraDataPacket);
   void updateSensors(DATA * loraDataPacket);
-  bool updateLocation(GPS *gps, DATA * loraDataPacket);
+  void printPackage(DATA * loraDataPacket);
 
 //  void request(String request);
 
 private:
-  void printPackage(DATA * loraDataPacket);
 };
 
 

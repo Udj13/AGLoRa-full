@@ -6,22 +6,26 @@
 #include <TinyGPSPlus.h>
 #include <SoftwareSerial.h>
 
+#include "../../settings/settings.h"
+
 // ======================= GPS HEADER=====================
 
 class GPS
 {
-    SoftwareSerial port;
-    TinyGPSPlus tinygps;
+    SoftwareSerial gpsPort;
+    TinyGPSPlus gpsModule;
 public:
-    GPS(uint8_t pinRx, uint8_t pinTx, long speed);
+    GPS(uint8_t pinRx, uint8_t pinTx, long speed, uint8_t ledPin);
     void setup();
-    void listen();
-    void printGPSInfo();
-    TinyGPSPlus module;
+    void updateLocation(DATA *loraDataPacket);
 
 
 private:
     bool _debugMode;
+    uint8_t _ledPin;
+    void turnIndicatorOn();
+    void turnIndicatorOff();    
+    void printGPSInfo();
 
 };
 
