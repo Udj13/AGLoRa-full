@@ -36,8 +36,11 @@ void sendToPhone(DATA *package) {
   Serial.print(F("Z"));                // UTC
 
   // Sensors and additional data
-  Serial.print(F("&sat="));    //record separator
+  Serial.print(F("&sat=")); 
   Serial.print(package->sat);  // satellites  1 byte
+
+  Serial.print(F("&hdop=")); 
+  Serial.print(package->hdop);  // HDOP  1 byte
 
   // Add more data here if you need ...
   // Serial.print("&speed=");       // data's name in app

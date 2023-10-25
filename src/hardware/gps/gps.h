@@ -3,8 +3,11 @@
 
 
 #include <Arduino.h>
-#include <TinyGPSPlus.h>
 #include <SoftwareSerial.h>
+
+// install from Arduino IDE or PlatformIO
+// Docs: http://arduiniana.org/libraries/tinygpsplus/
+#include <TinyGPSPlus.h>
 
 #include "../../settings/settings.h"
 

@@ -4,4 +4,11 @@
 void AGLORA::updateSensors(DATA *loraDataPacket)
 {
     loraDataPacket->battery = 100; // just for example
+
+#if DEBUG_MODE
+    Serial.print(F("🟢[AGLoRa sensors: "));
+    Serial.print(F("🔋 - "));
+    Serial.print(loraDataPacket->battery);
+    Serial.println(F("]"));
+#endif
 }

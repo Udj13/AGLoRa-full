@@ -8,25 +8,30 @@ AGLORA::AGLORA()
 void AGLORA::hello()
 {
 #if DEBUG_MODE
-  Serial.println(F("All initializations completed."));
-  Serial.println();
-  for (int i = 0; i < 25; i++)
+  Serial.println(F("[power on]"));
+  Serial.print(F("Waiting | "));
+  for (int i = 0; i < 50; i++)
   {
-    Serial.print(F("-"));
-    delay(100);
+    Serial.print(F("#"));
+    delay(50);
   }
   Serial.println();
   Serial.println(F("AGLORA tracker started..."));
 #endif
 }
 
+/// @brief 
+/// 1. clear
+/// 2. set name
+/// 3. set ttl
+/// @param loraDataPacket 
 void AGLORA::clearDataPacket(DATA *loraDataPacket)
 {
-  memset(&loraDataPacket, 0, sizeof(loraDataPacket));
+  memset(loraDataPacket, 0, sizeof(&loraDataPacket));
   strcpy(loraDataPacket->name, NAME);
   loraDataPacket->ttl = TTL;
 #if DEBUG_MODE
-  Serial.println(F("[AGLoRa: new loraDataPacket prepared]"));
+  Serial.println(F("🟢[AGLoRa: time to send your location📍, new loraDataPacket prepared 📦]"));
 #endif
 }
 
@@ -34,20 +39,22 @@ void AGLORA::clearDataPacket(DATA *loraDataPacket)
 //   storageManager(request);
 // };
 
+
 void AGLORA::printPackage(DATA *loraDataPacket)
 {
   // DEBUG_MODE
 #if DEBUG_MODE // dump out what was just received
-  Serial.println();
-  Serial.println(F("[AGLoRa: loraDataPacket now contains:]"));
-  Serial.print(F("Name: "));
+  Serial.println(F("🟢[AGLoRa: loraDataPacket now contains ↴]"));
+  Serial.print(F("     Name: "));
   Serial.print(loraDataPacket->name);
   Serial.print(F(", lat: "));
   Serial.print(loraDataPacket->lat, 6);
   Serial.print(F(", lon: "));
   Serial.print(loraDataPacket->lon, 6);
-  Serial.print(F(", satellites: "));
+  Serial.print(F(", sat: "));
   Serial.print(loraDataPacket->sat);
+  Serial.print(F(", hdop: "));
+  Serial.print(loraDataPacket->hdop);
 
   Serial.print(F(", date: "));
   Serial.print(loraDataPacket->year);
@@ -62,7 +69,7 @@ void AGLORA::printPackage(DATA *loraDataPacket)
   Serial.print(loraDataPacket->minute);
   Serial.print(F(":"));
   Serial.print(loraDataPacket->second);
-  Serial.println(F(" (UTC)"));
+  Serial.print(F(" (UTC)"));
 
   Serial.print(F(", TTL: "));
   Serial.print(loraDataPacket->ttl);

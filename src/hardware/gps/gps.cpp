@@ -14,19 +14,20 @@ GPS::GPS(uint8_t pinRx, uint8_t pinTx, long speed, uint8_t ledPin) : gpsPort(pin
 void GPS::setup()
 {
 #if DEBUG_MODE
-    Serial.println(F("[GPS: Start GPS configuration.]"));
+    Serial.println(F("📡[GPS: Start GPS configuration.]"));
 #endif
 }
 
 void GPS::printGPSInfo()
 {
 #if DEBUG_MODE
-    Serial.println();
-    Serial.print(F("[GPS: current GPS position. Satellites in view: "));
+    Serial.print(F("current GPS position. Satellites in view: "));
     Serial.print(gpsModule.satellites.value());
+    Serial.print(F("🛰️. HDOP: "));
+    Serial.print(gpsModule.hdop.value());
     Serial.println(F("]"));
 
-    Serial.print(F("Location: "));
+    Serial.print(F("📍 Location: "));
     if (gpsModule.location.isValid())
     {
         Serial.print(gpsModule.location.lat(), 6);
@@ -35,7 +36,7 @@ void GPS::printGPSInfo()
     }
     else
     {
-        Serial.print(F("INVALID "));
+        Serial.print(F("❌ INVALID "));
         Serial.print(gpsModule.location.lat(), 6);
         Serial.print(F(","));
         Serial.print(gpsModule.location.lat(), 6);
@@ -43,7 +44,7 @@ void GPS::printGPSInfo()
         Serial.print(gpsModule.location.lng(), 6);
     }
 
-    Serial.print(F("  Date/Time: "));
+    Serial.print(F(" ⏰ Date/Time: "));
     if (gpsModule.date.isValid())
     {
         Serial.print(gpsModule.date.month());
@@ -54,7 +55,7 @@ void GPS::printGPSInfo()
     }
     else
     {
-        Serial.print(F("INVALID"));
+        Serial.print(F("❌ INVALID"));
     }
 
     Serial.print(F(" "));
@@ -85,6 +86,11 @@ void GPS::printGPSInfo()
 
 void GPS::updateLocation(DATA *loraDataPacket)
 {
+
+#if DEBUG_MODE
+    Serial.print(F("📡[GPS reading: "));
+#endif
+
     gpsPort.listen(); // switch to gps software serial
 
     bool newData = false;
@@ -107,6 +113,7 @@ void GPS::updateLocation(DATA *loraDataPacket)
         loraDataPacket->lat = gpsModule.location.lat();
         loraDataPacket->lon = gpsModule.location.lng();
         loraDataPacket->sat = gpsModule.satellites.value();
+        loraDataPacket->hdop = gpsModule.hdop.value() / 10;
 
         loraDataPacket->year = gpsModule.date.year() - 2000;
         loraDataPacket->month = gpsModule.date.month();
@@ -124,8 +131,7 @@ void GPS::updateLocation(DATA *loraDataPacket)
     else
     {
 #if DEBUG_MODE
-        Serial.println();
-        Serial.println(F("[GPS: No valid data.]"));
+        Serial.println(F("❌ No valid data.]"));
 #endif
         return;
     }
@@ -133,8 +139,7 @@ void GPS::updateLocation(DATA *loraDataPacket)
     if (gpsModule.charsProcessed() < 10)
     {
 #if DEBUG_MODE
-        Serial.println();
-        Serial.println(F("[GPS: No characters received from GPS, check wiring!]"));
+        Serial.println(F("❌ No characters received from GPS, check wiring!]"));
 #endif
         return;
     }

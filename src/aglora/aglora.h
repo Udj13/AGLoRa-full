@@ -12,6 +12,7 @@ public:
   AGLORA();
   void hello();
   void clearDataPacket(DATA * loraDataPacket);
+  void updateName(DATA * loraDataPacket);
   void updateSensors(DATA * loraDataPacket);
   void printPackage(DATA * loraDataPacket);
 

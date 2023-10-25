@@ -54,12 +54,17 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 #define LORA_PIN_M0 4
 #define LORA_PIN_M1 5
 #define LORA_PIN_AX 6
+#define LORA_LED LED_BUILTIN
+
 
 #define GPS_PIN_RX 7
 #define GPS_PIN_TX 8
+#define GPS_LED LED_BUILTIN
+
 
 // ========== MODULES SETTING=============
 #define GPS_SPEED 9600
+#define LORA_SPEED 9600
 
 // Then install "EByte LoRa E220 by Renzo Mischianty" library
 // and "TinyGPSPlus by Mikal Hart" library
@@ -99,6 +104,7 @@ struct DATA {
   unsigned char second;
 
   unsigned char sat;
+  unsigned char hdop;
 
   // Add more data fields here if you need
   // ...
@@ -129,7 +135,7 @@ void sendToPhone(DATA *package);
 // But the write operation is finite and usually capped at 100,000 cycles.
 // Please read: https://docs.arduino.cc/learn/programming/memory-guide
 // ============ LORA NETWORK SETTINGS ============
-#define DATA_SENDING_INTERVAL 20000  // milliseconds
+#define DATA_SENDING_INTERVAL 10000  // milliseconds
 #define TTL 3  // Data packet lifetime (for transfer between devices)
 // ============ OTHER SETTINGS ==========
 #define BLE_UPDATE_INTERVAL 30000  // milliseconds

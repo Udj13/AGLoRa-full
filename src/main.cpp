@@ -12,16 +12,16 @@
 #include "settings/settings.h"
 #include "aglora/aglora.h"
 #include <hardware/gps/gps.h>
+#include <hardware/lora/ebyte-e220.h>
 // #include <utils/memory/manager.h>
 // #include <utils/memory/sram.h>
 // #include <utils/memory/eeprom.h>
 // #include <utils/crc.h>
-// #include <hardware/lora/ebyte-e220.h>
 // #include <hardware/ble/ble.h>
 
 AGLORA aglora;
-GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED, LED_BUILTIN);
-// LORA lora;
+GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED, GPS_LED);
+LORA lora(LORA_PIN_RX, LORA_PIN_TX, LORA_SPEED, LORA_PIN_AX, LORA_PIN_M0, LORA_PIN_M1, LORA_LED);
 // BLE ble;
 // MEMORY memory;
 
@@ -32,12 +32,12 @@ void setup()
 {
   Serial.begin(9600);
   // Start modules
+  aglora.hello(); // Beautifully print Hello from AGloRa :-)
   gps.setup(); // GPS
+  lora.setup();   // LoRa
   //  ble.setup();    // Bluetooth Low Energy
-  //  lora.setup();   // LoRa
   //  memory.setup(); // SRAM or EEPROM
 
-  aglora.hello(); // Beautifully print Hello from AGloRa :-)
 }
 
 // ========== MAIN LOOP ==========
@@ -52,9 +52,8 @@ void loop()
     aglora.updateSensors(&loraDataPacket); // add sensors
     gps.updateLocation(&loraDataPacket);  // add locations
     aglora.printPackage(&loraDataPacket);
-    // lora.send(&loraDataPacket); // send location to other trackers
+    lora.send(&loraDataPacket); // send location to other trackers
     _timeToSendMyLocation += DATA_SENDING_INTERVAL;
-    // lora.listen(); //switch software serial
   }
 
   /*
