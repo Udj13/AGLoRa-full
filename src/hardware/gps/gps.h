@@ -29,7 +29,8 @@ private:
     void turnIndicatorOn();
     void turnIndicatorOff();    
     void printGPSInfo();
-
+    void printReadingIndication(unsigned long start, unsigned int delay);
+    char _readingIndicator = 0;
 };
 
 #endif

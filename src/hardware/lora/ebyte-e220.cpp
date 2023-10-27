@@ -54,6 +54,7 @@ void LORA::setup()
 void LORA::send(DATA *loraDataPacket)
 {
     loraPort.listen();
+    turnIndicatorOn();
 
 #if DEBUG_MODE
     Serial.print(F("🛜 [LoRa: Sending 📭, "));
@@ -85,40 +86,43 @@ void LORA::send(DATA *loraDataPacket)
 #if DEBUG_MODE
     Serial.print(F("🛜 [LORA: Sending status ➜ "));
     Serial.print(rs.getResponseDescription());
-    if(rs.code == 1) {
-    Serial.print(F(" 🆗"));
-    }else{
-    Serial.print(F(" 🚨"));
+    if (rs.code == 1)
+    {
+        Serial.print(F(" 🆗"));
     }
-
+    else
+    {
+        Serial.print(F(" 🚨"));
+    }
     Serial.println(F("]"));
     Serial.println();
 #endif
+
+    turnIndicatorOff();
 }
 
-/*
-SoftwareSerial lora_ss(LORA_PIN_RX, LORA_PIN_TX);
-LoRa_E220 e220ttl(&lora_ss, 6, 4, 5); // AUX M0 M1
-// LoRa_E220 e220ttl(&lora_ss); // Config without connect AUX and M0 M1
-
-bool listenToLORA();
-void sendMyLocationToLoRa();
-void sendLoRaData();
-void setupLoRa();
-
-// =========================================== Listen LORA =====================================
-bool listenToLORA()
+bool LORA::hasNewData(DATA *loraDataPacket)
 {
     if (e220ttl.available() > 1)
     {
-        ResponseStructContainer rsc = e220ttl.receiveMessage(sizeof(DATA));
+#if DEBUG_MODE
+        Serial.println(F("🛜 [LORA: we have new data 🥳]"));
+#endif
+
+        rsc = e220ttl.receiveMessage(sizeof(DATA));
         if (rsc.status.code != 1)
         {
+#if DEBUG_MODE
+            Serial.println(F("🛜 [LORA error: ❌ status - "));
             Serial.println(rsc.status.getResponseDescription());
+            Serial.println(F("]"));
+
+#endif
+            return false;
         }
         else
         {
-            loraDataPacket = *(DATA *)rsc.data;
+            loraDataPacket = (DATA *)rsc.data;
             rsc.close();
         }
 
@@ -127,10 +131,12 @@ bool listenToLORA()
     return false;
 }
 
-// ====================== READ GPS and SEND TO LORA ==============================
-void sendMyLocationToLoRa()
+void LORA::turnIndicatorOn()
 {
+    digitalWrite(_ledPin, HIGH);
 }
 
-
-*/
+void LORA::turnIndicatorOff()
+{
+    digitalWrite(_ledPin, LOW);
+}

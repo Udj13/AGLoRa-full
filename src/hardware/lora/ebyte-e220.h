@@ -22,6 +22,7 @@ public:
     LORA(uint8_t pinRx, uint8_t pinTx, long speed, uint8_t aux, uint8_t m0, uint8_t m1, uint8_t ledPin);
     void setup();
     void send(DATA *loraDataPacket);
+    bool hasNewData(DATA *loraDataPacket);
 
 
 private:
@@ -29,6 +30,7 @@ private:
     uint8_t _ledPin;
     void turnIndicatorOn();
     void turnIndicatorOff();
+    ResponseStructContainer rsc;
 };
 
 

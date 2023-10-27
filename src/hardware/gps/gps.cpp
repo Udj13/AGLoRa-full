@@ -1,6 +1,5 @@
 #include "gps.h"
 
-
 // ================= GPS SECTION =================================
 
 GPS::GPS(uint8_t pinRx, uint8_t pinTx, long speed, uint8_t ledPin) : gpsPort(pinRx, pinTx),
@@ -21,7 +20,7 @@ void GPS::setup()
 void GPS::printGPSInfo()
 {
 #if DEBUG_MODE
-    Serial.print(F("current GPS position. Satellites in view: "));
+    Serial.print(F(" Satellites in view: "));
     Serial.print(gpsModule.satellites.value());
     Serial.print(F("🛰️. HDOP: "));
     Serial.print(gpsModule.hdop.value());
@@ -44,7 +43,7 @@ void GPS::printGPSInfo()
         Serial.print(gpsModule.location.lng(), 6);
     }
 
-    Serial.print(F(" ⏰ Date/Time: "));
+    Serial.print(F(" 🗓️ Date/Time: "));
     if (gpsModule.date.isValid())
     {
         Serial.print(gpsModule.date.month());
@@ -58,7 +57,7 @@ void GPS::printGPSInfo()
         Serial.print(F("❌ INVALID"));
     }
 
-    Serial.print(F(" "));
+    Serial.print(F(" ⏰ "));
     if (gpsModule.time.isValid())
     {
         if (gpsModule.time.hour() < 10)
@@ -81,6 +80,19 @@ void GPS::printGPSInfo()
     {
         Serial.print(F("INVALID"));
     }
+    Serial.println();
+#endif
+}
+
+void GPS::printReadingIndication(unsigned long start, unsigned int delay)
+{
+#if DEBUG_MODE
+    byte progress = (10 * (millis() - start)) / delay;
+    if (progress != _readingIndicator)
+    {
+        _readingIndicator = progress;
+        Serial.print(F("#"));
+    }
 #endif
 }
 
@@ -95,8 +107,10 @@ void GPS::updateLocation(DATA *loraDataPacket)
 
     bool newData = false;
     // For three seconds we parse GPS data and report some key values
-    for (unsigned long start = millis(); millis() - start < 3000;)
+    const unsigned int readingDelay = 3000;
+    for (unsigned long start = millis(); millis() - start < readingDelay;)
     {
+        printReadingIndication(start, readingDelay);
         while (gpsPort.available() > 0)
             if (gpsModule.encode(gpsPort.read()))
             {

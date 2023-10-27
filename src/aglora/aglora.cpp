@@ -29,7 +29,7 @@ void AGLORA::clearDataPacket(DATA *loraDataPacket)
 {
   memset(loraDataPacket, 0, sizeof(&loraDataPacket));
   strcpy(loraDataPacket->name, NAME);
-  loraDataPacket->ttl = TTL;
+  loraDataPacket->ttlOrCrc = TTL;
 #if DEBUG_MODE
   Serial.println(F("🟢[AGLoRa: time to send your location📍, new loraDataPacket prepared 📦]"));
 #endif
@@ -72,7 +72,7 @@ void AGLORA::printPackage(DATA *loraDataPacket)
   Serial.print(F(" (UTC)"));
 
   Serial.print(F(", TTL: "));
-  Serial.print(loraDataPacket->ttl);
+  Serial.print(loraDataPacket->ttlOrCrc);
 
   Serial.println();
 #endif

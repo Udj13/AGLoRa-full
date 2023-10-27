@@ -1,14 +1,13 @@
 #include <Arduino.h>
+#include "../memory.h"
+#include "../../../settings/settings.h"
 
-class SRAM
+class SRAM: public IMemory
 {
 public:
-    void storageInit();
-    void writeTrackerInfoToBLE();
-    void addNewDataToStorage(DATA *newData);
-    void writeNewPositionToBLE();
-    void writeAllPositionsToBLE();
-    void writePositionToBLE(String *command);
+    void setup();
+    bool checkUnique(DATA *loraDataPacket);
+    void save(DATA *newData);
     void clearAllPositions();
 
 private:
@@ -16,15 +15,27 @@ private:
     unsigned int storageIndex = 0;
     bool storageOverflow = false;
 
-}
+};
 
 
-void SRAM::storageInit()
-{
-#if DEBUG_MODE
-    Serial.println(F("[Storage: Start initialization.]"));
-#endif
-}
+
+
+
+
+
+
+
+/*
+
+
+
+    void writeTrackerInfoToBLE();
+    void addNewDataToStorage(DATA *newData);
+    void writeNewPositionToBLE();
+    void writeAllPositionsToBLE();
+    void writePositionToBLE(String *command);
+
+
 
 void SRAM::writeTrackerInfoToBLE()
 {
@@ -42,22 +53,6 @@ void SRAM::writeTrackerInfoToBLE()
     Serial.print(SRAM_STORAGE_SIZE);
     Serial.print(F("&memoryIndex=")); // storage length
     Serial.println(storageIndex);
-}
-
-// ADD NEW DATA TO STORAGE
-void SRAM::addNewDataToStorage(DATA *newData)
-{
-    storageIndex++;
-    if (storageIndex >= SRAM_STORAGE_SIZE)
-    {
-        storageIndex = 0;
-        storageOverflow = true;
-    }
-    storage[storageIndex] = *newData;
-
-#if DEBUG_MODE
-    Serial.println(F("[Storage: New data added.]"));
-#endif
 }
 
 void SRAM::writeNewPositionToBLE()
@@ -119,13 +114,4 @@ void BLE::writePositionToBLE(String *command)
     sendPackageToBluetooth(&storage[index]); // Next tracker DATA
     delay(10);
 }
-
-void BLE::clearAllPositions()
-{
-#if DEBUG_MODE
-    Serial.println(F("[Storage: clearing memory.]"));
-#endif
-
-    storageIndex = 0;
-    storageOverflow = false;
-}
+*/

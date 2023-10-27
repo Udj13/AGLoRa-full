@@ -114,7 +114,9 @@ struct DATA {
   // unsigned char sensor2;
   // ...
 
-  unsigned char ttl; // time to live (for mesh network)
+  unsigned char ttlOrCrc; 
+  // time to live (for mesh network) on air
+  // or CRC in memory
 };
 
 /*
@@ -150,6 +152,8 @@ void sendToPhone(DATA *package);
 #define EEPROM_BEGIN_ADDRESS 0  //bytes
 // reserve for storing settings
 // not used if USE_EEPROM_MEMORY false
+// ================ TESTS ==================
+#define TEST_LORA_DATA true
 // =========================================
 // ========== END OF SETTINGS ==============
 // =========================================
