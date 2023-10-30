@@ -74,13 +74,12 @@ void GPS::printGPSInfo()
         Serial.print(F("."));
         if (gpsModule.time.centisecond() < 10)
             Serial.print(F("0"));
-        Serial.print(gpsModule.time.centisecond());
+        Serial.println(gpsModule.time.centisecond());
     }
     else
     {
-        Serial.print(F("INVALID"));
+        Serial.println(F("INVALID"));
     }
-    Serial.println();
 #endif
 }
 

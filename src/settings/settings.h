@@ -137,7 +137,7 @@ void sendToPhone(DATA *package);
 // But the write operation is finite and usually capped at 100,000 cycles.
 // Please read: https://docs.arduino.cc/learn/programming/memory-guide
 // ============ LORA NETWORK SETTINGS ============
-#define DATA_SENDING_INTERVAL 10000  // milliseconds
+#define DATA_SENDING_INTERVAL 40000  // milliseconds
 #define TTL 3  // Data packet lifetime (for transfer between devices)
 // ============ OTHER SETTINGS ==========
 #define BLE_UPDATE_INTERVAL 30000  // milliseconds

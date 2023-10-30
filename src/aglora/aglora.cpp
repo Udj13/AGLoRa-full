@@ -1,8 +1,18 @@
 #include "aglora.h"
 #include "../settings/settings.h"
 
-AGLORA::AGLORA()
+const String bleProtocolPrefix = "AGLoRa";
+const String bleProtocolVersion = "&ver=2.1";
+const String bleProtocolOK = "ok";
+const String bleProtocolError = "error";
+const String bleProtocolCRCMemory = "&crcmemory=";
+const String bleProtocolDivider = "\r\n";
+
+
+AGLORA::AGLORA(SRAM memory, BLE_HM10 ble)
 {
+  _ble = ble;
+  _memory = memory;
 }
 
 void AGLORA::hello()
@@ -20,11 +30,11 @@ void AGLORA::hello()
 #endif
 }
 
-/// @brief 
+/// @brief
 /// 1. clear
 /// 2. set name
 /// 3. set ttl
-/// @param loraDataPacket 
+/// @param loraDataPacket
 void AGLORA::clearDataPacket(DATA *loraDataPacket)
 {
   memset(loraDataPacket, 0, sizeof(&loraDataPacket));
@@ -38,7 +48,6 @@ void AGLORA::clearDataPacket(DATA *loraDataPacket)
 // void AGLORA::request(String * request){
 //   storageManager(request);
 // };
-
 
 void AGLORA::printPackage(DATA *loraDataPacket)
 {
@@ -76,4 +85,38 @@ void AGLORA::printPackage(DATA *loraDataPacket)
 
   Serial.println();
 #endif
+}
+
+void AGLORA::request(String request)
+{
+  if (request.length() == 0)
+  {
+    return;
+  }
+#if DEBUG_MODE
+  Serial.println();
+  Serial.print(F("🟢[AGLoRa: request <<"));
+  Serial.print(request);
+  Serial.println(F(">> received]"));
+  Serial.println();
+#endif
+
+  if (request.startsWith(F("checkmem")))
+  {
+    checkMemory();
+    return;
+  }
+}
+
+void AGLORA::checkMemory()
+{
+    // String response = bleProtocolPrefix + bleProtocolVersion;
+    // response += bleProtocolCRCMemory;
+    // if(memory.checkCRC()){
+    //     response += bleProtocolOK;
+    // } else {
+    //   response += bleProtocolError;
+    // }
+    // _ble.send(response);
+
 }

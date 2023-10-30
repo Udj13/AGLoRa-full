@@ -1,3 +1,6 @@
+#ifndef SRAM_INCLUDED
+#define SRAM_INCLUDED
+
 #include <Arduino.h>
 #include "../memory.h"
 #include "../../../settings/settings.h"
@@ -17,9 +20,7 @@ private:
 
 };
 
-
-
-
+#endif
 
 
 

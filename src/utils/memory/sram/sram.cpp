@@ -1,9 +1,15 @@
 #include "sram.h"
+#include "../../crc.h"
 
 void SRAM::setup()
 {
 #if DEBUG_MODE
-    Serial.println(F("💾[SRAM storage: memory is ready.]"));
+    Serial.print(F("💾[SRAM storage: memory is ready. SRAM_STORAGE_SIZE="));
+    Serial.print(SRAM_STORAGE_SIZE);
+    Serial.print(F(" ("));
+    Serial.print(SRAM_STORAGE_SIZE * sizeof(DATA));
+    Serial.print(F(" bytes)"));
+    Serial.println(F("]"));
 #endif
 }
 
@@ -12,6 +18,14 @@ void SRAM::setup()
 /// @return true if the same data is not exist
 bool SRAM::checkUnique(DATA *loraDataPacket)
 {
+    if (loraDataPacket->name == NAME)
+    {
+#if DEBUG_MODE
+        Serial.println(F("💾[SRAM storage: returned package 🔄 ]"));
+#endif
+        return false;
+    }
+
     const unsigned int maxIndex = storageOverflow ? SRAM_STORAGE_SIZE : storageIndex;
     for (unsigned int i = 0; i <= maxIndex; ++i)
     {
@@ -24,7 +38,7 @@ bool SRAM::checkUnique(DATA *loraDataPacket)
             (loraDataPacket->second == storage[i].second))
         {
 #if DEBUG_MODE
-    Serial.println(F("💾[SRAM storage: data already exist‼️⛔️]"));
+            Serial.println(F("💾[SRAM storage: data already exist‼️⛔️]"));
 #endif
             return false;
         }
@@ -44,16 +58,21 @@ void SRAM::save(DATA *newData)
         storageOverflow = true;
     }
     storage[storageIndex] = *newData;
+    storage[storageIndex].ttlOrCrc = calculateCRC((unsigned char *)newData, sizeof(newData) - sizeof(newData->ttlOrCrc));
 
 #if DEBUG_MODE
-    Serial.println(F("[Storage: New data added.]"));
+    Serial.print(F("💾[SRAM storage: New data was added: "));
+    Serial.print(storageIndex);
+    Serial.print(F("/"));
+    Serial.print(SRAM_STORAGE_SIZE);
+    Serial.println(F(" ✅]"));
 #endif
 }
 
 void SRAM::clearAllPositions()
 {
 #if DEBUG_MODE
-    Serial.println(F("[Storage: clearing memory.]"));
+    Serial.println(F("💾[SRAM storage: clearing memory 🫙]"));
 #endif
     storageIndex = 0;
     storageOverflow = false;

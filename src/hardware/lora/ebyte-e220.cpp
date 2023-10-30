@@ -77,6 +77,8 @@ void LORA::send(DATA *loraDataPacket)
     Serial.print(F(":"));
     Serial.print(loraDataPacket->minute);
     Serial.print(F(" (UTC)"));
+    Serial.print(F(" TTL="));
+    Serial.print(loraDataPacket->ttlOrCrc);
     Serial.println(F("]"));
 
 #endif

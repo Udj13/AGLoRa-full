@@ -13,33 +13,32 @@
 #include "aglora/aglora.h"
 #include <hardware/gps/gps.h>
 #include <hardware/lora/ebyte-e220.h>
+#include <hardware/ble/hm-10.h>
 #include "tests/tests.h"
 // #include <utils/memory/manager.h>
 #include <utils/memory/sram/sram.h>
 // #include <utils/memory/eeprom.h>
 // #include <utils/crc.h>
-// #include <hardware/ble/ble.h>
 
-AGLORA aglora;
 TESTS tests;
 GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED, GPS_LED);
 LORA lora(LORA_PIN_RX, LORA_PIN_TX, LORA_SPEED, LORA_PIN_AX, LORA_PIN_M0, LORA_PIN_M1, LORA_LED);
+BLE_HM10 ble;
 SRAM memory;
 
-// BLE ble;
-
 DATA loraDataPacket;
+AGLORA aglora(memory, ble);
 
 // ========== BEGIN ==========
 void setup()
 {
   Serial.begin(9600);
-  // Start modules
   aglora.hello(); // Beautifully print Hello from AGloRa :-)
+  // Start modules
   gps.setup();    // GPS
   lora.setup();   // LoRa
   memory.setup(); // SRAM or EEPROM
-  //  ble.setup();    // Bluetooth Low Energy
+  ble.setup();    // Bluetooth Low Energy
 }
 
 // ========== MAIN LOOP ==========
@@ -61,17 +60,18 @@ void loop()
   // waiting for new data
   if (lora.hasNewData(&loraDataPacket))
   {
-    // if(memory.checkUnique(&loraDataPacket)) // Check the name and time of the point
-    //{
-    // memory.save(&loraDataPacket);
-    // ble.send(&loraDataPacket);         // upload data to app
+    if (memory.checkUnique(&loraDataPacket)) // Check the name and time of the point
+    {
+      memory.save(&loraDataPacket);
+      // ble.send(&loraDataPacket);         // upload data to app
 
-    // loraDataPacket.ttl --;
-    // if(loraDataPacket.ttl > 0) {
-    //   lora.send(&loraDataPacket);
-    // }
-
-    //}
+      // resend data to other trackers
+      loraDataPacket.ttlOrCrc--;
+      if (loraDataPacket.ttlOrCrc > 0)
+      {
+        lora.send(&loraDataPacket);
+      }
+    }
 
     _timeOfLastReceivedPacket = millis(); // if you got data, update the checker
   }
@@ -81,13 +81,15 @@ void loop()
   {
     if (memory.checkUnique(&loraDataPacket)) // Check the name and time of the point
     {
-      // memory.save(&loraDataPacket);
+      memory.save(&loraDataPacket);
       // ble.send(&loraDataPacket);         // upload data to app
 
-      // loraDataPacket.ttl --;
-      // if(loraDataPacket.ttl > 0) {
-      //   lora.send(&loraDataPacket);
-      // }
+      // resend data to other trackers
+      loraDataPacket.ttlOrCrc--;
+      if (loraDataPacket.ttlOrCrc > 0)
+      {
+        lora.send(&loraDataPacket);
+      }
     }
 
     _timeOfLastReceivedPacket = millis(); // if you got data, update the checker
@@ -102,5 +104,5 @@ void loop()
     _timeOfLastReceivedPacket = millis();
   }
 
-  // ble.read(aglora.request); // check requests from app
+  aglora.request(ble.read()); // check requests from app
 }
