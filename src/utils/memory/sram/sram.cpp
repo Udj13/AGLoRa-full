@@ -77,3 +77,62 @@ void SRAM::clearAllPositions()
     storageIndex = 0;
     storageOverflow = false;
 }
+
+bool SRAM::checkCRC()
+{
+#if DEBUG_MODE
+    Serial.print(F("💾[SRAM storage: checking CRC, "));
+    Serial.print(storageIndex);
+    Serial.print(F("/"));
+    Serial.print(SRAM_STORAGE_SIZE);
+    Serial.print(F(" cells are used, storageOverflow is "));
+    Serial.print(storageOverflow);
+    Serial.println(F("]"));
+#endif
+
+    const byte rowLength = 10; // how many characters will be printed in a row
+    bool isErrorsFound = false;
+    byte crc = 0;
+    
+    const unsigned int maxIndex = storageOverflow ? SRAM_STORAGE_SIZE : storageIndex;
+    for (unsigned int i = 0; i <= SRAM_STORAGE_SIZE; ++i)
+    {
+        const byte size = sizeof(storage[i]) - sizeof(storage[i].ttlOrCrc);
+        if (i <= maxIndex)
+        {
+            crc = calculateCRC((unsigned char *)&storage[i], size);
+            if (storage[i].ttlOrCrc == crc)
+            {
+#if DEBUG_MODE
+                Serial.print(F("✅ "));
+#endif
+            }
+            else
+            {
+#if DEBUG_MODE
+                Serial.print(F("⛔️ "));
+#endif
+                isErrorsFound = true;
+            }
+        }
+        else
+        {
+#if DEBUG_MODE
+            Serial.print(F("⬜ "));
+#endif
+        }
+
+        if ((i + 1) % rowLength == 0)
+        {
+#if DEBUG_MODE
+            Serial.println();
+#endif
+        }
+    }
+
+#if DEBUG_MODE
+    Serial.println();
+#endif
+
+    return false;
+}

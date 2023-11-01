@@ -27,7 +27,7 @@ BLE_HM10 ble;
 SRAM memory;
 
 DATA loraDataPacket;
-AGLORA aglora(memory, ble);
+AGLORA aglora(&memory, &ble);
 
 // ========== BEGIN ==========
 void setup()

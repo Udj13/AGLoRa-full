@@ -9,7 +9,7 @@ const String bleProtocolCRCMemory = "&crcmemory=";
 const String bleProtocolDivider = "\r\n";
 
 
-AGLORA::AGLORA(SRAM memory, BLE_HM10 ble)
+AGLORA::AGLORA(SRAM * memory, BLE_HM10 * ble)
 {
   _ble = ble;
   _memory = memory;
@@ -101,7 +101,7 @@ void AGLORA::request(String request)
   Serial.println();
 #endif
 
-  if (request.startsWith(F("checkmem")))
+  if (request.startsWith(F("crc")))
   {
     checkMemory();
     return;
@@ -110,13 +110,14 @@ void AGLORA::request(String request)
 
 void AGLORA::checkMemory()
 {
-    // String response = bleProtocolPrefix + bleProtocolVersion;
-    // response += bleProtocolCRCMemory;
-    // if(memory.checkCRC()){
-    //     response += bleProtocolOK;
-    // } else {
-    //   response += bleProtocolError;
-    // }
-    // _ble.send(response);
+    String response = bleProtocolPrefix + bleProtocolVersion;
+    response += bleProtocolCRCMemory;
+    if(_memory->checkCRC()){
+        response += bleProtocolOK;
+    } else {
+      response += bleProtocolError;
+    }
+    response += bleProtocolDivider;
 
+    _ble->send(response);
 }

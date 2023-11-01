@@ -11,7 +11,7 @@
 class AGLORA
 {
 public:
-  AGLORA(SRAM memory, BLE_HM10 ble);
+  AGLORA(SRAM * memory, BLE_HM10 * ble);
   void hello();
   void clearDataPacket(DATA * loraDataPacket);
   void updateName(DATA * loraDataPacket);
@@ -21,8 +21,8 @@ public:
   void request(String request);
 
 private:
-  SRAM _memory;
-  BLE_HM10 _ble;
+  SRAM * _memory;
+  BLE_HM10 * _ble;
   void checkMemory();
 
 

@@ -12,6 +12,7 @@ class IMemory {
         virtual void clearAllPositions() = 0;
         virtual bool checkUnique(DATA *loraDataPacket) = 0;
         virtual void save(DATA *loraDataPacket) = 0;
+        virtual bool checkCRC() = 0;
 };
 
 

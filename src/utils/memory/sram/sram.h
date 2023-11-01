@@ -12,6 +12,7 @@ public:
     bool checkUnique(DATA *loraDataPacket);
     void save(DATA *newData);
     void clearAllPositions();
+    bool checkCRC();
 
 private:
     DATA storage[SRAM_STORAGE_SIZE];
