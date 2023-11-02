@@ -62,31 +62,34 @@ void LORA::send(DATA *loraDataPacket)
     Serial.print(F(" bytes are ready to send"));
     Serial.print(F(" ➜ "));
     Serial.print(loraDataPacket->name);
-    Serial.print(F("/"));
+    Serial.print(F(" / "));
     Serial.print(loraDataPacket->lat, 6);
-    Serial.print(F("/"));
+    Serial.print(F(" "));
     Serial.print(loraDataPacket->lon, 6);
-    Serial.print(F(" - "));
+    Serial.print(F(" / "));
     Serial.print(loraDataPacket->year);
     Serial.print(F("-"));
+    if(loraDataPacket->month < 10) Serial.print(F("0"));   
     Serial.print(loraDataPacket->month);
     Serial.print(F("-"));
+    if(loraDataPacket->day < 10) Serial.print(F("0"));
     Serial.print(loraDataPacket->day);
     Serial.print(F(" "));
     Serial.print(loraDataPacket->hour);
     Serial.print(F(":"));
+    if(loraDataPacket->minute < 10) Serial.print(F("0"));
     Serial.print(loraDataPacket->minute);
     Serial.print(F(" (UTC)"));
     Serial.print(F(" TTL="));
     Serial.print(loraDataPacket->ttlOrCrc);
-    Serial.println(F("]"));
+    Serial.print(F("] ➜ "));
 
 #endif
 
     ResponseStatus rs = e220ttl.sendMessage(&loraDataPacket, sizeof(loraDataPacket));
 
 #if DEBUG_MODE
-    Serial.print(F("🛜 [LORA: Sending status ➜ "));
+    Serial.print(F("[Status: "));
     Serial.print(rs.getResponseDescription());
     if (rs.code == 1)
     {

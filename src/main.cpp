@@ -77,11 +77,12 @@ void loop()
   }
 
 #if TEST_LORA_DATA
-  if (tests.hasNewDataEvery60sec(&loraDataPacket, &gps))
+  if (tests.hasNewDataEveryXSec(&loraDataPacket, &gps, 10))
   {
     if (memory.checkUnique(&loraDataPacket)) // Check the name and time of the point
     {
       memory.save(&loraDataPacket);
+      memory.checkCRC();
       // ble.send(&loraDataPacket);         // upload data to app
 
       // resend data to other trackers

@@ -19,6 +19,7 @@ void AGLORA::hello()
 {
 #if DEBUG_MODE
   Serial.println(F("[power on]"));
+
   Serial.print(F("Waiting | "));
   for (int i = 0; i < 50; i++)
   {
@@ -68,15 +69,19 @@ void AGLORA::printPackage(DATA *loraDataPacket)
   Serial.print(F(", date: "));
   Serial.print(loraDataPacket->year);
   Serial.print(F("/"));
+  if(loraDataPacket->month < 10) Serial.print(F("0"));   
   Serial.print(loraDataPacket->month);
   Serial.print(F("/"));
+  if(loraDataPacket->day < 10) Serial.print(F("0"));   
   Serial.print(loraDataPacket->day);
 
   Serial.print(F(", time: "));
   Serial.print(loraDataPacket->hour);
-  Serial.print(F(":"));
+  Serial.print(F(":"));  
+  if(loraDataPacket->minute < 10) Serial.print(F("0"));   
   Serial.print(loraDataPacket->minute);
   Serial.print(F(":"));
+  if(loraDataPacket->second < 10) Serial.print(F("0"));
   Serial.print(loraDataPacket->second);
   Serial.print(F(" (UTC)"));
 

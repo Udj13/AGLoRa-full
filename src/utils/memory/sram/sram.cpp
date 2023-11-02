@@ -5,9 +5,9 @@ void SRAM::setup()
 {
 #if DEBUG_MODE
     Serial.print(F("💾[SRAM storage: memory is ready. SRAM_STORAGE_SIZE="));
-    Serial.print(SRAM_STORAGE_SIZE);
+    Serial.print(SRAM_STORAGE_SIZE + 1);
     Serial.print(F(" ("));
-    Serial.print(SRAM_STORAGE_SIZE * sizeof(DATA));
+    Serial.print((SRAM_STORAGE_SIZE + 1) * sizeof(DATA));
     Serial.print(F(" bytes)"));
     Serial.println(F("]"));
 #endif
@@ -27,7 +27,7 @@ bool SRAM::checkUnique(DATA *loraDataPacket)
     }
 
     const unsigned int maxIndex = storageOverflow ? SRAM_STORAGE_SIZE : storageIndex;
-    for (unsigned int i = 0; i <= maxIndex; ++i)
+    for (unsigned int i = 0; i < maxIndex; ++i)
     {
         if ((loraDataPacket->name == storage[i].name) &&
             (loraDataPacket->year == storage[i].year) &&
@@ -51,22 +51,30 @@ bool SRAM::checkUnique(DATA *loraDataPacket)
 
 void SRAM::save(DATA *newData)
 {
+    storage[storageIndex] = *newData;
+    byte size = sizeof(storage[storageIndex]) - sizeof(storage[storageIndex].ttlOrCrc);
+    storage[storageIndex].ttlOrCrc = calculateCRC((unsigned char *)newData, size);
+
+#if DEBUG_MODE
+    Serial.print(F("💾[SRAM storage: New data from "));
+    Serial.print(storage[storageIndex].name);
+    Serial.print(F(" (TTL="));
+    Serial.print(storage[storageIndex].ttlOrCrc);
+    Serial.print(F(") was added. Memory: "));
+    Serial.print(storageIndex + 1);
+    Serial.print(F("/"));
+    Serial.print(SRAM_STORAGE_SIZE + 1);
+    Serial.print(F(", CRC "));
+    Serial.print(storage[storageIndex].ttlOrCrc);
+    Serial.println(F(" ✅]"));
+#endif
+
     storageIndex++;
     if (storageIndex >= SRAM_STORAGE_SIZE)
     {
         storageIndex = 0;
         storageOverflow = true;
     }
-    storage[storageIndex] = *newData;
-    storage[storageIndex].ttlOrCrc = calculateCRC((unsigned char *)newData, sizeof(newData) - sizeof(newData->ttlOrCrc));
-
-#if DEBUG_MODE
-    Serial.print(F("💾[SRAM storage: New data was added: "));
-    Serial.print(storageIndex);
-    Serial.print(F("/"));
-    Serial.print(SRAM_STORAGE_SIZE);
-    Serial.println(F(" ✅]"));
-#endif
 }
 
 void SRAM::clearAllPositions()
@@ -90,49 +98,78 @@ bool SRAM::checkCRC()
     Serial.println(F("]"));
 #endif
 
-    const byte rowLength = 10; // how many characters will be printed in a row
-    bool isErrorsFound = false;
+    const byte rowLength = 20; // how many characters will be printed in a row
+    const byte rowDivider = 5; // split string for better view
+    bool result = true;
     byte crc = 0;
-    
-    const unsigned int maxIndex = storageOverflow ? SRAM_STORAGE_SIZE : storageIndex;
-    for (unsigned int i = 0; i <= SRAM_STORAGE_SIZE; ++i)
+    byte size = sizeof(storage[0]) - sizeof(storage[0].ttlOrCrc);
+
+    if ((storageIndex == 0) && (!storageOverflow))
     {
-        const byte size = sizeof(storage[i]) - sizeof(storage[i].ttlOrCrc);
+#if DEBUG_MODE
+        Serial.println(F("💾[SRAM storage: memory is empty]"));
+#endif
+        return result;
+    }
+
+    const unsigned int maxIndex = storageOverflow ? (SRAM_STORAGE_SIZE - 1) : (storageIndex - 1);
+
+    for (unsigned int i = 0; i < SRAM_STORAGE_SIZE; ++i)
+    {
         if (i <= maxIndex)
         {
             crc = calculateCRC((unsigned char *)&storage[i], size);
             if (storage[i].ttlOrCrc == crc)
             {
 #if DEBUG_MODE
-                Serial.print(F("✅ "));
+                Serial.print(F(" ✅"));
 #endif
             }
             else
             {
 #if DEBUG_MODE
-                Serial.print(F("⛔️ "));
+                Serial.print(F(" ⛔️"));
 #endif
-                isErrorsFound = true;
+                result = false;
             }
+#if DEBUG_MODE
+            if (crc < 100)
+                Serial.print(F("0"));
+            if (crc < 10)
+                Serial.print(F("0"));
+            Serial.print(crc);
+            if (i == storageIndex - 1)
+            {
+                Serial.print(F("\u0332")); // underline active memory cell
+            }
+#endif
         }
         else
         {
 #if DEBUG_MODE
-            Serial.print(F("⬜ "));
+            Serial.print(F(" ⬜"));
+            Serial.print(F("   "));
 #endif
         }
 
+#if DEBUG_MODE // Memory visualisation
+
         if ((i + 1) % rowLength == 0)
         {
-#if DEBUG_MODE
             Serial.println();
-#endif
         }
+        else
+        {
+            if ((i + 1) % rowDivider == 0)
+                Serial.print(F(" - "));
+        }
+
+#endif
     }
 
 #if DEBUG_MODE
     Serial.println();
 #endif
 
-    return false;
+    return result;
 }

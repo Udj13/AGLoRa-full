@@ -7,12 +7,11 @@
 
 
 #define OTHER_NAME "Morty" // virtual tracker's name
-#define TEST_DATA_INTERVAL 60000 // test data interval in ms
 
 class TESTS
 {
 public:
-    bool hasNewDataEvery60sec(DATA *loraDataPacket, GPS *gps);
+    bool hasNewDataEveryXSec(DATA *loraDataPacket, GPS *gps, byte interval);
 
 private:
     unsigned long _timeOfLastSendedPacket = 0;
