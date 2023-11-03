@@ -17,8 +17,8 @@ public:
   void updateName(DATA * loraDataPacket);
   void updateSensors(DATA * loraDataPacket);
   void printPackage(DATA * loraDataPacket);
-
-  void request(String request);
+  void getRequest(String request);
+  void sendPackageToBLE(DATA * loraDataPacket);
 
 private:
   SRAM * _memory;

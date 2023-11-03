@@ -41,7 +41,7 @@ void LORA::setup()
     e220ttl.setConfiguration(configuration, WRITE_CFG_PWR_DWN_SAVE);
     delay(100);
 #if DEBUG_MODE
-    Serial.print(F("🛜 [LORA current config: channel = "));
+    Serial.print(F("\t🛜 [LORA current config: channel = "));
     Serial.print(configuration.getChannelDescription());
     Serial.print(F(" , airDataRate = "));
     Serial.print(configuration.SPED.getAirDataRateDescription());
@@ -57,7 +57,7 @@ void LORA::send(DATA *loraDataPacket)
     turnIndicatorOn();
 
 #if DEBUG_MODE
-    Serial.print(F("🛜 [LoRa: Sending 📭, "));
+    Serial.print(F("🛜 [LoRa: Sending 📫, "));
     Serial.print(sizeof(DATA));
     Serial.print(F(" bytes are ready to send"));
     Serial.print(F(" ➜ "));

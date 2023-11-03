@@ -45,7 +45,7 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 
 // ========== NAME =======================
 #define NAME_LENGTH 6             // The same value for all devices
-#define NAME "Rick"               // Name of current tracker, NAME_LENGTH characters
+const char NAME[NAME_LENGTH] = "Rick";               // Name of current tracker, NAME_LENGTH characters
 // Example:
 // #define NAME = "Morty"; // All names length should be no longer than NAME_LENGTH
 // ========== WIRING =====================
@@ -124,7 +124,7 @@ This is a function that sends data to the app.
 Data packets are sent using OsmAnd-like protocol:
 id=name&lat={0}&lon={1}&timestamp={2}&speed={3}&altitude={4}
 */
-void sendToPhone(DATA *package); 
+String sendToPhone(DATA *package); 
 // find it in the code and customize if you need
 
 // ========================================
@@ -144,7 +144,7 @@ void sendToPhone(DATA *package);
 // ============ SRAM STORAGE ==============
 // Maximum number of track points (struct DATA) in memory
 // Change and check free memory in "Output" after pressing "Verify".
-#define SRAM_STORAGE_SIZE 45    // DATA array size
+#define SRAM_STORAGE_SIZE 30    // DATA array size
 // not used if USE_EEPROM_MEMORY true, may be zero in this case
 // ============ EEPROM STORAGE ==============
 // EEPROM (non-volatile) memory

@@ -1,15 +1,16 @@
 #include "aglora.h"
 #include "../settings/settings.h"
 
-const String bleProtocolPrefix = "AGLoRa";
+const String bleProtocolPrefix = "AGLoRa-";
+const String bleProtocolPoint = "point";
+const String bleProtocolMemory = "memory";
 const String bleProtocolVersion = "&ver=2.1";
+const String bleProtocolCRCMemoryStatus = "&crcmemory=";
 const String bleProtocolOK = "ok";
 const String bleProtocolError = "error";
-const String bleProtocolCRCMemory = "&crcmemory=";
 const String bleProtocolDivider = "\r\n";
 
-
-AGLORA::AGLORA(SRAM * memory, BLE_HM10 * ble)
+AGLORA::AGLORA(SRAM *memory, BLE_HM10 *ble)
 {
   _ble = ble;
   _memory = memory;
@@ -69,19 +70,23 @@ void AGLORA::printPackage(DATA *loraDataPacket)
   Serial.print(F(", date: "));
   Serial.print(loraDataPacket->year);
   Serial.print(F("/"));
-  if(loraDataPacket->month < 10) Serial.print(F("0"));   
+  if (loraDataPacket->month < 10)
+    Serial.print(F("0"));
   Serial.print(loraDataPacket->month);
   Serial.print(F("/"));
-  if(loraDataPacket->day < 10) Serial.print(F("0"));   
+  if (loraDataPacket->day < 10)
+    Serial.print(F("0"));
   Serial.print(loraDataPacket->day);
 
   Serial.print(F(", time: "));
   Serial.print(loraDataPacket->hour);
-  Serial.print(F(":"));  
-  if(loraDataPacket->minute < 10) Serial.print(F("0"));   
+  Serial.print(F(":"));
+  if (loraDataPacket->minute < 10)
+    Serial.print(F("0"));
   Serial.print(loraDataPacket->minute);
   Serial.print(F(":"));
-  if(loraDataPacket->second < 10) Serial.print(F("0"));
+  if (loraDataPacket->second < 10)
+    Serial.print(F("0"));
   Serial.print(loraDataPacket->second);
   Serial.print(F(" (UTC)"));
 
@@ -92,15 +97,16 @@ void AGLORA::printPackage(DATA *loraDataPacket)
 #endif
 }
 
-void AGLORA::request(String request)
+void AGLORA::getRequest(String request)
 {
   if (request.length() == 0)
   {
     return;
   }
+
 #if DEBUG_MODE
   Serial.println();
-  Serial.print(F("🟢[AGLoRa: request <<"));
+  Serial.print(F("🟢[AGLoRa: 📭 BLE request received <<"));
   Serial.print(request);
   Serial.println(F(">> received]"));
   Serial.println();
@@ -115,14 +121,34 @@ void AGLORA::request(String request)
 
 void AGLORA::checkMemory()
 {
-    String response = bleProtocolPrefix + bleProtocolVersion;
-    response += bleProtocolCRCMemory;
-    if(_memory->checkCRC()){
-        response += bleProtocolOK;
-    } else {
-      response += bleProtocolError;
-    }
-    response += bleProtocolDivider;
+  String response = bleProtocolPrefix +
+                    bleProtocolMemory +
+                    bleProtocolVersion;
+  response += bleProtocolCRCMemoryStatus;
+  if (_memory->checkCRC())
+  {
+    response += bleProtocolOK;
+  }
+  else
+  {
+    response += bleProtocolError;
+  }
+  response += bleProtocolDivider;
+  _ble->send(&response);
+}
 
-    _ble->send(response);
+void AGLORA::sendPackageToBLE(DATA *loraDataPacket)
+{
+  String response = bleProtocolPrefix +
+                    bleProtocolPoint +
+                    bleProtocolVersion;
+  response += sendToPhone(loraDataPacket);
+  response += bleProtocolDivider;
+
+#if DEBUG_MODE
+  Serial.print(F("🟢AGLoRa: new point 📦 to BLE →"));
+  Serial.print(response);
+#endif
+
+  //_ble->send(&response);
 }

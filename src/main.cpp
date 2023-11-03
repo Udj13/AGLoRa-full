@@ -83,7 +83,7 @@ void loop()
     {
       memory.save(&loraDataPacket);
       memory.checkCRC();
-      // ble.send(&loraDataPacket);         // upload data to app
+      aglora.sendPackageToBLE(&loraDataPacket); // upload data to app
 
       // resend data to other trackers
       loraDataPacket.ttlOrCrc--;
@@ -105,5 +105,5 @@ void loop()
     _timeOfLastReceivedPacket = millis();
   }
 
-  aglora.request(ble.read()); // check requests from app
+  aglora.getRequest(ble.read()); // check requests from app
 }
