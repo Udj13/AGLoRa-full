@@ -10,6 +10,7 @@ void SRAM::setup()
     Serial.print((SRAM_STORAGE_SIZE + 1) * sizeof(DATA));
     Serial.print(F(" bytes)"));
     Serial.println(F("]"));
+    Serial.println(F("\t CRC check symbols: ✅ CRC OK, ⛔️ CRC ERROR, ⬜ empty memory cell, underlined CRC\u0332 - current cell"));
 #endif
 }
 
@@ -98,7 +99,7 @@ bool SRAM::checkCRC()
     Serial.println(F("]"));
 #endif
 
-    const byte rowLength = 20; // how many characters will be printed in a row
+    const byte rowLength = 15; // how many characters will be printed in a row
     const byte rowDivider = 5; // split string for better view
     bool result = true;
     byte crc = 0;
@@ -113,6 +114,10 @@ bool SRAM::checkCRC()
     }
 
     const unsigned int maxIndex = storageOverflow ? (SRAM_STORAGE_SIZE - 1) : (storageIndex - 1);
+
+#if DEBUG_MODE
+    Serial.print(F("\t"));
+#endif
 
     for (unsigned int i = 0; i < SRAM_STORAGE_SIZE; ++i)
     {
@@ -138,7 +143,7 @@ bool SRAM::checkCRC()
             if (crc < 10)
                 Serial.print(F("0"));
             Serial.print(crc);
-            if (i == storageIndex - 1)
+            if ((i == storageIndex - 1) || (i == SRAM_STORAGE_SIZE - 1))
             {
                 Serial.print(F("\u0332")); // underline active memory cell
             }
@@ -157,11 +162,13 @@ bool SRAM::checkCRC()
         if ((i + 1) % rowLength == 0)
         {
             Serial.println();
+            Serial.println();
+            Serial.print(F("\t"));
         }
         else
         {
             if ((i + 1) % rowDivider == 0)
-                Serial.print(F(" - "));
+                Serial.print(F(" · "));
         }
 
 #endif

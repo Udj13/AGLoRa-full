@@ -144,7 +144,7 @@ void sendToPhone(DATA *package);
 // ============ SRAM STORAGE ==============
 // Maximum number of track points (struct DATA) in memory
 // Change and check free memory in "Output" after pressing "Verify".
-#define SRAM_STORAGE_SIZE 40    // DATA array size
+#define SRAM_STORAGE_SIZE 45    // DATA array size
 // not used if USE_EEPROM_MEMORY true, may be zero in this case
 // ============ EEPROM STORAGE ==============
 // EEPROM (non-volatile) memory
