@@ -10,11 +10,12 @@ BLE_HM10::BLE_HM10()
 
 void BLE_HM10::setup()
 {
-#if DEBUG_MODE
-    Serial.print(F("📲[BLE: ready for work ✅. MTU = "));
+#if DEBUG_MODE && DEBUG_BLE
+    Serial.print(F("📲[BLE: ready for work ✅. Maximum Transmission Unit (MTU) = "));
     Serial.print(MTU);
     Serial.println(F("]"));
-#else
+#endif
+#if !DEBUG_MODE
     sendCommand(F("AT"));
     sendCommand(F("AT+NAMEAGLoRa"));
     sendCommand(F("AT+ROLE0"));
@@ -33,30 +34,43 @@ String BLE_HM10::read()
     return result;
 }
 
-void BLE_HM10::send(String * package)
+void BLE_HM10::send(String *package)
 {
-#if DEBUG_MODE
-    Serial.println(F("📲[BLE: 📫 Sending:"));
-    Serial.println(* package);
+#if DEBUG_MODE && DEBUG_BLE
+    Serial.print(F("📲[BLE: 📫 Sending: "));
+    Serial.print(*package);
+
+    Serial.print(F("\t"));
+    for (byte i = 1; i <= MTU; ++i)
+    {
+        Serial.print(i % 10);
+    }
+    Serial.print(F(" (MTU = "));
+    Serial.print(MTU);
+    Serial.println(F(")"));
 #endif
 
     bool isStringNotEmpty = true;
     while (isStringNotEmpty)
     {
-#if DEBUG_MODE
-        Serial.print(F("\tMTU: "));
+#if DEBUG_MODE && DEBUG_BLE
+        Serial.print(F("\t"));
 #endif
-        const String nextSendMTU = package->substring(0, MTU - 1);
-        Serial.println(nextSendMTU);
-#if DEBUG_MODE
-        Serial.println(F("⮐"));
-#endif
+        String nextSendMTU = package->substring(0, MTU);
+        package->remove(0, MTU);
         isStringNotEmpty = package->length() != 0;
-    }
 
-#if DEBUG_MODE
-    Serial.println(F(">>]"));
+#if !DEBUG_MODE && !DEBUG_BLE
+        // important part
+        Serial.print(nextSendMTU); //  here we send data to BLE
+        delay(10);
 #endif
+
+#if DEBUG_MODE && DEBUG_BLE
+        if (isStringNotEmpty)
+            Serial.println(F(" ⮐"));
+#endif
+    }
 }
 
 void BLE_HM10::sendCommand(const String command)

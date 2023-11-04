@@ -78,6 +78,9 @@ const char NAME[NAME_LENGTH] = "Rick";               // Name of current tracker,
 // Don't forget to disconnect the bluetooth module.
 // Then open “Tools” -> ”Serial monitor” in Arduino IDE.
 #define DEBUG_MODE true  // change "false" to "true" to enable
+// Next, logs levels for deep debugging, 
+// if DEBUG_MODE == false, logs level are not important 
+#define DEBUG_BLE false  // bluetooth low energy
 
 // ========================================
 // ==== Settings LEVEL 2 (optional) =======
@@ -144,7 +147,7 @@ String sendToPhone(DATA *package);
 // ============ SRAM STORAGE ==============
 // Maximum number of track points (struct DATA) in memory
 // Change and check free memory in "Output" after pressing "Verify".
-#define SRAM_STORAGE_SIZE 30    // DATA array size
+#define SRAM_STORAGE_SIZE 5    // DATA array size
 // not used if USE_EEPROM_MEMORY true, may be zero in this case
 // ============ EEPROM STORAGE ==============
 // EEPROM (non-volatile) memory

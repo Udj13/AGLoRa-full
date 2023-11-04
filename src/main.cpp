@@ -44,6 +44,10 @@ void setup()
 // ========== MAIN LOOP ==========
 unsigned long _timeToSendMyLocation = millis() + DATA_SENDING_INTERVAL;
 unsigned long _timeOfLastReceivedPacket;
+unsigned int addedMemoryIndex;
+byte ttl = 0;
+
+void processNewData();
 
 void loop()
 {
@@ -60,40 +64,13 @@ void loop()
   // waiting for new data
   if (lora.hasNewData(&loraDataPacket))
   {
-    if (memory.checkUnique(&loraDataPacket)) // Check the name and time of the point
-    {
-      memory.save(&loraDataPacket);
-      // ble.send(&loraDataPacket);         // upload data to app
-
-      // resend data to other trackers
-      loraDataPacket.ttlOrCrc--;
-      if (loraDataPacket.ttlOrCrc > 0)
-      {
-        lora.send(&loraDataPacket);
-      }
-    }
-
-    _timeOfLastReceivedPacket = millis(); // if you got data, update the checker
+    processNewData();
   }
 
 #if TEST_LORA_DATA
   if (tests.hasNewDataEveryXSec(&loraDataPacket, &gps, 10))
   {
-    if (memory.checkUnique(&loraDataPacket)) // Check the name and time of the point
-    {
-      memory.save(&loraDataPacket);
-      memory.checkCRC();
-      aglora.sendPackageToBLE(&loraDataPacket); // upload data to app
-
-      // resend data to other trackers
-      loraDataPacket.ttlOrCrc--;
-      if (loraDataPacket.ttlOrCrc > 0)
-      {
-        lora.send(&loraDataPacket);
-      }
-    }
-
-    _timeOfLastReceivedPacket = millis(); // if you got data, update the checker
+    processNewData();
   }
 #endif
 
@@ -106,4 +83,26 @@ void loop()
   }
 
   aglora.getRequest(ble.read()); // check requests from app
+}
+
+void processNewData()
+{
+  if (memory.checkUnique(&loraDataPacket)) // Check the name and time of the point
+  {
+
+    ttl = loraDataPacket.ttlOrCrc;
+
+    addedMemoryIndex = memory.save(&loraDataPacket);
+    memory.checkCRC();
+    aglora.sendPackageToBLE(&loraDataPacket, addedMemoryIndex); // upload data to app
+
+    // resend data to other trackers
+    if (--ttl > 0)
+    {
+      loraDataPacket.ttlOrCrc = ttl;
+      lora.send(&loraDataPacket);
+    }
+  }
+
+  _timeOfLastReceivedPacket = millis(); // if you got data, update the checker
 }

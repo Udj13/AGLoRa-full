@@ -1,6 +1,11 @@
 #include "sram.h"
 #include "../../crc.h"
 
+SRAM::SRAM()
+{
+    dataSizeWithoutCRC = sizeof(storage[0]) - sizeof(storage[0].ttlOrCrc);
+}
+
 void SRAM::setup()
 {
 #if DEBUG_MODE
@@ -27,7 +32,7 @@ bool SRAM::checkUnique(DATA *loraDataPacket)
         return false;
     }
 
-    const unsigned int maxIndex = storageOverflow ? SRAM_STORAGE_SIZE : storageIndex;
+    const unsigned int maxIndex = storageOverwrite ? SRAM_STORAGE_SIZE : storageIndex;
     for (unsigned int i = 0; i < maxIndex; ++i)
     {
         if ((loraDataPacket->name == storage[i].name) &&
@@ -50,17 +55,16 @@ bool SRAM::checkUnique(DATA *loraDataPacket)
     return true;
 }
 
-void SRAM::save(DATA *newData)
+unsigned int SRAM::save(DATA *newData)
 {
     storage[storageIndex] = *newData;
-    byte size = sizeof(storage[storageIndex]) - sizeof(storage[storageIndex].ttlOrCrc);
-    storage[storageIndex].ttlOrCrc = calculateCRC((unsigned char *)newData, size);
+    storage[storageIndex].ttlOrCrc = calculateCRC((unsigned char *)newData, dataSizeWithoutCRC);
 
 #if DEBUG_MODE
     Serial.print(F("💾[SRAM storage: New data from "));
     Serial.print(storage[storageIndex].name);
     Serial.print(F(" (TTL="));
-    Serial.print(storage[storageIndex].ttlOrCrc);
+    Serial.print(newData->ttlOrCrc);
     Serial.print(F(") was added. Memory: "));
     Serial.print(storageIndex + 1);
     Serial.print(F("/"));
@@ -70,12 +74,24 @@ void SRAM::save(DATA *newData)
     Serial.println(F(" ✅]"));
 #endif
 
+    unsigned int addedIindex = storageIndex;
     storageIndex++;
     if (storageIndex >= SRAM_STORAGE_SIZE)
     {
         storageIndex = 0;
-        storageOverflow = true;
+        storageOverwrite = true;
     }
+
+    return addedIindex;
+}
+
+/// @brief Loading data from memory to loraDataPacket by index
+/// @param loraDataPacket pointer
+/// @param index index of data in memory 
+/// @return true if success 
+DATA * SRAM::load(unsigned int index)
+{
+    return &storage[index];;
 }
 
 void SRAM::clearAllPositions()
@@ -84,7 +100,7 @@ void SRAM::clearAllPositions()
     Serial.println(F("💾[SRAM storage: clearing memory 🫙]"));
 #endif
     storageIndex = 0;
-    storageOverflow = false;
+    storageOverwrite = false;
 }
 
 bool SRAM::checkCRC()
@@ -95,17 +111,16 @@ bool SRAM::checkCRC()
     Serial.print(F("/"));
     Serial.print(SRAM_STORAGE_SIZE);
     Serial.print(F(" cells are used, storageOverflow is "));
-    Serial.print(storageOverflow);
+    Serial.print(storageOverwrite);
     Serial.println(F("]"));
 #endif
 
-    const byte rowLength = 15; // how many characters will be printed in a row
-    const byte rowDivider = 5; // split string for better view
+    const byte rowLength = 12; // how many characters will be printed in a row
+    const byte rowDivider = 4; // split string for better view
     bool result = true;
     byte crc = 0;
-    byte size = sizeof(storage[0]) - sizeof(storage[0].ttlOrCrc);
 
-    if ((storageIndex == 0) && (!storageOverflow))
+    if ((storageIndex == 0) && (!storageOverwrite))
     {
 #if DEBUG_MODE
         Serial.println(F("💾[SRAM storage: memory is empty]"));
@@ -113,7 +128,7 @@ bool SRAM::checkCRC()
         return result;
     }
 
-    const unsigned int maxIndex = storageOverflow ? (SRAM_STORAGE_SIZE - 1) : (storageIndex - 1);
+    const unsigned int maxIndex = storageOverwrite ? (SRAM_STORAGE_SIZE - 1) : (storageIndex - 1);
 
 #if DEBUG_MODE
     Serial.print(F("\t"));
@@ -123,7 +138,7 @@ bool SRAM::checkCRC()
     {
         if (i <= maxIndex)
         {
-            crc = calculateCRC((unsigned char *)&storage[i], size);
+            crc = calculateCRC((unsigned char *)&storage[i], dataSizeWithoutCRC);
             if (storage[i].ttlOrCrc == crc)
             {
 #if DEBUG_MODE
@@ -143,7 +158,8 @@ bool SRAM::checkCRC()
             if (crc < 10)
                 Serial.print(F("0"));
             Serial.print(crc);
-            if ((i == storageIndex - 1) || (i == SRAM_STORAGE_SIZE - 1))
+            if ((i == storageIndex - 1) ||
+                ((i == 0)&&(storageOverwrite)))
             {
                 Serial.print(F("\u0332")); // underline active memory cell
             }
@@ -179,4 +195,35 @@ bool SRAM::checkCRC()
 #endif
 
     return result;
+}
+
+bool SRAM::checkCRC(DATA *loraDataPacket)
+{
+    const byte crc = calculateCRC((unsigned char *)loraDataPacket, dataSizeWithoutCRC);
+    if (loraDataPacket->ttlOrCrc == crc)
+        return true;
+    return false;
+}
+
+bool SRAM::checkCRC(unsigned int index)
+{
+    const byte crc = calculateCRC((unsigned char *)&storage[index], dataSizeWithoutCRC);
+    if (storage[index].ttlOrCrc == crc)
+        return true;
+    return false;
+}
+
+unsigned int SRAM::getSize()
+{
+    return SRAM_STORAGE_SIZE;
+}
+
+unsigned int SRAM::getIndex()
+{
+    return storageIndex;
+}
+
+bool SRAM::getStorageOverwrite()
+{
+    return storageOverwrite;
 }

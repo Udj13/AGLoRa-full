@@ -14,17 +14,18 @@ public:
   AGLORA(SRAM * memory, BLE_HM10 * ble);
   void hello();
   void clearDataPacket(DATA * loraDataPacket);
-  void updateName(DATA * loraDataPacket);
+//  void updateName(DATA * loraDataPacket);
   void updateSensors(DATA * loraDataPacket);
   void printPackage(DATA * loraDataPacket);
   void getRequest(String request);
-  void sendPackageToBLE(DATA * loraDataPacket);
+  void sendPackageToBLE(DATA * loraDataPacket, int index);
 
 private:
   SRAM * _memory;
   BLE_HM10 * _ble;
   void checkMemory();
-
+  void sendAllPackagesToBLE();
+  void sendPackageToBLEFromStorage(unsigned int index);
 
 };
 

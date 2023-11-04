@@ -9,10 +9,19 @@
 class IMemory {
     public:
         virtual void setup() = 0;
+
         virtual void clearAllPositions() = 0;
         virtual bool checkUnique(DATA *loraDataPacket) = 0;
-        virtual void save(DATA *loraDataPacket) = 0;
-        virtual bool checkCRC() = 0;
+        virtual unsigned int save(DATA *loraDataPacket) = 0;
+        virtual DATA * load(unsigned int index) = 0;
+
+        virtual bool checkCRC() = 0;    // all memory
+        virtual bool checkCRC(DATA *loraDataPacket) = 0;
+        virtual bool checkCRC(unsigned int index) = 0;
+
+        virtual unsigned int getSize() = 0;
+        virtual unsigned int getIndex() = 0;
+        virtual bool getStorageOverwrite() = 0;
 };
 
 

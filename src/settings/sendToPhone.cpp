@@ -13,9 +13,9 @@ String sendToPhone(DATA *package) {
   result += package->name;  //NAME_LENGTH bytes
 
   result += F("&lat=");       // cordinates
-  result += package->lat;  // latitude
+  result += String(package->lat, 6);  // latitude
   result += F("&lon=");       // record separator
-  result += package->lon;  // longitute
+  result += String(package->lon, 6);  // longitute
 
   //Date and time format: 2023-06-07T15:21:00Z
   result += F("&timestamp=");      // record separator

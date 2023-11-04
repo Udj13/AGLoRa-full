@@ -2,12 +2,17 @@
 #include "../settings/settings.h"
 
 const String bleProtocolPrefix = "AGLoRa-";
-const String bleProtocolPoint = "point";
-const String bleProtocolMemory = "memory";
+const String bleProtocolTypePoint = "point";
+const String bleProtocolTypeMemory = "memory";
 const String bleProtocolVersion = "&ver=2.1";
-const String bleProtocolCRCMemoryStatus = "&crcmemory=";
+const String bleProtocolParamCRC = "&crc=";
 const String bleProtocolOK = "ok";
 const String bleProtocolError = "error";
+
+const String bleProtocolParamMemorySize = "&memsize=";
+const String bleProtocolParamMemoryOverwrite = "&overwrite=";
+const String bleProtocolParamMemoryIndex = "&index=";
+
 const String bleProtocolDivider = "\r\n";
 
 AGLORA::AGLORA(SRAM *memory, BLE_HM10 *ble)
@@ -117,38 +122,114 @@ void AGLORA::getRequest(String request)
     checkMemory();
     return;
   }
+
+  if (request.startsWith(F("clear")))
+  {
+    _memory->clearAllPositions();
+    checkMemory();
+    return;
+  }
+
+  if (request.startsWith(F("all")))
+  {
+    sendAllPackagesToBLE();
+    return;
+  }
+
+  if (request.startsWith(F("id")))
+  {
+    request.remove(0,2);
+    unsigned int index = request.toInt();
+    sendPackageToBLEFromStorage(index);
+
+    return;
+  }
+
+
 }
 
 void AGLORA::checkMemory()
 {
   String response = bleProtocolPrefix +
-                    bleProtocolMemory +
+                    bleProtocolTypeMemory +
                     bleProtocolVersion;
-  response += bleProtocolCRCMemoryStatus;
-  if (_memory->checkCRC())
-  {
-    response += bleProtocolOK;
-  }
-  else
-  {
-    response += bleProtocolError;
-  }
+  response += bleProtocolParamCRC;
+  response += _memory->checkCRC() ? bleProtocolOK : bleProtocolError;
+  response += bleProtocolParamMemorySize + _memory->getSize();
+  response += bleProtocolParamMemoryIndex + _memory->getIndex();
+  response += bleProtocolParamMemoryOverwrite + _memory->getStorageOverwrite();
   response += bleProtocolDivider;
   _ble->send(&response);
 }
 
-void AGLORA::sendPackageToBLE(DATA *loraDataPacket)
+void AGLORA::sendPackageToBLE(DATA *loraDataPacket, int index)
 {
   String response = bleProtocolPrefix +
-                    bleProtocolPoint +
+                    bleProtocolTypePoint +
                     bleProtocolVersion;
+
   response += sendToPhone(loraDataPacket);
+  response += bleProtocolParamMemoryIndex + index;
+  response += bleProtocolParamCRC;
+  response += _memory->checkCRC(index) ? bleProtocolOK : bleProtocolError;
   response += bleProtocolDivider;
 
 #if DEBUG_MODE
-  Serial.print(F("🟢AGLoRa: new point 📦 to BLE →"));
+  Serial.print(F("🟢AGLoRa: send point 📦 to BLE → "));
   Serial.print(response);
 #endif
 
-  //_ble->send(&response);
+  _ble->send(&response);
+}
+
+void AGLORA::sendAllPackagesToBLE()
+{
+  unsigned int maxIndex = _memory->getStorageOverwrite() ? _memory->getSize() : _memory->getIndex();
+  for (unsigned int i = 0; i < maxIndex; ++i)
+  {
+#if DEBUG_MODE
+    Serial.print(F("🟢[AGLoRa: loading "));
+    Serial.print(i+1);
+    Serial.print(F("/"));
+    Serial.print(maxIndex);
+    Serial.print(F(" 📦 from memory ]"));
+#endif
+
+    sendPackageToBLE(_memory->load(i), i);
+  }
+
+#if DEBUG_MODE
+    Serial.println();
+#endif
+
+}
+
+
+void AGLORA::sendPackageToBLEFromStorage(unsigned int index){
+#if DEBUG_MODE
+    Serial.print(F("🟢[AGLoRa: loading 📦  from index "));
+    Serial.print(index);
+    Serial.print(F("]"));
+#endif
+
+
+if((_memory->getStorageOverwrite() == false)&&( _memory->getIndex()==0)){
+#if DEBUG_MODE
+    Serial.println(F("- error 🚨 empty memory 🚨"));
+#endif
+    return;
+    // TODO: send error
+}
+
+
+  unsigned int maxIndex = _memory->getStorageOverwrite() ? _memory->getSize() : _memory->getIndex();
+  if(index > maxIndex-1) {
+#if DEBUG_MODE
+    Serial.println(F("- error 🚨 index out of range 🚨"));
+#endif
+    return;
+    // TODO: send error
+  }
+
+  sendPackageToBLE(_memory->load(index), index); 
 }

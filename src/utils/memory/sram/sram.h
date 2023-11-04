@@ -8,16 +8,24 @@
 class SRAM: public IMemory
 {
 public:
+    SRAM();
     void setup();
     bool checkUnique(DATA *loraDataPacket);
-    void save(DATA *newData);
+    unsigned int save(DATA *newData);
+    DATA * load(unsigned int index);
     void clearAllPositions();
     bool checkCRC();
+    bool checkCRC(DATA *loraDataPacket);
+    bool checkCRC(unsigned int index);
+    unsigned int getSize();
+    unsigned int getIndex();
+    bool getStorageOverwrite();
 
 private:
     DATA storage[SRAM_STORAGE_SIZE];
     unsigned int storageIndex = 0;
-    bool storageOverflow = false;
+    bool storageOverwrite = false;
+    byte dataSizeWithoutCRC;
 
 };
 
