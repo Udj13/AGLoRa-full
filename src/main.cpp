@@ -15,16 +15,20 @@
 #include <hardware/lora/ebyte-e220.h>
 #include <hardware/ble/hm-10.h>
 #include "tests/tests.h"
-// #include <utils/memory/manager.h>
-#include <utils/memory/sram/sram.h>
-// #include <utils/memory/eeprom.h>
+#include "utils/memory/sram/sram.h"
+#include "utils/memory/eeprom/eepromaglora.h"
 // #include <utils/crc.h>
 
 TESTS tests;
 GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED, GPS_LED);
 LORA lora(LORA_PIN_RX, LORA_PIN_TX, LORA_SPEED, LORA_PIN_AX, LORA_PIN_M0, LORA_PIN_M1, LORA_LED);
 BLE_HM10 ble;
+
+#if USE_EEPROM_MEMORY
+EEPROMAglora memory;
+#else
 SRAM memory;
+#endif
 
 DATA loraDataPacket;
 AGLORA aglora(&memory, &ble);

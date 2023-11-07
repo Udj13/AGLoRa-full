@@ -2,7 +2,7 @@
 #define SRAM_INCLUDED
 
 #include <Arduino.h>
-#include "../memory.h"
+#include "../imemory.h"
 #include "../../../settings/settings.h"
 
 class SRAM: public IMemory

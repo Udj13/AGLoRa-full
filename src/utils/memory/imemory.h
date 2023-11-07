@@ -1,12 +1,12 @@
-#ifndef MEMORY_INCLUDED
-#define MEMORY_INCLUDED
+#ifndef IMEMORY_INCLUDED
+#define IMEMORY_INCLUDED
 
 
 #include <Arduino.h>
 #include "../../settings/settings.h"
 
 
-class IMemory {
+class IMemory {         // interface
     public:
         virtual void setup() = 0;
 

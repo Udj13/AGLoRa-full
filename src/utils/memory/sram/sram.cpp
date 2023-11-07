@@ -8,7 +8,7 @@ SRAM::SRAM()
 
 void SRAM::setup()
 {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
     Serial.print(F("💾[SRAM storage: memory is ready. SRAM_STORAGE_SIZE="));
     Serial.print(SRAM_STORAGE_SIZE + 1);
     Serial.print(F(" ("));
@@ -26,7 +26,7 @@ bool SRAM::checkUnique(DATA *loraDataPacket)
 {
     if (loraDataPacket->name == NAME)
     {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
         Serial.println(F("💾[SRAM storage: returned package 🔄 ]"));
 #endif
         return false;
@@ -43,13 +43,13 @@ bool SRAM::checkUnique(DATA *loraDataPacket)
             (loraDataPacket->minute == storage[i].minute) &&
             (loraDataPacket->second == storage[i].second))
         {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
             Serial.println(F("💾[SRAM storage: data already exist‼️⛔️]"));
 #endif
             return false;
         }
     }
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
     Serial.println(F("💾[SRAM storage: new data checked ✅]"));
 #endif
     return true;
@@ -60,7 +60,7 @@ unsigned int SRAM::save(DATA *newData)
     storage[storageIndex] = *newData;
     storage[storageIndex].ttlOrCrc = calculateCRC((unsigned char *)newData, dataSizeWithoutCRC);
 
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
     Serial.print(F("💾[SRAM storage: New data from "));
     Serial.print(storage[storageIndex].name);
     Serial.print(F(" (TTL="));
@@ -96,7 +96,7 @@ DATA * SRAM::load(unsigned int index)
 
 void SRAM::clearAllPositions()
 {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
     Serial.println(F("💾[SRAM storage: clearing memory 🫙]"));
 #endif
     storageIndex = 0;
@@ -122,7 +122,7 @@ bool SRAM::checkCRC()
 
     if ((storageIndex == 0) && (!storageOverwrite))
     {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
         Serial.println(F("💾[SRAM storage: memory is empty]"));
 #endif
         return result;
@@ -130,7 +130,7 @@ bool SRAM::checkCRC()
 
     const unsigned int maxIndex = storageOverwrite ? (SRAM_STORAGE_SIZE - 1) : (storageIndex - 1);
 
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
     Serial.print(F("\t"));
 #endif
 
@@ -141,18 +141,18 @@ bool SRAM::checkCRC()
             crc = calculateCRC((unsigned char *)&storage[i], dataSizeWithoutCRC);
             if (storage[i].ttlOrCrc == crc)
             {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
                 Serial.print(F(" ✅"));
 #endif
             }
             else
             {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
                 Serial.print(F(" ⛔️"));
 #endif
                 result = false;
             }
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
             if (crc < 100)
                 Serial.print(F("0"));
             if (crc < 10)
@@ -167,13 +167,13 @@ bool SRAM::checkCRC()
         }
         else
         {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
             Serial.print(F(" ⬜"));
             Serial.print(F("   "));
 #endif
         }
 
-#if DEBUG_MODE // Memory visualisation
+#if DEBUG_MODE && DEBUG_MEMORY // Memory visualisation
 
         if ((i + 1) % rowLength == 0)
         {
@@ -190,7 +190,7 @@ bool SRAM::checkCRC()
 #endif
     }
 
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
     Serial.println();
 #endif
 

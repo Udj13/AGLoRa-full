@@ -12,7 +12,7 @@ LORA::LORA(uint8_t pinRx, uint8_t pinTx, long speed, uint8_t aux, uint8_t m0, ui
 
 void LORA::setup()
 {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_LORA
     Serial.println(F("🛜 [LORA: Start configuration]"));
 #endif
 
@@ -40,7 +40,7 @@ void LORA::setup()
 
     e220ttl.setConfiguration(configuration, WRITE_CFG_PWR_DWN_SAVE);
     delay(100);
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_LORA
     Serial.print(F("\t🛜 [LORA current config: channel = "));
     Serial.print(configuration.getChannelDescription());
     Serial.print(F(" , airDataRate = "));
@@ -56,7 +56,7 @@ void LORA::send(DATA *loraDataPacket)
     loraPort.listen();
     turnIndicatorOn();
 
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_LORA
     Serial.print(F("🛜 [LoRa: Sending 📫, "));
     Serial.print(sizeof(DATA));
     Serial.print(F(" bytes are ready to send"));
@@ -88,7 +88,7 @@ void LORA::send(DATA *loraDataPacket)
 
     ResponseStatus rs = e220ttl.sendMessage(&loraDataPacket, sizeof(loraDataPacket));
 
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_LORA
     Serial.print(F("[Status: "));
     Serial.print(rs.getResponseDescription());
     if (rs.code == 1)
@@ -110,14 +110,14 @@ bool LORA::hasNewData(DATA *loraDataPacket)
 {
     if (e220ttl.available() > 1)
     {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_LORA
         Serial.println(F("🛜 [LORA: we have new data 🥳]"));
 #endif
 
         rsc = e220ttl.receiveMessage(sizeof(DATA));
         if (rsc.status.code != 1)
         {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_LORA
             Serial.println(F("🛜 [LORA error: ❌ status - "));
             Serial.println(rsc.status.getResponseDescription());
             Serial.println(F("]"));

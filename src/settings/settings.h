@@ -78,9 +78,13 @@ const char NAME[NAME_LENGTH] = "Rick";               // Name of current tracker,
 // Don't forget to disconnect the bluetooth module.
 // Then open “Tools” -> ”Serial monitor” in Arduino IDE.
 #define DEBUG_MODE true  // change "false" to "true" to enable
-// Next, logs levels for deep debugging, 
+// Next, logs levels for comfortable debugging, 
 // if DEBUG_MODE == false, logs level are not important 
 #define DEBUG_BLE false  // bluetooth low energy
+#define DEBUG_GPS true  // print GPS logs
+#define DEBUG_LORA true  // print GPS logs
+#define DEBUG_MEMORY true  // print GPS logs
+#define DEBUG_AGLORA true  // print GPS logs
 
 // ========================================
 // ==== Settings LEVEL 2 (optional) =======
@@ -133,7 +137,7 @@ String sendToPhone(DATA *package);
 // ========================================
 // ==== Settings LEVEL 3 (nightmare) ======
 // ========================================
-#define USE_EEPROM_MEMORY false  // "false" by default
+#define USE_EEPROM_MEMORY true  // "false" by default
 // set "false" to use SRAM memory, "true" to use EEPROM
 // EEPROM is permanent memory, data is not lost even 
 // if the system is turned off.

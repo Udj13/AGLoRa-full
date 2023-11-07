@@ -23,7 +23,7 @@ AGLORA::AGLORA(SRAM *memory, BLE_HM10 *ble)
 
 void AGLORA::hello()
 {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_AGLORA
   Serial.println(F("[power on]"));
 
   Serial.print(F("Waiting | "));
@@ -47,7 +47,7 @@ void AGLORA::clearDataPacket(DATA *loraDataPacket)
   memset(loraDataPacket, 0, sizeof(&loraDataPacket));
   strcpy(loraDataPacket->name, NAME);
   loraDataPacket->ttlOrCrc = TTL;
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_AGLORA
   Serial.println(F("🟢[AGLoRa: time to send your location📍, new loraDataPacket prepared 📦]"));
 #endif
 }
@@ -59,7 +59,7 @@ void AGLORA::clearDataPacket(DATA *loraDataPacket)
 void AGLORA::printPackage(DATA *loraDataPacket)
 {
   // DEBUG_MODE
-#if DEBUG_MODE // dump out what was just received
+#if DEBUG_MODE && DEBUG_AGLORA // dump out what was just received
   Serial.println(F("🟢[AGLoRa: loraDataPacket now contains ↴]"));
   Serial.print(F("     Name: "));
   Serial.print(loraDataPacket->name);
@@ -109,7 +109,7 @@ void AGLORA::getRequest(String request)
     return;
   }
 
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_AGLORA
   Serial.println();
   Serial.print(F("🟢[AGLoRa: 📭 BLE request received <<"));
   Serial.print(request);
@@ -174,7 +174,7 @@ void AGLORA::sendPackageToBLE(DATA *loraDataPacket, int index)
   response += _memory->checkCRC(index) ? bleProtocolOK : bleProtocolError;
   response += bleProtocolDivider;
 
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_AGLORA
   Serial.print(F("🟢AGLoRa: send point 📦 to BLE → "));
   Serial.print(response);
 #endif
@@ -187,7 +187,7 @@ void AGLORA::sendAllPackagesToBLE()
   unsigned int maxIndex = _memory->getStorageOverwrite() ? _memory->getSize() : _memory->getIndex();
   for (unsigned int i = 0; i < maxIndex; ++i)
   {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_AGLORA
     Serial.print(F("🟢[AGLoRa: loading "));
     Serial.print(i+1);
     Serial.print(F("/"));
@@ -198,7 +198,7 @@ void AGLORA::sendAllPackagesToBLE()
     sendPackageToBLE(_memory->load(i), i);
   }
 
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_AGLORA
     Serial.println();
 #endif
 
@@ -206,7 +206,7 @@ void AGLORA::sendAllPackagesToBLE()
 
 
 void AGLORA::sendPackageToBLEFromStorage(unsigned int index){
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_AGLORA
     Serial.print(F("🟢[AGLoRa: loading 📦  from index "));
     Serial.print(index);
     Serial.print(F("]"));
@@ -214,7 +214,7 @@ void AGLORA::sendPackageToBLEFromStorage(unsigned int index){
 
 
 if((_memory->getStorageOverwrite() == false)&&( _memory->getIndex()==0)){
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_AGLORA
     Serial.println(F("- error 🚨 empty memory 🚨"));
 #endif
     return;
@@ -224,7 +224,7 @@ if((_memory->getStorageOverwrite() == false)&&( _memory->getIndex()==0)){
 
   unsigned int maxIndex = _memory->getStorageOverwrite() ? _memory->getSize() : _memory->getIndex();
   if(index > maxIndex-1) {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_AGLORA
     Serial.println(F("- error 🚨 index out of range 🚨"));
 #endif
     return;

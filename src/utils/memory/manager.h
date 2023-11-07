@@ -38,7 +38,7 @@ void storageManager(String * command) {
 
 
 
-#if USE_EEPROM_MEMORY
+#if true //USE_EEPROM_MEMORY
 // ===================== EEPROM MEMORY ===========================
   #include <EEPROM.h>
 

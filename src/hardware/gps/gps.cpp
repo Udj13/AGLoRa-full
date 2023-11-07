@@ -12,14 +12,14 @@ GPS::GPS(uint8_t pinRx, uint8_t pinTx, long speed, uint8_t ledPin) : gpsPort(pin
 
 void GPS::setup()
 {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_GPS
     Serial.println(F("📡[GPS: Start GPS configuration.]"));
 #endif
 }
 
 void GPS::printGPSInfo()
 {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_GPS
     Serial.print(F(" Satellites in view: "));
     Serial.print(gpsModule.satellites.value());
     Serial.print(F("🛰️. HDOP: "));
@@ -85,7 +85,7 @@ void GPS::printGPSInfo()
 
 void GPS::printReadingIndication(unsigned long start, unsigned int delay)
 {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_GPS
     byte progress = (10 * (millis() - start)) / delay;
     if (progress != _readingIndicator)
     {
@@ -98,7 +98,7 @@ void GPS::printReadingIndication(unsigned long start, unsigned int delay)
 void GPS::updateLocation(DATA *loraDataPacket)
 {
 
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_GPS
     Serial.print(F("📡[GPS reading: "));
 #endif
 
@@ -143,7 +143,7 @@ void GPS::updateLocation(DATA *loraDataPacket)
     }
     else
     {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_GPS
         Serial.println(F("❌ No valid data.]"));
 #endif
         return;
@@ -151,7 +151,7 @@ void GPS::updateLocation(DATA *loraDataPacket)
 
     if (gpsModule.charsProcessed() < 10)
     {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_GPS
         Serial.println(F("❌ No characters received from GPS, check wiring!]"));
 #endif
         return;
