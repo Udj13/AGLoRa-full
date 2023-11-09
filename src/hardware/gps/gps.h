@@ -20,7 +20,7 @@ class GPS
 public:
     GPS(uint8_t pinRx, uint8_t pinTx, long speed, uint8_t ledPin);
     void setup();
-    void updateLocation(DATA *loraDataPacket);
+    void updateLocation(DATA *dataPackage);
 
 
 private:

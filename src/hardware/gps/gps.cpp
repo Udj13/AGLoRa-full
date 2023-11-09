@@ -95,7 +95,7 @@ void GPS::printReadingIndication(unsigned long start, unsigned int delay)
 #endif
 }
 
-void GPS::updateLocation(DATA *loraDataPacket)
+void GPS::updateLocation(DATA *dataPackage)
 {
 
 #if DEBUG_MODE && DEBUG_GPS
@@ -123,20 +123,20 @@ void GPS::updateLocation(DATA *loraDataPacket)
         turnIndicatorOn(); // GPS is valid
 
         // data set
-        loraDataPacket->lat = gpsModule.location.lat();
-        loraDataPacket->lon = gpsModule.location.lng();
-        loraDataPacket->sat = gpsModule.satellites.value();
-        loraDataPacket->hdop = gpsModule.hdop.value() / 10;
+        dataPackage->lat = gpsModule.location.lat();
+        dataPackage->lon = gpsModule.location.lng();
+        dataPackage->sat = gpsModule.satellites.value();
+        dataPackage->hdop = gpsModule.hdop.value() / 10;
 
-        loraDataPacket->year = gpsModule.date.year() - 2000;
-        loraDataPacket->month = gpsModule.date.month();
-        loraDataPacket->day = gpsModule.date.day();
+        dataPackage->year = gpsModule.date.year() - 2000;
+        dataPackage->month = gpsModule.date.month();
+        dataPackage->day = gpsModule.date.day();
 
-        loraDataPacket->hour = gpsModule.time.hour();
-        loraDataPacket->minute = gpsModule.time.minute();
-        loraDataPacket->second = gpsModule.time.second();
+        dataPackage->hour = gpsModule.time.hour();
+        dataPackage->minute = gpsModule.time.minute();
+        dataPackage->second = gpsModule.time.second();
 
-        strcpy(loraDataPacket->name, NAME);
+        strcpy(dataPackage->name, NAME);
 
         printGPSInfo();
         return;

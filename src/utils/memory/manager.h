@@ -1,4 +1,5 @@
 
+
 void storageInit();
 
 void addNewDataToStorage(DATA *newData);
@@ -268,6 +269,7 @@ void storageManager(String * command) {
 // ===================== SRAM MEMORY ===========================
 
 #endif
+
 
 
 

@@ -1,9 +1,12 @@
+#include <Arduino.h>
+#include "../../../settings/settings.h"
+
 #include "sram.h"
-#include "../../crc.h"
+#include "../../crc/crc.h"
 
 SRAM::SRAM()
 {
-    dataSizeWithoutCRC = sizeof(storage[0]) - sizeof(storage[0].ttlOrCrc);
+    dataSize = sizeof(DATA);
 }
 
 void SRAM::setup()
@@ -22,9 +25,9 @@ void SRAM::setup()
 /// @brief Checking new data for uniqueness
 /// @param loraDataPacket
 /// @return true if the same data is not exist
-bool SRAM::checkUnique(DATA *loraDataPacket)
+bool SRAM::checkUnique(DATA *newPoint)
 {
-    if (loraDataPacket->name == NAME)
+    if (newPoint->name == NAME)
     {
 #if DEBUG_MODE && DEBUG_MEMORY
         Serial.println(F("💾[SRAM storage: returned package 🔄 ]"));
@@ -35,13 +38,13 @@ bool SRAM::checkUnique(DATA *loraDataPacket)
     const unsigned int maxIndex = storageOverwrite ? SRAM_STORAGE_SIZE : storageIndex;
     for (unsigned int i = 0; i < maxIndex; ++i)
     {
-        if ((loraDataPacket->name == storage[i].name) &&
-            (loraDataPacket->year == storage[i].year) &&
-            (loraDataPacket->month == storage[i].month) &&
-            (loraDataPacket->day == storage[i].day) &&
-            (loraDataPacket->hour == storage[i].hour) &&
-            (loraDataPacket->minute == storage[i].minute) &&
-            (loraDataPacket->second == storage[i].second))
+        if ((newPoint->name == storage[i].data.name) &&
+            (newPoint->year == storage[i].data.year) &&
+            (newPoint->month == storage[i].data.month) &&
+            (newPoint->day == storage[i].data.day) &&
+            (newPoint->hour == storage[i].data.hour) &&
+            (newPoint->minute == storage[i].data.minute) &&
+            (newPoint->second == storage[i].data.second))
         {
 #if DEBUG_MODE && DEBUG_MEMORY
             Serial.println(F("💾[SRAM storage: data already exist‼️⛔️]"));
@@ -55,22 +58,23 @@ bool SRAM::checkUnique(DATA *loraDataPacket)
     return true;
 }
 
+/// @brief Save data to storage
+/// @param newData data that needs to be added to the storage
+/// @return the index of added data 
 unsigned int SRAM::save(DATA *newData)
 {
-    storage[storageIndex] = *newData;
-    storage[storageIndex].ttlOrCrc = calculateCRC((unsigned char *)newData, dataSizeWithoutCRC);
+    storage[storageIndex].data = *newData;
+    storage[storageIndex].crc = calculateCRC((unsigned char *)newData, dataSize);
 
 #if DEBUG_MODE && DEBUG_MEMORY
     Serial.print(F("💾[SRAM storage: New data from "));
-    Serial.print(storage[storageIndex].name);
-    Serial.print(F(" (TTL="));
-    Serial.print(newData->ttlOrCrc);
+    Serial.print(storage[storageIndex].data.name);
     Serial.print(F(") was added. Memory: "));
     Serial.print(storageIndex + 1);
     Serial.print(F("/"));
     Serial.print(SRAM_STORAGE_SIZE + 1);
     Serial.print(F(", CRC "));
-    Serial.print(storage[storageIndex].ttlOrCrc);
+    Serial.print(storage[storageIndex].crc);
     Serial.println(F(" ✅]"));
 #endif
 
@@ -91,7 +95,7 @@ unsigned int SRAM::save(DATA *newData)
 /// @return true if success 
 DATA * SRAM::load(unsigned int index)
 {
-    return &storage[index];;
+    return &storage[index].data;
 }
 
 void SRAM::clearAllPositions()
@@ -105,7 +109,7 @@ void SRAM::clearAllPositions()
 
 bool SRAM::checkCRC()
 {
-#if DEBUG_MODE
+#if DEBUG_MODE && DEBUG_MEMORY
     Serial.print(F("💾[SRAM storage: checking CRC, "));
     Serial.print(storageIndex);
     Serial.print(F("/"));
@@ -138,8 +142,8 @@ bool SRAM::checkCRC()
     {
         if (i <= maxIndex)
         {
-            crc = calculateCRC((unsigned char *)&storage[i], dataSizeWithoutCRC);
-            if (storage[i].ttlOrCrc == crc)
+            crc = calculateCRC((unsigned char *)&storage[i], dataSize);
+            if (storage[i].crc == crc)
             {
 #if DEBUG_MODE && DEBUG_MEMORY
                 Serial.print(F(" ✅"));
@@ -197,18 +201,18 @@ bool SRAM::checkCRC()
     return result;
 }
 
-bool SRAM::checkCRC(DATA *loraDataPacket)
+bool SRAM::checkCRC(SRAMDATA *point)
 {
-    const byte crc = calculateCRC((unsigned char *)loraDataPacket, dataSizeWithoutCRC);
-    if (loraDataPacket->ttlOrCrc == crc)
+    const byte crc = calculateCRC((unsigned char *)point, dataSize);
+    if (point->crc == crc)
         return true;
     return false;
 }
 
 bool SRAM::checkCRC(unsigned int index)
 {
-    const byte crc = calculateCRC((unsigned char *)&storage[index], dataSizeWithoutCRC);
-    if (storage[index].ttlOrCrc == crc)
+    const byte crc = calculateCRC((unsigned char *)&storage[index], dataSize);
+    if (storage[index].crc == crc)
         return true;
     return false;
 }

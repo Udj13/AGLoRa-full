@@ -13,11 +13,12 @@
 #include "aglora/aglora.h"
 #include <hardware/gps/gps.h>
 #include <hardware/lora/ebyte-e220.h>
+#include <hardware/lora/loraData.h>
 #include <hardware/ble/hm-10.h>
 #include "tests/tests.h"
 #include "utils/memory/sram/sram.h"
-#include "utils/memory/eeprom/eepromaglora.h"
-// #include <utils/crc.h>
+// #include "utils/memory/eeprom/eepromaglora.h"
+//  #include <utils/crc.h>
 
 TESTS tests;
 GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED, GPS_LED);
@@ -30,7 +31,8 @@ EEPROMAglora memory;
 SRAM memory;
 #endif
 
-DATA loraDataPacket;
+DATA trackerData;
+LORADATA loraDataPackage;
 AGLORA aglora(&memory, &ble);
 
 // ========== BEGIN ==========
@@ -43,6 +45,8 @@ void setup()
   lora.setup();   // LoRa
   memory.setup(); // SRAM or EEPROM
   ble.setup();    // Bluetooth Low Energy
+
+  loraDataPackage.data = &trackerData;
 }
 
 // ========== MAIN LOOP ==========
@@ -51,30 +55,33 @@ unsigned long _timeOfLastReceivedPacket;
 unsigned int addedMemoryIndex;
 byte ttl = 0;
 
-void processNewData();
+void processNewData(LORADATA * loraDataPackage);
 
 void loop()
 {
   if (_timeToSendMyLocation < millis())
   {
-    aglora.clearDataPacket(&loraDataPacket); // clear structure before reading new data
-    aglora.updateSensors(&loraDataPacket);   // add sensors
-    gps.updateLocation(&loraDataPacket);     // add locations
-    aglora.printPackage(&loraDataPacket);
-    lora.send(&loraDataPacket); // send location to other trackers
+    aglora.clearDataPacket(loraDataPackage.data); // clear structure before reading new data
+    aglora.updateSensors(loraDataPackage.data);   // add sensors
+    gps.updateLocation(loraDataPackage.data);     // add locations
+    loraDataPackage.ttl = TTL; // time to live (for mesh network)
+
+    aglora.printPackage(&loraDataPackage);
+
+    lora.send(&loraDataPackage); // send location to other trackers
     _timeToSendMyLocation += DATA_SENDING_INTERVAL;
   }
 
   // waiting for new data
-  if (lora.hasNewData(&loraDataPacket))
+  if (lora.hasNewData(&loraDataPackage))
   {
-    processNewData();
+    processNewData(&loraDataPackage);
   }
 
 #if TEST_LORA_DATA
-  if (tests.hasNewDataEveryXSec(&loraDataPacket, &gps, 10))
+  if (tests.hasNewDataEveryXSec(&loraDataPackage, &gps, 10))
   {
-    processNewData();
+    processNewData(&loraDataPackage);
   }
 #endif
 
@@ -89,22 +96,22 @@ void loop()
   aglora.getRequest(ble.read()); // check requests from app
 }
 
-void processNewData()
+void processNewData(LORADATA * loraDataPackage)
 {
-  if (memory.checkUnique(&loraDataPacket)) // Check the name and time of the point
+  if (memory.checkUnique(loraDataPackage->data)) // Check the name and time of the point
   {
 
-    ttl = loraDataPacket.ttlOrCrc;
+    ttl = loraDataPackage->ttl;
 
-    addedMemoryIndex = memory.save(&loraDataPacket);
+    addedMemoryIndex = memory.save(loraDataPackage->data);
     memory.checkCRC();
-    aglora.sendPackageToBLE(&loraDataPacket, addedMemoryIndex); // upload data to app
+    aglora.sendPackageToBLE(loraDataPackage->data, addedMemoryIndex); // upload data to app
 
     // resend data to other trackers
     if (--ttl > 0)
     {
-      loraDataPacket.ttlOrCrc = ttl;
-      lora.send(&loraDataPacket);
+      loraDataPackage->ttl = ttl;
+      lora.send(loraDataPackage);
     }
   }
 

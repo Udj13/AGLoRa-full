@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "../settings/settings.h"
+#include "../hardware/lora/loraData.h"
 #include "../hardware/gps/gps.h"
 
 
@@ -11,7 +12,7 @@
 class TESTS
 {
 public:
-    bool hasNewDataEveryXSec(DATA *loraDataPacket, GPS *gps, byte interval);
+    bool hasNewDataEveryXSec(LORADATA *loraDataPacket, GPS *gps, byte interval);
 
 private:
     unsigned long _timeOfLastSendedPacket = 0;

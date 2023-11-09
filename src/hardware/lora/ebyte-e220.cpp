@@ -51,7 +51,7 @@ void LORA::setup()
 #endif
 }
 
-void LORA::send(DATA *loraDataPacket)
+void LORA::send(LORADATA *loraDataPacket)
 {
     loraPort.listen();
     turnIndicatorOn();
@@ -61,27 +61,27 @@ void LORA::send(DATA *loraDataPacket)
     Serial.print(sizeof(DATA));
     Serial.print(F(" bytes are ready to send"));
     Serial.print(F(" ➜ "));
-    Serial.print(loraDataPacket->name);
+    Serial.print(loraDataPacket->data->name);
     Serial.print(F(" / "));
-    Serial.print(loraDataPacket->lat, 6);
+    Serial.print(loraDataPacket->data->lat, 6);
     Serial.print(F(" "));
-    Serial.print(loraDataPacket->lon, 6);
+    Serial.print(loraDataPacket->data->lon, 6);
     Serial.print(F(" / "));
-    Serial.print(loraDataPacket->year);
+    Serial.print(loraDataPacket->data->year);
     Serial.print(F("-"));
-    if(loraDataPacket->month < 10) Serial.print(F("0"));   
-    Serial.print(loraDataPacket->month);
+    if(loraDataPacket->data->month < 10) Serial.print(F("0"));   
+    Serial.print(loraDataPacket->data->month);
     Serial.print(F("-"));
-    if(loraDataPacket->day < 10) Serial.print(F("0"));
-    Serial.print(loraDataPacket->day);
+    if(loraDataPacket->data->day < 10) Serial.print(F("0"));
+    Serial.print(loraDataPacket->data->day);
     Serial.print(F(" "));
-    Serial.print(loraDataPacket->hour);
+    Serial.print(loraDataPacket->data->hour);
     Serial.print(F(":"));
-    if(loraDataPacket->minute < 10) Serial.print(F("0"));
-    Serial.print(loraDataPacket->minute);
+    if(loraDataPacket->data->minute < 10) Serial.print(F("0"));
+    Serial.print(loraDataPacket->data->minute);
     Serial.print(F(" (UTC)"));
     Serial.print(F(" TTL="));
-    Serial.print(loraDataPacket->ttlOrCrc);
+    Serial.print(loraDataPacket->ttl);
     Serial.print(F("] ➜ "));
 
 #endif
@@ -106,7 +106,7 @@ void LORA::send(DATA *loraDataPacket)
     turnIndicatorOff();
 }
 
-bool LORA::hasNewData(DATA *loraDataPacket)
+bool LORA::hasNewData(LORADATA *loraDataPacket)
 {
     if (e220ttl.available() > 1)
     {
@@ -127,7 +127,7 @@ bool LORA::hasNewData(DATA *loraDataPacket)
         }
         else
         {
-            loraDataPacket = (DATA *)rsc.data;
+            loraDataPacket = (LORADATA *)rsc.data;
             rsc.close();
         }
 

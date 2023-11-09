@@ -1,6 +1,6 @@
 #include "tests.h"
 
-bool TESTS::hasNewDataEveryXSec(DATA *loraDataPacket, GPS *gps, byte interval)
+bool TESTS::hasNewDataEveryXSec(LORADATA *loraDataPacket, GPS *gps, byte interval)
 {
         int _intervarSec = interval * 1000;
         if (_timeOfLastSendedPacket + _intervarSec < millis())
@@ -10,11 +10,11 @@ bool TESTS::hasNewDataEveryXSec(DATA *loraDataPacket, GPS *gps, byte interval)
                 Serial.println(F("💛💛💛 [TEST: virtual tracker transmitted the data] 💛💛💛"));
 #endif
 
-                gps->updateLocation(loraDataPacket); // we need an actual time
-                strcpy(loraDataPacket->name, OTHER_NAME);
-                loraDataPacket->lat = 45.455631;
-                loraDataPacket->lon = 54.084960;
-                loraDataPacket->ttlOrCrc = TTL;
+                gps->updateLocation(loraDataPacket->data); // we need an actual time
+                strcpy(loraDataPacket->data->name, OTHER_NAME);
+                loraDataPacket->data->lat = 45.455631;
+                loraDataPacket->data->lon = 54.084960;
+                loraDataPacket->ttl = TTL;
 
 #if DEBUG_MODE
                 Serial.println();

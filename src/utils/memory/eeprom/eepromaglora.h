@@ -1,10 +1,8 @@
-#ifndef EEPROM_INCLUDED
-#define EEPROM_INCLUDED
+#ifndef EEPROMAGLORA_INCLUDED
+#define EEPROMAGLORA_INCLUDED
 
-#include <Arduino.h>
-#include "eepromdata.h"
 #include "../imemory.h"
-#include "../../../settings/settings.h"
+#include "eepromdata.h"
 
 class EEPROMAglora : public IMemory
 {

@@ -81,7 +81,7 @@ const char NAME[NAME_LENGTH] = "Rick";               // Name of current tracker,
 // Next, logs levels for comfortable debugging, 
 // if DEBUG_MODE == false, logs level are not important 
 #define DEBUG_BLE false  // bluetooth low energy
-#define DEBUG_GPS true  // print GPS logs
+#define DEBUG_GPS false  // print GPS logs
 #define DEBUG_LORA true  // print GPS logs
 #define DEBUG_MEMORY true  // print GPS logs
 #define DEBUG_AGLORA true  // print GPS logs
@@ -120,10 +120,6 @@ struct DATA {
   // unsigned char sensor1;
   // unsigned char sensor2;
   // ...
-
-  unsigned char ttlOrCrc; 
-  // time to live (for mesh network) on air
-  // or CRC in memory
 };
 
 /*
@@ -137,7 +133,7 @@ String sendToPhone(DATA *package);
 // ========================================
 // ==== Settings LEVEL 3 (nightmare) ======
 // ========================================
-#define USE_EEPROM_MEMORY true  // "false" by default
+#define USE_EEPROM_MEMORY false  // "false" by default
 // set "false" to use SRAM memory, "true" to use EEPROM
 // EEPROM is permanent memory, data is not lost even 
 // if the system is turned off.

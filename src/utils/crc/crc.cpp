@@ -1,8 +1,6 @@
-#ifndef CRC_INCLUDED
-#define CRC_INCLUDED
-
-
 #include <Arduino.h>
+#include "crc.h"
+
 // ======================== UTILITES ===============================
 
 // CRC
@@ -17,5 +15,3 @@ unsigned char calculateCRC(unsigned char *buffer, unsigned char size) {
   }
   return crc;
 }
-
-#endif

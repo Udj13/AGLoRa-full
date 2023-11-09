@@ -8,7 +8,7 @@
 // Docs: https://github.com/xreef/EByte_LoRa_E220_Series_Library
 #include "LoRa_E220.h"
 
-
+#include "loraData.h"
 #include "../../settings/settings.h"
 
 
@@ -21,8 +21,8 @@ class LORA
 public:
     LORA(uint8_t pinRx, uint8_t pinTx, long speed, uint8_t aux, uint8_t m0, uint8_t m1, uint8_t ledPin);
     void setup();
-    void send(DATA *loraDataPacket);
-    bool hasNewData(DATA *loraDataPacket);
+    void send(LORADATA *loraDataPackage);
+    bool hasNewData(LORADATA *loraDataPackage);
 
 
 private:

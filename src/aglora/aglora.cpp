@@ -1,5 +1,5 @@
+#include <Arduino.h>
 #include "aglora.h"
-#include "../settings/settings.h"
 
 const String bleProtocolPrefix = "AGLoRa-";
 const String bleProtocolTypePoint = "point";
@@ -15,7 +15,7 @@ const String bleProtocolParamMemoryIndex = "&index=";
 
 const String bleProtocolDivider = "\r\n";
 
-AGLORA::AGLORA(SRAM *memory, BLE_HM10 *ble)
+AGLORA::AGLORA(IMemory *memory, BLE_HM10 *ble)
 {
   _ble = ble;
   _memory = memory;
@@ -46,7 +46,6 @@ void AGLORA::clearDataPacket(DATA *loraDataPacket)
 {
   memset(loraDataPacket, 0, sizeof(&loraDataPacket));
   strcpy(loraDataPacket->name, NAME);
-  loraDataPacket->ttlOrCrc = TTL;
 #if DEBUG_MODE && DEBUG_AGLORA
   Serial.println(F("🟢[AGLoRa: time to send your location📍, new loraDataPacket prepared 📦]"));
 #endif
@@ -56,47 +55,47 @@ void AGLORA::clearDataPacket(DATA *loraDataPacket)
 //   storageManager(request);
 // };
 
-void AGLORA::printPackage(DATA *loraDataPacket)
+void AGLORA::printPackage(LORADATA *loraDataPacket)
 {
   // DEBUG_MODE
 #if DEBUG_MODE && DEBUG_AGLORA // dump out what was just received
   Serial.println(F("🟢[AGLoRa: loraDataPacket now contains ↴]"));
   Serial.print(F("     Name: "));
-  Serial.print(loraDataPacket->name);
+  Serial.print(loraDataPacket->data->name);
   Serial.print(F(", lat: "));
-  Serial.print(loraDataPacket->lat, 6);
+  Serial.print(loraDataPacket->data->lat, 6);
   Serial.print(F(", lon: "));
-  Serial.print(loraDataPacket->lon, 6);
+  Serial.print(loraDataPacket->data->lon, 6);
   Serial.print(F(", sat: "));
-  Serial.print(loraDataPacket->sat);
+  Serial.print(loraDataPacket->data->sat);
   Serial.print(F(", hdop: "));
-  Serial.print(loraDataPacket->hdop);
+  Serial.print(loraDataPacket->data->hdop);
 
   Serial.print(F(", date: "));
-  Serial.print(loraDataPacket->year);
+  Serial.print(loraDataPacket->data->year);
   Serial.print(F("/"));
-  if (loraDataPacket->month < 10)
+  if (loraDataPacket->data->month < 10)
     Serial.print(F("0"));
-  Serial.print(loraDataPacket->month);
+  Serial.print(loraDataPacket->data->month);
   Serial.print(F("/"));
-  if (loraDataPacket->day < 10)
+  if (loraDataPacket->data->day < 10)
     Serial.print(F("0"));
-  Serial.print(loraDataPacket->day);
+  Serial.print(loraDataPacket->data->day);
 
   Serial.print(F(", time: "));
-  Serial.print(loraDataPacket->hour);
+  Serial.print(loraDataPacket->data->hour);
   Serial.print(F(":"));
-  if (loraDataPacket->minute < 10)
+  if (loraDataPacket->data->minute < 10)
     Serial.print(F("0"));
-  Serial.print(loraDataPacket->minute);
+  Serial.print(loraDataPacket->data->minute);
   Serial.print(F(":"));
-  if (loraDataPacket->second < 10)
+  if (loraDataPacket->data->second < 10)
     Serial.print(F("0"));
-  Serial.print(loraDataPacket->second);
+  Serial.print(loraDataPacket->data->second);
   Serial.print(F(" (UTC)"));
 
-  Serial.print(F(", TTL: "));
-  Serial.print(loraDataPacket->ttlOrCrc);
+  Serial.print(F(" TTL="));
+  Serial.print(loraDataPacket->ttl);
 
   Serial.println();
 #endif
@@ -138,14 +137,12 @@ void AGLORA::getRequest(String request)
 
   if (request.startsWith(F("id")))
   {
-    request.remove(0,2);
+    request.remove(0, 2);
     unsigned int index = request.toInt();
     sendPackageToBLEFromStorage(index);
 
     return;
   }
-
-
 }
 
 void AGLORA::checkMemory()
@@ -189,7 +186,7 @@ void AGLORA::sendAllPackagesToBLE()
   {
 #if DEBUG_MODE && DEBUG_AGLORA
     Serial.print(F("🟢[AGLoRa: loading "));
-    Serial.print(i+1);
+    Serial.print(i + 1);
     Serial.print(F("/"));
     Serial.print(maxIndex);
     Serial.print(F(" 📦 from memory ]"));
@@ -199,31 +196,30 @@ void AGLORA::sendAllPackagesToBLE()
   }
 
 #if DEBUG_MODE && DEBUG_AGLORA
-    Serial.println();
+  Serial.println();
 #endif
-
 }
 
-
-void AGLORA::sendPackageToBLEFromStorage(unsigned int index){
+void AGLORA::sendPackageToBLEFromStorage(unsigned int index)
+{
 #if DEBUG_MODE && DEBUG_AGLORA
-    Serial.print(F("🟢[AGLoRa: loading 📦  from index "));
-    Serial.print(index);
-    Serial.print(F("]"));
+  Serial.print(F("🟢[AGLoRa: loading 📦  from index "));
+  Serial.print(index);
+  Serial.print(F("]"));
 #endif
 
-
-if((_memory->getStorageOverwrite() == false)&&( _memory->getIndex()==0)){
+  if ((_memory->getStorageOverwrite() == false) && (_memory->getIndex() == 0))
+  {
 #if DEBUG_MODE && DEBUG_AGLORA
     Serial.println(F("- error 🚨 empty memory 🚨"));
 #endif
     return;
     // TODO: send error
-}
-
+  }
 
   unsigned int maxIndex = _memory->getStorageOverwrite() ? _memory->getSize() : _memory->getIndex();
-  if(index > maxIndex-1) {
+  if (index > maxIndex - 1)
+  {
 #if DEBUG_MODE && DEBUG_AGLORA
     Serial.println(F("- error 🚨 index out of range 🚨"));
 #endif
@@ -231,5 +227,5 @@ if((_memory->getStorageOverwrite() == false)&&( _memory->getIndex()==0)){
     // TODO: send error
   }
 
-  sendPackageToBLE(_memory->load(index), index); 
+  sendPackageToBLE(_memory->load(index), index);
 }
