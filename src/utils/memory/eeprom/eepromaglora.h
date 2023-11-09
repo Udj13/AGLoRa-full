@@ -9,7 +9,7 @@ class EEPROMAglora : public IMemory
 public:
     EEPROMAglora();
     void setup();
-    bool checkUnique(DATA *loraDataPacket);
+    bool checkUnique(DATA *newPoint);
     unsigned int save(DATA *newData);
     DATA *load(unsigned int index);
     void clearAllPositions();

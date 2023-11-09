@@ -11,8 +11,8 @@ class IMemory {         // interface
         virtual void setup() = 0;
 
         virtual void clearAllPositions() = 0;
-        virtual bool checkUnique(DATA *loraDataPacket) = 0;
-        virtual unsigned int save(DATA *loraDataPacket) = 0;
+        virtual bool checkUnique(DATA *newPoint) = 0;
+        virtual unsigned int save(DATA *newData) = 0;
         virtual DATA * load(unsigned int index) = 0;
 
         virtual bool checkCRC() = 0;    // all memory

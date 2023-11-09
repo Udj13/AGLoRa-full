@@ -133,7 +133,7 @@ String sendToPhone(DATA *package);
 // ========================================
 // ==== Settings LEVEL 3 (nightmare) ======
 // ========================================
-#define USE_EEPROM_MEMORY false  // "false" by default
+#define USE_EEPROM_MEMORY true  // "false" by default
 // set "false" to use SRAM memory, "true" to use EEPROM
 // EEPROM is permanent memory, data is not lost even 
 // if the system is turned off.
