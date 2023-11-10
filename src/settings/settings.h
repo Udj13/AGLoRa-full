@@ -49,19 +49,22 @@ const char NAME[NAME_LENGTH] = "Rick";               // Name of current tracker,
 // Example:
 // #define NAME = "Morty"; // All names length should be no longer than NAME_LENGTH
 // ========== WIRING =====================
+//UART LORA
 #define LORA_PIN_RX 2
 #define LORA_PIN_TX 3
 #define LORA_PIN_M0 4
 #define LORA_PIN_M1 5
 #define LORA_PIN_AX 6
-#define LORA_LED LED_BUILTIN
 
-
+//UART GPS
 #define GPS_PIN_RX 7
 #define GPS_PIN_TX 8
+
+// Leds
+#define LORA_LED LED_BUILTIN
 #define GPS_LED LED_BUILTIN
-
-
+#define BLE_LED LED_BUILTIN
+#define MEMORY_LED LED_BUILTIN
 // ========== MODULES SETTING=============
 #define GPS_SPEED 9600
 #define LORA_SPEED 9600

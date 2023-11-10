@@ -11,18 +11,19 @@
 
 #include "settings/settings.h"
 #include "aglora/aglora.h"
-#include <hardware/gps/gps.h>
-#include <hardware/lora/ebyte-e220.h>
-#include <hardware/lora/loraData.h>
-#include <hardware/ble/hm-10.h>
+#include "hardware/gps/gps.h"
+#include "hardware/lora/ebyte-e220.h"
+#include "hardware/lora/loraData.h"
+#include "hardware/ble/hm-10.h"
 #include "tests/tests.h"
 #include "utils/memory/sram/sram.h"
-// #include "utils/memory/eeprom/eepromaglora.h"
-//  #include <utils/crc.h>
+#include "utils/memory/eeprom/eepromaglora.h"
+#include "hardware/indication/indication.h"
 
 TESTS tests;
-GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED, GPS_LED);
-LORA lora(LORA_PIN_RX, LORA_PIN_TX, LORA_SPEED, LORA_PIN_AX, LORA_PIN_M0, LORA_PIN_M1, LORA_LED);
+INDICATION indication(GPS_LED, LORA_LED, BLE_LED, MEMORY_LED);
+GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED, &indication);
+LORA lora(LORA_PIN_RX, LORA_PIN_TX, LORA_SPEED, LORA_PIN_AX, LORA_PIN_M0, LORA_PIN_M1, &indication);
 BLE_HM10 ble;
 
 #if USE_EEPROM_MEMORY
@@ -94,6 +95,8 @@ void loop()
   }
 
   aglora.getRequest(ble.read()); // check requests from app
+  
+  indication.loop(); //make an indication
 }
 
 void processNewData(LORADATA * loraDataPackage)

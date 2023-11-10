@@ -2,12 +2,11 @@
 
 // ================= GPS SECTION =================================
 
-GPS::GPS(uint8_t pinRx, uint8_t pinTx, long speed, uint8_t ledPin) : gpsPort(pinRx, pinTx),
-                                                                     gpsModule()
+GPS::GPS(uint8_t pinRx, uint8_t pinTx, long speed, INDICATION *indication) : gpsPort(pinRx, pinTx),
+                                                                             gpsModule()
 {
     gpsPort.begin(speed);
-    _ledPin = ledPin;
-    pinMode(_ledPin, OUTPUT); // GPS valid indicator
+    _indication = indication;
 }
 
 void GPS::setup()
@@ -116,12 +115,9 @@ void GPS::updateLocation(DATA *dataPackage)
                 newData = true;
             }
     }
-    turnIndicatorOff();
 
     if (newData && gpsModule.location.isValid() && gpsModule.date.isValid() && gpsModule.time.isValid())
     {
-        turnIndicatorOn(); // GPS is valid
-
         // data set
         dataPackage->lat = gpsModule.location.lat();
         dataPackage->lon = gpsModule.location.lng();
@@ -139,6 +135,7 @@ void GPS::updateLocation(DATA *dataPackage)
         strcpy(dataPackage->name, NAME);
 
         printGPSInfo();
+        _indication->gps(GPSStatuses::correct); // GPS is valid
         return;
     }
     else
@@ -146,6 +143,7 @@ void GPS::updateLocation(DATA *dataPackage)
 #if DEBUG_MODE && DEBUG_GPS
         Serial.println(F("❌ No valid data.]"));
 #endif
+        _indication->gps(GPSStatuses::invalid); // GPS is valid
         return;
     }
 
@@ -154,16 +152,7 @@ void GPS::updateLocation(DATA *dataPackage)
 #if DEBUG_MODE && DEBUG_GPS
         Serial.println(F("❌ No characters received from GPS, check wiring!]"));
 #endif
+        _indication->gps(GPSStatuses::connectionError); // GPS is valid
         return;
     }
-}
-
-void GPS::turnIndicatorOn()
-{
-    digitalWrite(_ledPin, HIGH);
-}
-
-void GPS::turnIndicatorOff()
-{
-    digitalWrite(_ledPin, LOW);
 }

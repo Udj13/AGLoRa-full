@@ -2,12 +2,11 @@
 
 // ========== LORA section ==========
 
-LORA::LORA(uint8_t pinRx, uint8_t pinTx, long speed, uint8_t aux, uint8_t m0, uint8_t m1, uint8_t ledPin) : loraPort(pinRx, pinTx),
-                                                                                                            e220ttl(&loraPort, aux, m0, m1)
+LORA::LORA(uint8_t pinRx, uint8_t pinTx, long speed, uint8_t aux, uint8_t m0, uint8_t m1, INDICATION *indication) : loraPort(pinRx, pinTx),
+                                                                                                                    e220ttl(&loraPort, aux, m0, m1)
 {
     loraPort.begin(speed);
-    _ledPin = ledPin;
-    pinMode(_ledPin, OUTPUT); // GPS valid indicator
+    _indication = indication;
 }
 
 void LORA::setup()
@@ -54,7 +53,6 @@ void LORA::setup()
 void LORA::send(LORADATA *loraDataPacket)
 {
     loraPort.listen();
-    turnIndicatorOn();
 
 #if DEBUG_MODE && DEBUG_LORA
     Serial.print(F("🛜 [LoRa: Sending 📫, "));
@@ -69,15 +67,18 @@ void LORA::send(LORADATA *loraDataPacket)
     Serial.print(F(" / "));
     Serial.print(loraDataPacket->data->year);
     Serial.print(F("-"));
-    if(loraDataPacket->data->month < 10) Serial.print(F("0"));   
+    if (loraDataPacket->data->month < 10)
+        Serial.print(F("0"));
     Serial.print(loraDataPacket->data->month);
     Serial.print(F("-"));
-    if(loraDataPacket->data->day < 10) Serial.print(F("0"));
+    if (loraDataPacket->data->day < 10)
+        Serial.print(F("0"));
     Serial.print(loraDataPacket->data->day);
     Serial.print(F(" "));
     Serial.print(loraDataPacket->data->hour);
     Serial.print(F(":"));
-    if(loraDataPacket->data->minute < 10) Serial.print(F("0"));
+    if (loraDataPacket->data->minute < 10)
+        Serial.print(F("0"));
     Serial.print(loraDataPacket->data->minute);
     Serial.print(F(" (UTC)"));
     Serial.print(F(" TTL="));
@@ -91,19 +92,27 @@ void LORA::send(LORADATA *loraDataPacket)
 #if DEBUG_MODE && DEBUG_LORA
     Serial.print(F("[Status: "));
     Serial.print(rs.getResponseDescription());
+#endif
+
     if (rs.code == 1)
     {
+#if DEBUG_MODE && DEBUG_LORA
         Serial.print(F(" 🆗"));
+#endif
+        _indication->lora(LoRaStatuses::dataTransmitted);
     }
     else
     {
+#if DEBUG_MODE && DEBUG_LORA
         Serial.print(F(" 🚨"));
+#endif
+        _indication->lora(LoRaStatuses::error);
     }
+
+#if DEBUG_MODE && DEBUG_LORA
     Serial.println(F("]"));
     Serial.println();
 #endif
-
-    turnIndicatorOff();
 }
 
 bool LORA::hasNewData(LORADATA *loraDataPacket)
@@ -121,8 +130,8 @@ bool LORA::hasNewData(LORADATA *loraDataPacket)
             Serial.println(F("🛜 [LORA error: ❌ status - "));
             Serial.println(rsc.status.getResponseDescription());
             Serial.println(F("]"));
-
 #endif
+            _indication->lora(LoRaStatuses::error);
             return false;
         }
         else
@@ -130,18 +139,8 @@ bool LORA::hasNewData(LORADATA *loraDataPacket)
             loraDataPacket = (LORADATA *)rsc.data;
             rsc.close();
         }
-
+        _indication->lora(LoRaStatuses::dataReceived);
         return true;
     }
     return false;
-}
-
-void LORA::turnIndicatorOn()
-{
-    digitalWrite(_ledPin, HIGH);
-}
-
-void LORA::turnIndicatorOff()
-{
-    digitalWrite(_ledPin, LOW);
 }
