@@ -6,13 +6,15 @@
 
 EEPROMAglora::EEPROMAglora()
 {
+    dataSize = sizeof(DATA);
     EEPROMStorageSize = (EEPROM.length() - EEPROM_BEGIN_ADDRESS) / EEPROMDataSize;
 }
- 
+
 void EEPROMAglora::setup()
 {
     EEPROMStorageIndex = 0;
     incrementCounter = 0;
+    storageOverwrite = false;
 
 #if DEBUG_MODE && DEBUG_MEMORY
     Serial.print(F("📀[EEPROM storage: Start EEPROM initialization. Size of memory: "));
@@ -21,17 +23,24 @@ void EEPROMAglora::setup()
     Serial.print(F("📀[EEPROM storage: "));
     Serial.print(EEPROMStorageSize);
     Serial.println(F(" track points can be saved.]"));
-    Serial.println(F("\t CRC check symbols: ✅ CRC OK, ⛔️ CRC ERROR, ⬜ empty memory cell, underlined CRC\u0332 - current cell"));
-    Serial.print(F("Finding the index of the last record. Read memory... "));
+    Serial.println(F("\tCRC check symbols: ✅ CRC OK, ⛔️ CRC ERROR, ⬜ empty memory cell, 👉 - current cell"));
+    Serial.println(F("\tFormat: {COUNTER}➜ {CRC} {CRC check symbol}, 255 - default EEPROM value "));
+    Serial.print(F("\tFinding the index of the last record. Read memory... "));
 #endif
 
     unsigned int prevIncCounter = 0;
 
     for (unsigned int i = 0; i < EEPROMStorageSize; i++)
     {
-        EEPROM.get(i * EEPROMDataSize + EEPROM_BEGIN_ADDRESS, EEPROMdata);
+        EEPROM.get(i * EEPROMDataSize + EEPROM_BEGIN_ADDRESS, eepromdata);
 
-        if (EEPROMdata.counter == 255)
+#if DEBUG_MODE && DEBUG_MEMORY
+        Serial.print(F("."));
+        if ((i + 1) % 50 == 0)
+            Serial.println();
+#endif
+
+        if (eepromdata.counter == 255)
         { // check empty EEPROM cell
             if (i == 0)
             {
@@ -46,7 +55,7 @@ void EEPROMAglora::setup()
             break;
         }
 
-        if (abs(EEPROMdata.counter - prevIncCounter) > 1)
+        if (abs(eepromdata.counter - prevIncCounter) > 1)
         { // not in sequence
             if (i != 0)
             {
@@ -58,194 +67,229 @@ void EEPROMAglora::setup()
                     {
                         incrementCounter = 0;
                     }
+                    if(eepromdata.counter != 255) {storageOverwrite = true;}
                     break;
                 }
             }
         }
-        prevIncCounter = EEPROMdata.counter;
+        prevIncCounter = eepromdata.counter;
     }
 
 #if DEBUG_MODE && DEBUG_MEMORY
     Serial.println();
-    Serial.print(F("Next record will be "));
-    Serial.println(EEPROMStorageIndex);
+    Serial.print(F("\tNext record will be "));
+    Serial.print(EEPROMStorageIndex + 1);
+    Serial.print(F(",\tstorageOverwrite = "));
+    Serial.println(storageOverwrite);
 #endif
 }
 
 bool EEPROMAglora::checkUnique(DATA *newPoint)
 {
-    return false;
+
+    if (newPoint->name == NAME)
+    {
+#if DEBUG_MODE && DEBUG_MEMORY
+        Serial.println(F("📀[EEPROM storage: returned package 🔄 ]"));
+#endif
+        return false;
+    }
+
+    for (unsigned int i = 0; i < EEPROMStorageSize; i++)
+    {
+        DATA *eepromPoint = load(i);
+        if ((newPoint->name == eepromPoint->name) &&
+            (newPoint->year == eepromPoint->year) &&
+            (newPoint->month == eepromPoint->month) &&
+            (newPoint->day == eepromPoint->day) &&
+            (newPoint->hour == eepromPoint->hour) &&
+            (newPoint->minute == eepromPoint->minute) &&
+            (newPoint->second == eepromPoint->second))
+        {
+#if DEBUG_MODE && DEBUG_MEMORY
+            Serial.println(F("📀[EEPROM storage: data already exist‼️⛔️]"));
+#endif
+            return false;
+        }
+    }
+#if DEBUG_MODE && DEBUG_MEMORY
+    Serial.println(F("📀[EEPROM storage: new data checked ✅]"));
+#endif
+    return true;
 }
 
 /// @brief Save data to storage
 /// @param newData that needs to be added to the storage
-/// @return the index of added data 
+/// @return the index of added data
 unsigned int EEPROMAglora::save(DATA *newData)
 {
-  EEPROMdata.counter = incrementCounter;
-    EEPROMdata.data = *newData;
-    EEPROMdata.crc = calculateCRC((unsigned char*)newData, sizeof(DATA));
-    EEPROM.put(EEPROMStorageIndex * EEPROMDataSize + EEPROM_BEGIN_ADDRESS, EEPROMdata);
+    eepromdata.counter = incrementCounter;
+    eepromdata.data = *newData;
+    eepromdata.crc = calculateCRC((unsigned char *)newData, sizeof(DATA));
+    EEPROM.put(EEPROMStorageIndex * EEPROMDataSize + EEPROM_BEGIN_ADDRESS, eepromdata);
 
-    #if DEBUG_MODE && DEBUG_MEMORY
-      Serial.print(F("📀[EEPROM storage: New data added. Address: "));
-      Serial.print(EEPROMStorageIndex * EEPROMDataSize + EEPROM_BEGIN_ADDRESS);
-      Serial.print(F(", index: "));
-      Serial.print(EEPROMStorageIndex);
-      Serial.print(F(", counter: "));
-      Serial.print(EEPROMdata.counter);
-      Serial.print(F(", CRC: "));
-      Serial.print(EEPROMdata.crc);
-      Serial.println(F("]"));
-    #endif
-
+#if DEBUG_MODE && DEBUG_MEMORY
+    Serial.print(F("📀[EEPROM storage: New data added. Address: "));
+    Serial.print(EEPROMStorageIndex * EEPROMDataSize + EEPROM_BEGIN_ADDRESS);
+    Serial.print(F(", index: "));
+    Serial.print(EEPROMStorageIndex);
+    Serial.print(F(", counter: "));
+    Serial.print(eepromdata.counter);
+    Serial.print(F(", CRC: "));
+    Serial.print(eepromdata.crc);
+    Serial.println(F("]"));
+#endif
 
     EEPROMStorageIndex++;
-    if (EEPROMStorageIndex >= EEPROMStorageSize) {
-      EEPROMStorageIndex = 0;
+    if (EEPROMStorageIndex >= EEPROMStorageSize)
+    {
+        EEPROMStorageIndex = 0;
     }
 
     incrementCounter++;
-    if ( incrementCounter >= 255 ) {
-      incrementCounter = 0;
+    if (incrementCounter >= 255)
+    {
+        incrementCounter = 0;
     }
-  
+
     return incrementCounter;
 }
 
 DATA *EEPROMAglora::load(unsigned int index)
 {
-    return nullptr;
+    EEPROM.get(index * EEPROMDataSize + EEPROM_BEGIN_ADDRESS, eepromdata);
+    return &eepromdata.data;
 }
 
 void EEPROMAglora::clearAllPositions()
 {
-      #if DEBUG_MODE 
-      Serial.println(F("📀[EEPROM storage: clearing memory.]"));
-    #endif
+
+#if DEBUG_MODE && DEBUG_MEMORY
+    const byte rowLength = 120;
+    int cellsCounter = 0;
+    Serial.println(F("📀[EEPROM storage: clearing memory.]"));
+    Serial.print(F("\t"));
+#endif
 
     unsigned char memoryCell = 0;
-    for (int i = 0; i < EEPROM.length(); i++) {
-      EEPROM.get(i + EEPROM_BEGIN_ADDRESS, memoryCell);
-      if( memoryCell != 255 ){  // 255 - default value in EEPROM
-        memoryCell = 255;
-        EEPROM.put(i + EEPROM_BEGIN_ADDRESS, memoryCell);
-      }
-    }
+    for (unsigned int i = 0; i < EEPROM.length(); i++)
+    {
+        EEPROM.get(i + EEPROM_BEGIN_ADDRESS, memoryCell);
+        if (memoryCell != 255)
+        { // 255 - default value in EEPROM
+            memoryCell = 255;
+            EEPROM.put(i + EEPROM_BEGIN_ADDRESS, memoryCell);
+#if DEBUG_MODE && DEBUG_MEMORY
+            Serial.print(F("#"));
+            if (++cellsCounter % rowLength == 0)
+            {
+                Serial.println();
+                Serial.print(F("\t"));
+            }
 
+#endif
+        }
+    }
     EEPROMStorageIndex = 0;
     incrementCounter = 0;
+    storageOverwrite = false;
+
+#if DEBUG_MODE && DEBUG_MEMORY
+    Serial.println();
+#endif
 }
-
-
 
 bool EEPROMAglora::checkCRC()
 {
-
-
-
-#if DEBUG_MODE && DEBUG_MEMORY
-    for (unsigned int  i = 0; i < EEPROMStorageSize; i++)
-    {
-        EEPROM.get(i * EEPROMDataSize + EEPROM_BEGIN_ADDRESS, EEPROMdata);
-
-        unsigned char crc = calculateCRC((unsigned char *)&EEPROMdata.data, sizeof(EEPROMdata.data));
-
-        Serial.print(F(", "));
-        if ((i % 10) == 0)
-        {
-            Serial.println(F("*"));
-        }
-        Serial.print(EEPROMdata.counter);
-
-        if (EEPROMdata.counter != 255)
-        {
-            if (crc == EEPROMdata.crc)
-            {
-                Serial.print(F("(CRC OK ✅)"));
-            }
-            else
-            {
-                Serial.print(F("(CRC ERROR ⛔️)"));
-            }
-        }
-    }
-    Serial.println();
-#endif
-
-
-
+    const byte rowLength = 12; // how many characters will be printed in a row
+    const byte rowDivider = 4; // split string for better view
+    bool result = true;
 
 #if DEBUG_MODE && DEBUG_MEMORY
-    Serial.print(F("💾[SRAM storage: checking CRC, "));
-    Serial.print(storageIndex);
+    Serial.print(F("📀[EEPROM storage: checking CRC, "));
+    Serial.print(EEPROMStorageIndex);
     Serial.print(F("/"));
-    Serial.print(SRAM_STORAGE_SIZE);
-    Serial.print(F(" cells are used, storageOverflow is "));
+    Serial.print(EEPROMStorageSize);
+    Serial.print(F(" cells are used, storageOverwrite is "));
     Serial.print(storageOverwrite);
     Serial.println(F("]"));
 #endif
 
-    const byte rowLength = 12; // how many characters will be printed in a row
-    const byte rowDivider = 4; // split string for better view
-    bool result = true;
-    byte crc = 0;
-
-    if ((storageIndex == 0) && (!storageOverwrite))
+#if DEBUG_MODE && DEBUG_MEMORY // Memory visualisation
+    Serial.print(F("\t "));
+    for (unsigned int i = 0; i < rowLength; ++i)
     {
-#if DEBUG_MODE && DEBUG_MEMORY
-        Serial.println(F("💾[SRAM storage: memory is empty]"));
-#endif
-        return result;
+        Serial.print(F("🔻"));
+        if (i < 10)
+            Serial.print(F("0"));
+        Serial.print(i + 1);
+        Serial.print(F("⎻⎻⎻⎻⎻⎻⎻"));
+
+        if ((i + 1) % rowDivider == 0)
+            Serial.print(F("   "));
     }
-
-    const unsigned int maxIndex = storageOverwrite ? (SRAM_STORAGE_SIZE - 1) : (storageIndex - 1);
-
-#if DEBUG_MODE && DEBUG_MEMORY
+    Serial.println();
     Serial.print(F("\t"));
 #endif
 
-    for (unsigned int i = 0; i < SRAM_STORAGE_SIZE; ++i)
+    for (unsigned int i = 0; i < EEPROMStorageSize; i++)
     {
-        if (i <= maxIndex)
+        EEPROM.get(i * EEPROMDataSize + EEPROM_BEGIN_ADDRESS, eepromdata);
+
+        unsigned char crc = calculateCRC((unsigned char *)&eepromdata.data, sizeof(eepromdata.data));
+
+#if DEBUG_MODE && DEBUG_MEMORY
+
+        if (eepromdata.counter < 100)
+            Serial.print(F(" "));
+        if (eepromdata.counter < 10)
+            Serial.print(F(" "));
+
+        Serial.print(F(" "));
+        Serial.print(eepromdata.counter);
+
+        if (i == EEPROMStorageIndex - 1)
         {
-            crc = calculateCRC((unsigned char *)&storage[i], dataSize);
-            if (storage[i].crc == crc)
+            Serial.print(F("👉"));
+        }
+        else
+        {
+            Serial.print(F("➜ "));
+        }
+
+        if (eepromdata.crc < 100)
+            Serial.print(F("0"));
+        if (eepromdata.crc < 10)
+            Serial.print(F("0"));
+
+        Serial.print(eepromdata.crc);
+#endif
+
+        if (eepromdata.counter != 255)
+        {
+            if (crc == eepromdata.crc)
+
             {
 #if DEBUG_MODE && DEBUG_MEMORY
-                Serial.print(F(" ✅"));
+                Serial.print(F("✅"));
 #endif
             }
             else
             {
 #if DEBUG_MODE && DEBUG_MEMORY
-                Serial.print(F(" ⛔️"));
+                Serial.print(F("⛔️"));
 #endif
                 result = false;
             }
-#if DEBUG_MODE && DEBUG_MEMORY
-            if (crc < 100)
-                Serial.print(F("0"));
-            if (crc < 10)
-                Serial.print(F("0"));
-            Serial.print(crc);
-            if ((i == storageIndex - 1) ||
-                ((i == 0)&&(storageOverwrite)))
-            {
-                Serial.print(F("\u0332")); // underline active memory cell
-            }
-#endif
         }
         else
         {
 #if DEBUG_MODE && DEBUG_MEMORY
-            Serial.print(F(" ⬜"));
-            Serial.print(F("   "));
+            Serial.print(F("⬜"));
 #endif
         }
 
 #if DEBUG_MODE && DEBUG_MEMORY // Memory visualisation
-
         if ((i + 1) % rowLength == 0)
         {
             Serial.println();
@@ -257,7 +301,6 @@ bool EEPROMAglora::checkCRC()
             if ((i + 1) % rowDivider == 0)
                 Serial.print(F(" · "));
         }
-
 #endif
     }
 
@@ -266,16 +309,14 @@ bool EEPROMAglora::checkCRC()
 #endif
 
     return result;
-
-}
-
-bool EEPROMAglora::checkCRC(DATA *loraDataPacket)
-{
-    return false;
 }
 
 bool EEPROMAglora::checkCRC(unsigned int index)
 {
+    EEPROM.get(index * EEPROMDataSize + EEPROM_BEGIN_ADDRESS, eepromdata);
+    const byte crc = calculateCRC((unsigned char *)&eepromdata.data, dataSize);
+    if (eepromdata.crc == crc)
+        return true;
     return false;
 }
 
@@ -291,5 +332,5 @@ unsigned int EEPROMAglora::getIndex()
 
 bool EEPROMAglora::getStorageOverwrite()
 {
-    return false;
+    return storageOverwrite;
 }

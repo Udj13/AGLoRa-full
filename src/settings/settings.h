@@ -78,7 +78,7 @@ const char NAME[NAME_LENGTH] = "Rick";               // Name of current tracker,
 // Don't forget to disconnect the bluetooth module.
 // Then open “Tools” -> ”Serial monitor” in Arduino IDE.
 #define DEBUG_MODE true  // change "false" to "true" to enable
-// Next, logs levels for comfortable debugging, 
+// Next, logs levels for comfortable deallbugging, 
 // if DEBUG_MODE == false, logs level are not important 
 #define DEBUG_BLE false  // bluetooth low energy
 #define DEBUG_GPS false  // print GPS logs

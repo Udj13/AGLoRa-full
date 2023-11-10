@@ -114,7 +114,7 @@ bool SRAM::checkCRC()
     Serial.print(storageIndex);
     Serial.print(F("/"));
     Serial.print(SRAM_STORAGE_SIZE);
-    Serial.print(F(" cells are used, storageOverflow is "));
+    Serial.print(F(" cells are used, storageOverwrite is "));
     Serial.print(storageOverwrite);
     Serial.println(F("]"));
 #endif
