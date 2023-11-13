@@ -40,6 +40,10 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 #include "LoRa_E220.h"        // install from Arduino IDE
 // Docs: https://github.com/xreef/EByte_LoRa_E220_Series_Library
 
+// ...or, if you use PlatformIO, add to "platformio.ini":
+//  lib_deps = 
+//  	mikalhart/TinyGPSPlus@^1.0.3
+//  	xreef/EByte LoRa E220 library@^1.0.8
 
 // The first thing you need is to set up a tracker name and modules connections:
 
