@@ -5,10 +5,6 @@
   that will not need to be changed in most cases
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#include <Arduino.h>
-#include <HardwareSerial.h>
-#include <SoftwareSerial.h>
-
 #include "settings/settings.h"
 #include "aglora/aglora.h"
 #include "hardware/gps/gps.h"
@@ -19,6 +15,19 @@
 #include "utils/memory/sram/sram.h"
 #include "utils/memory/eeprom/eepromaglora.h"
 #include "hardware/indication/indication.h"
+
+
+/*
+ _ __ ___     __ _  (_)  _ __         ___   _ __    _ __  
+ | '_ ` _ \   / _` | | | | '_ \       / __| | '_ \  | '_ \ 
+ | | | | | | | (_| | | | | | | |  _  | (__  | |_) | | |_) |
+ |_| |_| |_|  \__,_| |_| |_| |_| (_)  \___| | .__/  | .__/ 
+                                            |_|     |_|   
+*/
+#include <Arduino.h>
+#include <HardwareSerial.h>
+#include <SoftwareSerial.h>
+
 
 TESTS tests;
 INDICATION indication(GPS_LED, LORA_LED, BLE_LED, MEMORY_LED);

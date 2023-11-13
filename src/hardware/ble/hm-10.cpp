@@ -2,7 +2,6 @@
 #include "hm-10.h"
 #include "../../settings/settings.h"
 
-// ================= BLE SECTION ===================
 
 BLE_HM10::BLE_HM10()
 {

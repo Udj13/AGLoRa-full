@@ -5,14 +5,22 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 
-// install from Arduino IDE or PlatformIO
-// Docs: http://arduiniana.org/libraries/tinygpsplus/
-#include <TinyGPSPlus.h>
-
 #include "../../settings/settings.h"
 #include "../indication/indication.h"
 
-// ======================= GPS HEADER=====================
+// ======================= GPS SECTION =====================
+/*
+   ____   ____    ____  
+  / ___| |  _ \  / ___| 
+ | |  _  | |_) | \___ \ 
+ | |_| | |  __/   ___) |
+  \____| |_|     |____/ 
+                        
+*/
+
+// install from Arduino IDE or PlatformIO
+// Docs: http://arduiniana.org/libraries/tinygpsplus/
+#include <TinyGPSPlus.h>
 
 class GPS
 {

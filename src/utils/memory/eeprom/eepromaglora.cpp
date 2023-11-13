@@ -2,6 +2,9 @@
 #include "../../../settings/settings.h"
 #include "eepromaglora.h"
 #include "../../crc/crc.h"
+
+
+
 #include <EEPROM.h>
 
 EEPROMAglora::EEPROMAglora()

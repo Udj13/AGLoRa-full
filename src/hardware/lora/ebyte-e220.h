@@ -4,16 +4,25 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 
-// install from Arduino IDE or PlatformIO
-// Docs: https://github.com/xreef/EByte_LoRa_E220_Series_Library
-#include "LoRa_E220.h"
-
 #include "loraData.h"
 #include "../../settings/settings.h"
 #include "../indication/indication.h"
 
 
-// ======================= LORA HEADER =====================
+// ======================= LORA SECTION =====================
+
+/*
+  _   _      _      ____    _____     _        ___    ____       _    
+ | | | |    / \    |  _ \  |_   _|   | |      / _ \  |  _ \     / \   
+ | | | |   / _ \   | |_) |   | |     | |     | | | | | |_) |   / _ \  
+ | |_| |  / ___ \  |  _ <    | |     | |___  | |_| | |  _ <   / ___ \ 
+  \___/  /_/   \_\ |_| \_\   |_|     |_____|  \___/  |_| \_\ /_/   \_\
+                                                                      
+*/
+
+// install from Arduino IDE or PlatformIO
+// Docs: https://github.com/xreef/EByte_LoRa_E220_Series_Library
+#include "LoRa_E220.h"
 
 class LORA
 {
