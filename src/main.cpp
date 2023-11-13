@@ -99,6 +99,15 @@ void loop()
   indication.loop(); //make an indication
 }
 
+/**
+ * Processes new data from a LORADATA package.
+ *
+ * @param loraDataPackage The LORADATA package containing the new data to be processed.
+ *
+ * @return void
+ *
+ * @throws None
+ */
 void processNewData(LORADATA * loraDataPackage)
 {
   if (memory.checkUnique(loraDataPackage->data)) // Check the name and time of the point

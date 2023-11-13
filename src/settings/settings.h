@@ -159,7 +159,7 @@ String sendToPhone(DATA *package);
 // reserve for storing settings
 // not used if USE_EEPROM_MEMORY false
 // ================ TESTS ==================
-#define TEST_LORA_DATA true
+#define TEST_LORA_DATA false
 // =========================================
 // ========== END OF SETTINGS ==============
 // =========================================
