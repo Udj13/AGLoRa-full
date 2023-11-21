@@ -41,7 +41,6 @@ EEPROMAglora memory;
 SRAM memory;
 #endif
 
-DATA trackerData;
 LORADATA loraDataPackage;
 AGLORA aglora(&memory, &ble);
 
@@ -56,7 +55,6 @@ void setup()
   memory.setup(); // SRAM or EEPROM
   ble.setup();    // Bluetooth Low Energy
 
-  loraDataPackage.data = &trackerData;
 }
 
 // ========== MAIN LOOP ==========
@@ -71,9 +69,9 @@ void loop()
 {
   if (_timeToSendMyLocation < millis())
   {
-    aglora.clearDataPacket(loraDataPackage.data); // clear structure before reading new data
-    aglora.updateSensors(loraDataPackage.data);   // add sensors
-    gps.updateLocation(loraDataPackage.data);     // add locations
+    aglora.clearDataPacket(&loraDataPackage.data); // clear structure before reading new data
+    aglora.updateSensors(&loraDataPackage.data);   // add sensors
+    gps.updateLocation(&loraDataPackage.data);     // add locations
     loraDataPackage.ttl = TTL; // time to live (for mesh network)
 
     aglora.printPackage(&loraDataPackage);
@@ -119,14 +117,14 @@ void loop()
  */
 void processNewData(LORADATA * loraDataPackage)
 {
-  if (memory.checkUnique(loraDataPackage->data)) // Check the name and time of the point
+  if (memory.checkUnique(&loraDataPackage->data)) // Check the name and time of the point
   {
 
     ttl = loraDataPackage->ttl;
 
-    addedMemoryIndex = memory.save(loraDataPackage->data);
+    addedMemoryIndex = memory.save(&loraDataPackage->data);
     memory.checkCRC();
-    aglora.sendPackageToBLE(loraDataPackage->data, addedMemoryIndex); // upload data to app
+    aglora.sendPackageToBLE(&loraDataPackage->data, addedMemoryIndex); // upload data to app
 
     // resend data to other trackers
     if (--ttl > 0)

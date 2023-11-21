@@ -49,7 +49,7 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 
 // ========== NAME =======================
 #define NAME_LENGTH 6             // The same value for all devices
-const char NAME[NAME_LENGTH] = "Rick";               // Name of current tracker, NAME_LENGTH characters
+const char NAME[NAME_LENGTH] = "Morty";               // Name of current tracker, NAME_LENGTH characters
 // Example:
 // #define NAME = "Morty"; // All names length should be no longer than NAME_LENGTH
 // ========== WIRING =====================
@@ -88,7 +88,7 @@ const char NAME[NAME_LENGTH] = "Rick";               // Name of current tracker,
 // Next, logs levels for comfortable deallbugging, 
 // if DEBUG_MODE == false, logs level are not important 
 #define DEBUG_BLE false  // bluetooth low energy
-#define DEBUG_GPS false  // print GPS logs
+#define DEBUG_GPS true  // print GPS logs
 #define DEBUG_LORA true  // print GPS logs
 #define DEBUG_MEMORY true  // print GPS logs
 #define DEBUG_AGLORA true  // print GPS logs
@@ -140,7 +140,7 @@ String sendToPhone(DATA *package);
 // ========================================
 // ==== Settings LEVEL 3 (nightmare) ======
 // ========================================
-#define USE_EEPROM_MEMORY true  // "false" by default
+#define USE_EEPROM_MEMORY false  // "false" by default
 // set "false" to use SRAM memory, "true" to use EEPROM
 // EEPROM is permanent memory, data is not lost even 
 // if the system is turned off.

@@ -5,7 +5,7 @@
 
 struct LORADATA
 {
-    DATA * data;
+    DATA data;
     unsigned char ttl;   // time to live (for mesh network)
 };
 

@@ -53,33 +53,34 @@ void LORA::setup()
 void LORA::send(LORADATA *loraDataPacket)
 {
     loraPort.listen();
+    const byte LORADATASIZE = sizeof(LORADATA);
 
 #if DEBUG_MODE && DEBUG_LORA
     Serial.print(F("🛜 [LoRa: Sending 📫, "));
-    Serial.print(sizeof(DATA));
+    Serial.print(LORADATASIZE); //TODO!!!!!!! check
     Serial.print(F(" bytes are ready to send"));
     Serial.print(F(" ➜ "));
-    Serial.print(loraDataPacket->data->name);
+    Serial.print(loraDataPacket->data.name);
     Serial.print(F(" / "));
-    Serial.print(loraDataPacket->data->lat, 6);
+    Serial.print(loraDataPacket->data.lat, 6);
     Serial.print(F(" "));
-    Serial.print(loraDataPacket->data->lon, 6);
+    Serial.print(loraDataPacket->data.lon, 6);
     Serial.print(F(" / "));
-    Serial.print(loraDataPacket->data->year);
+    Serial.print(loraDataPacket->data.year);
     Serial.print(F("-"));
-    if (loraDataPacket->data->month < 10)
+    if (loraDataPacket->data.month < 10)
         Serial.print(F("0"));
-    Serial.print(loraDataPacket->data->month);
+    Serial.print(loraDataPacket->data.month);
     Serial.print(F("-"));
-    if (loraDataPacket->data->day < 10)
+    if (loraDataPacket->data.day < 10)
         Serial.print(F("0"));
-    Serial.print(loraDataPacket->data->day);
+    Serial.print(loraDataPacket->data.day);
     Serial.print(F(" "));
-    Serial.print(loraDataPacket->data->hour);
+    Serial.print(loraDataPacket->data.hour);
     Serial.print(F(":"));
-    if (loraDataPacket->data->minute < 10)
+    if (loraDataPacket->data.minute < 10)
         Serial.print(F("0"));
-    Serial.print(loraDataPacket->data->minute);
+    Serial.print(loraDataPacket->data.minute);
     Serial.print(F(" (UTC)"));
     Serial.print(F(" TTL="));
     Serial.print(loraDataPacket->ttl);
@@ -87,7 +88,7 @@ void LORA::send(LORADATA *loraDataPacket)
 
 #endif
 
-    ResponseStatus rs = e220ttl.sendMessage(&loraDataPacket, sizeof(loraDataPacket));
+    ResponseStatus rs = e220ttl.sendMessage(&loraDataPacket, LORADATASIZE);
 
 #if DEBUG_MODE && DEBUG_LORA
     Serial.print(F("[Status: "));
@@ -123,7 +124,7 @@ bool LORA::hasNewData(LORADATA *loraDataPacket)
         Serial.println(F("🛜 [LORA: we have new data 🥳]"));
 #endif
 
-        rsc = e220ttl.receiveMessage(sizeof(DATA));
+        rsc = e220ttl.receiveMessage(sizeof(LORADATA));
         if (rsc.status.code != 1)
         {
 #if DEBUG_MODE && DEBUG_LORA

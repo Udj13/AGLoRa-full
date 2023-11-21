@@ -42,10 +42,10 @@ void AGLORA::hello()
 /// 2. set name
 /// 3. set ttl
 /// @param loraDataPacket
-void AGLORA::clearDataPacket(DATA *loraDataPacket)
+void AGLORA::clearDataPacket(DATA *trackerData)
 {
-  memset(loraDataPacket, 0, sizeof(&loraDataPacket));
-  strcpy(loraDataPacket->name, NAME);
+  memset(trackerData, 0, sizeof(&trackerData));
+  strcpy(trackerData->name, NAME);
 #if DEBUG_MODE && DEBUG_AGLORA
   Serial.println(F("🟢[AGLoRa: time to send your location📍, new loraDataPacket prepared 📦]"));
 #endif
@@ -61,37 +61,37 @@ void AGLORA::printPackage(LORADATA *loraDataPacket)
 #if DEBUG_MODE && DEBUG_AGLORA // dump out what was just received
   Serial.println(F("🟢[AGLoRa: loraDataPacket now contains ↴]"));
   Serial.print(F("     Name: "));
-  Serial.print(loraDataPacket->data->name);
+  Serial.print(loraDataPacket->data.name);
   Serial.print(F(", lat: "));
-  Serial.print(loraDataPacket->data->lat, 6);
+  Serial.print(loraDataPacket->data.lat, 6);
   Serial.print(F(", lon: "));
-  Serial.print(loraDataPacket->data->lon, 6);
+  Serial.print(loraDataPacket->data.lon, 6);
   Serial.print(F(", sat: "));
-  Serial.print(loraDataPacket->data->sat);
+  Serial.print(loraDataPacket->data.sat);
   Serial.print(F(", hdop: "));
-  Serial.print(loraDataPacket->data->hdop);
+  Serial.print(loraDataPacket->data.hdop);
 
   Serial.print(F(", date: "));
-  Serial.print(loraDataPacket->data->year);
+  Serial.print(loraDataPacket->data.year);
   Serial.print(F("/"));
-  if (loraDataPacket->data->month < 10)
+  if (loraDataPacket->data.month < 10)
     Serial.print(F("0"));
-  Serial.print(loraDataPacket->data->month);
+  Serial.print(loraDataPacket->data.month);
   Serial.print(F("/"));
-  if (loraDataPacket->data->day < 10)
+  if (loraDataPacket->data.day < 10)
     Serial.print(F("0"));
-  Serial.print(loraDataPacket->data->day);
+  Serial.print(loraDataPacket->data.day);
 
   Serial.print(F(", time: "));
-  Serial.print(loraDataPacket->data->hour);
+  Serial.print(loraDataPacket->data.hour);
   Serial.print(F(":"));
-  if (loraDataPacket->data->minute < 10)
+  if (loraDataPacket->data.minute < 10)
     Serial.print(F("0"));
-  Serial.print(loraDataPacket->data->minute);
+  Serial.print(loraDataPacket->data.minute);
   Serial.print(F(":"));
-  if (loraDataPacket->data->second < 10)
+  if (loraDataPacket->data.second < 10)
     Serial.print(F("0"));
-  Serial.print(loraDataPacket->data->second);
+  Serial.print(loraDataPacket->data.second);
   Serial.print(F(" (UTC)"));
 
   Serial.print(F(" TTL="));
@@ -159,13 +159,13 @@ void AGLORA::checkMemory()
   _ble->send(&response);
 }
 
-void AGLORA::sendPackageToBLE(DATA *loraDataPacket, int index)
+void AGLORA::sendPackageToBLE(DATA *trackerData, int index)
 {
   String response = bleProtocolPrefix +
                     bleProtocolTypePoint +
                     bleProtocolVersion;
 
-  response += sendToPhone(loraDataPacket);
+  response += sendToPhone(trackerData);
   response += bleProtocolParamMemoryIndex + index;
   response += bleProtocolParamCRC;
   response += _memory->checkCRC(index) ? bleProtocolOK : bleProtocolError;
