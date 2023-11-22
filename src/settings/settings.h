@@ -147,6 +147,7 @@ String sendToPhone(DATA *package);
 // But the write operation is finite and usually capped at 100,000 cycles.
 // Please read: https://docs.arduino.cc/learn/programming/memory-guide
 // ============ LORA NETWORK SETTINGS ============
+#define I_WANT_TO_SEND_MY_LOCATION true  // "true" by default
 #define DATA_SENDING_INTERVAL 40000  // milliseconds
 #define TTL 3  // Data packet lifetime (for transfer between devices)
 // ============ OTHER SETTINGS ==========

@@ -57,7 +57,7 @@ void LORA::send(LORADATA *loraDataPacket)
 
 #if DEBUG_MODE && DEBUG_LORA
     Serial.print(F("🛜 [LoRa: Sending 📫, "));
-    Serial.print(LORADATASIZE); //TODO!!!!!!! check
+    Serial.print(LORADATASIZE);
     Serial.print(F(" bytes are ready to send"));
     Serial.print(F(" ➜ "));
     Serial.print(loraDataPacket->data.name);
@@ -88,7 +88,7 @@ void LORA::send(LORADATA *loraDataPacket)
 
 #endif
 
-    ResponseStatus rs = e220ttl.sendMessage(&loraDataPacket, LORADATASIZE);
+    ResponseStatus rs = e220ttl.sendMessage(loraDataPacket, LORADATASIZE);
 
 #if DEBUG_MODE && DEBUG_LORA
     Serial.print(F("[Status: "));

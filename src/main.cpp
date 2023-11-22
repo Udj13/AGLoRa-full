@@ -16,18 +16,16 @@
 #include "utils/memory/eeprom/eepromaglora.h"
 #include "hardware/indication/indication.h"
 
-
 /*
- _ __ ___     __ _  (_)  _ __         ___   _ __    _ __  
- | '_ ` _ \   / _` | | | | '_ \       / __| | '_ \  | '_ \ 
+ _ __ ___     __ _  (_)  _ __         ___   _ __    _ __
+ | '_ ` _ \   / _` | | | | '_ \       / __| | '_ \  | '_ \
  | | | | | | | (_| | | | | | | |  _  | (__  | |_) | | |_) |
- |_| |_| |_|  \__,_| |_| |_| |_| (_)  \___| | .__/  | .__/ 
-                                            |_|     |_|   
+ |_| |_| |_|  \__,_| |_| |_| |_| (_)  \___| | .__/  | .__/
+                                            |_|     |_|
 */
 #include <Arduino.h>
 #include <HardwareSerial.h>
 #include <SoftwareSerial.h>
-
 
 TESTS tests;
 INDICATION indication(GPS_LED, LORA_LED, BLE_LED, MEMORY_LED);
@@ -54,7 +52,6 @@ void setup()
   lora.setup();   // LoRa
   memory.setup(); // SRAM or EEPROM
   ble.setup();    // Bluetooth Low Energy
-
 }
 
 // ========== MAIN LOOP ==========
@@ -63,24 +60,27 @@ unsigned long _timeOfLastReceivedPacket;
 unsigned int addedMemoryIndex;
 byte ttl = 0;
 
-void processNewData(LORADATA * loraDataPackage);
+void processNewData(LORADATA *loraDataPackage);
 
 void loop()
 {
   if (_timeToSendMyLocation < millis())
   {
+#if I_WANT_TO_SEND_MY_LOCATION 
     aglora.clearDataPacket(&loraDataPackage.data); // clear structure before reading new data
     aglora.updateSensors(&loraDataPackage.data);   // add sensors
     gps.updateLocation(&loraDataPackage.data);     // add locations
-    loraDataPackage.ttl = TTL; // time to live (for mesh network)
+    loraDataPackage.ttl = TTL;                     // time to live (for mesh network)
 
     aglora.printPackage(&loraDataPackage);
 
     lora.send(&loraDataPackage); // send location to other trackers
+#endif
+
     _timeToSendMyLocation += DATA_SENDING_INTERVAL;
   }
 
-  // waiting for new data
+  // checking for new data
   if (lora.hasNewData(&loraDataPackage))
   {
     processNewData(&loraDataPackage);
@@ -102,8 +102,8 @@ void loop()
   }
 
   aglora.getRequest(ble.read()); // check requests from app
-  
-  indication.loop(); //make an indication
+
+  indication.loop(); // make an indication
 }
 
 /**
@@ -115,7 +115,7 @@ void loop()
  *
  * @throws None
  */
-void processNewData(LORADATA * loraDataPackage)
+void processNewData(LORADATA *loraDataPackage)
 {
   if (memory.checkUnique(&loraDataPackage->data)) // Check the name and time of the point
   {
