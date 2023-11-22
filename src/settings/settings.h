@@ -49,7 +49,7 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 
 // ========== NAME =======================
 #define NAME_LENGTH 6             // The same value for all devices
-const char NAME[NAME_LENGTH] = "Morty";               // Name of current tracker, NAME_LENGTH characters
+const char NAME[NAME_LENGTH] = "Rick";               // Name of current tracker, NAME_LENGTH characters
 // Example:
 // #define NAME = "Morty"; // All names length should be no longer than NAME_LENGTH
 // ========== WIRING =====================
@@ -147,8 +147,10 @@ String sendToPhone(DATA *package);
 // But the write operation is finite and usually capped at 100,000 cycles.
 // Please read: https://docs.arduino.cc/learn/programming/memory-guide
 // ============ LORA NETWORK SETTINGS ============
-#define I_WANT_TO_SEND_MY_LOCATION true  // "true" by default
+#define I_WANT_TO_SEND_MY_LOCATION false  // "true" by default
 #define DATA_SENDING_INTERVAL 40000  // milliseconds
+
+#define MESH_MODE false  // "true" by default
 #define TTL 3  // Data packet lifetime (for transfer between devices)
 // ============ OTHER SETTINGS ==========
 #define BLE_UPDATE_INTERVAL 30000  // milliseconds

@@ -66,7 +66,7 @@ void loop()
 {
   if (_timeToSendMyLocation < millis())
   {
-#if I_WANT_TO_SEND_MY_LOCATION 
+#if I_WANT_TO_SEND_MY_LOCATION
     aglora.clearDataPacket(&loraDataPackage.data); // clear structure before reading new data
     aglora.updateSensors(&loraDataPackage.data);   // add sensors
     gps.updateLocation(&loraDataPackage.data);     // add locations
@@ -126,12 +126,14 @@ void processNewData(LORADATA *loraDataPackage)
     memory.checkCRC();
     aglora.sendPackageToBLE(&loraDataPackage->data, addedMemoryIndex); // upload data to app
 
-    // resend data to other trackers
+// resend data to other trackers
+#if MESH_MODE
     if (--ttl > 0)
     {
       loraDataPackage->ttl = ttl;
       lora.send(loraDataPackage);
     }
+#endif
   }
 
   _timeOfLastReceivedPacket = millis(); // if you got data, update the checker

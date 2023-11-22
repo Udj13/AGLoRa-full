@@ -27,17 +27,36 @@ void SRAM::setup()
 /// @return true if the same data is not exist
 bool SRAM::checkUnique(DATA *newPoint)
 {
-    if (newPoint->name == NAME)
+#if DEBUG_MODE && DEBUG_MEMORY
+    Serial.print(F("💾[SRAM storage: checking data for uniqueness 📦 ↔ 📦 ↔ 📦. First check if "));
+    Serial.print(newPoint->name);
+    Serial.print(F(" is equal to "));
+    Serial.print(NAME);
+    Serial.print(F("] ➜ "));
+    Serial.println(strcmp(newPoint->name, NAME));
+#endif
+
+    if (strcmp(newPoint->name, NAME) == 0)
     {
 #if DEBUG_MODE && DEBUG_MEMORY
-        Serial.println(F("💾[SRAM storage: returned package 🔄 ]"));
+        Serial.print(F("💾[SRAM storage: returned package 🔄, because "));
+        Serial.print(newPoint->name);
+        Serial.println(F(" it's me!]"));
 #endif
         return false;
     }
 
+#if DEBUG_MODE && DEBUG_MEMORY
+    Serial.println(F("💾[SRAM storage: checking data for uniqueness 📦 ↔ 📦 ↔ 📦. Second check, the coordinates and time duplication"));
+#endif
+
     const unsigned int maxIndex = storageOverwrite ? SRAM_STORAGE_SIZE : storageIndex;
     for (unsigned int i = 0; i < maxIndex; ++i)
     {
+#if DEBUG_MODE && DEBUG_MEMORY
+        Serial.print(F("#"));
+#endif
+
         if ((newPoint->name == storage[i].data.name) &&
             (newPoint->year == storage[i].data.year) &&
             (newPoint->month == storage[i].data.month) &&
@@ -47,29 +66,31 @@ bool SRAM::checkUnique(DATA *newPoint)
             (newPoint->second == storage[i].data.second))
         {
 #if DEBUG_MODE && DEBUG_MEMORY
+            Serial.println();
             Serial.println(F("💾[SRAM storage: data already exist‼️⛔️]"));
 #endif
             return false;
         }
     }
 #if DEBUG_MODE && DEBUG_MEMORY
-    Serial.println(F("💾[SRAM storage: new data checked ✅]"));
+    Serial.println();
+    Serial.println(F("💾[SRAM storage: new data ✅]"));
 #endif
     return true;
 }
 
 /// @brief Save data to storage
 /// @param newData data that needs to be added to the storage
-/// @return the index of added data 
+/// @return the index of added data
 unsigned int SRAM::save(DATA *newData)
 {
     storage[storageIndex].data = *newData;
     storage[storageIndex].crc = calculateCRC((unsigned char *)newData, dataSize);
 
 #if DEBUG_MODE && DEBUG_MEMORY
-    Serial.print(F("💾[SRAM storage: New data from "));
+    Serial.print(F("💾[SRAM storage saving: data from "));
     Serial.print(storage[storageIndex].data.name);
-    Serial.print(F(") was added. Memory: "));
+    Serial.print(F(" was added. Memory: "));
     Serial.print(storageIndex + 1);
     Serial.print(F("/"));
     Serial.print(SRAM_STORAGE_SIZE + 1);
@@ -91,9 +112,9 @@ unsigned int SRAM::save(DATA *newData)
 
 /// @brief Loading data from memory to loraDataPacket by index
 /// @param loraDataPacket pointer
-/// @param index index of data in memory 
-/// @return true if success 
-DATA * SRAM::load(unsigned int index)
+/// @param index index of data in memory
+/// @return true if success
+DATA *SRAM::load(unsigned int index)
 {
     return &storage[index].data;
 }
@@ -163,7 +184,7 @@ bool SRAM::checkCRC()
                 Serial.print(F("0"));
             Serial.print(crc);
             if ((i == storageIndex - 1) ||
-                ((i == 0)&&(storageOverwrite)))
+                ((i == 0) && (storageOverwrite)))
             {
                 Serial.print(F("\u0332")); // underline active memory cell
             }

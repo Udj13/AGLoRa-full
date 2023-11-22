@@ -3,8 +3,6 @@
 #include "eepromaglora.h"
 #include "../../crc/crc.h"
 
-
-
 #include <EEPROM.h>
 
 EEPROMAglora::EEPROMAglora()
@@ -70,7 +68,10 @@ void EEPROMAglora::setup()
                     {
                         incrementCounter = 0;
                     }
-                    if(eepromdata.counter != 255) {storageOverwrite = true;}
+                    if (eepromdata.counter != 255)
+                    {
+                        storageOverwrite = true;
+                    }
                     break;
                 }
             }
@@ -89,8 +90,7 @@ void EEPROMAglora::setup()
 
 bool EEPROMAglora::checkUnique(DATA *newPoint)
 {
-
-    if (newPoint->name == NAME)
+    if (strcmp(newPoint->name, NAME) == 0)
     {
 #if DEBUG_MODE && DEBUG_MEMORY
         Serial.println(F("📀[EEPROM storage: returned package 🔄 ]"));

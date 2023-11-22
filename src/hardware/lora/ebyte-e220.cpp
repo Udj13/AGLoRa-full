@@ -137,7 +137,7 @@ bool LORA::hasNewData(LORADATA *loraDataPacket)
         }
         else
         {
-            loraDataPacket = (LORADATA *)rsc.data;
+            memcpy(loraDataPacket, (LORADATA *)rsc.data, sizeof(LORADATA));
             rsc.close();
         }
         _indication->lora(LoRaStatuses::dataReceived);
