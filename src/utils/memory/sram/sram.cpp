@@ -28,12 +28,11 @@ void SRAM::setup()
 bool SRAM::checkUnique(DATA *newPoint)
 {
 #if DEBUG_MODE && DEBUG_MEMORY
-    Serial.print(F("💾[SRAM storage: checking data for uniqueness 📦 ↔ 📦 ↔ 📦. First check if "));
+    Serial.print(F("💾[SRAM storage: checking data for uniqueness 📦 ↔ 📦 ↔ 📦. First check, is <"));
     Serial.print(newPoint->name);
-    Serial.print(F(" is equal to "));
+    Serial.print(F("> equal to <"));
     Serial.print(NAME);
-    Serial.print(F("] ➜ "));
-    Serial.println(strcmp(newPoint->name, NAME));
+    Serial.println(F(">]"));
 #endif
 
     if (strcmp(newPoint->name, NAME) == 0)
@@ -47,7 +46,8 @@ bool SRAM::checkUnique(DATA *newPoint)
     }
 
 #if DEBUG_MODE && DEBUG_MEMORY
-    Serial.println(F("💾[SRAM storage: checking data for uniqueness 📦 ↔ 📦 ↔ 📦. Second check, the coordinates and time duplication"));
+    Serial.println(F("💾[SRAM storage: checking data for uniqueness 📦 ↔ 📦 ↔ 📦. Second check, find the coordinates and time duplication "));
+    Serial.print(F("\t"));
 #endif
 
     const unsigned int maxIndex = storageOverwrite ? SRAM_STORAGE_SIZE : storageIndex;
@@ -55,9 +55,18 @@ bool SRAM::checkUnique(DATA *newPoint)
     {
 #if DEBUG_MODE && DEBUG_MEMORY
         Serial.print(F("#"));
+
+        Serial.println();
+        Serial.print(newPoint->name); Serial.print(F("\t - "));Serial.println(storage[i].data.name);
+        Serial.print(newPoint->year); Serial.print(F("\t - "));Serial.println(storage[i].data.year);
+        Serial.print(newPoint->month); Serial.print(F("\t - "));Serial.println(storage[i].data.month);
+        Serial.print(newPoint->day); Serial.print(F("\t - "));Serial.println(storage[i].data.day);
+        Serial.print(newPoint->hour); Serial.print(F("\t - "));Serial.println(storage[i].data.hour);
+        Serial.print(newPoint->minute); Serial.print(F("\t - "));Serial.println(storage[i].data.minute);
+        Serial.print(newPoint->second); Serial.print(F("\t - "));Serial.println(storage[i].data.second);
 #endif
 
-        if ((newPoint->name == storage[i].data.name) &&
+        if ((strcmp(newPoint->name, storage[i].data.name) == 0) &&
             (newPoint->year == storage[i].data.year) &&
             (newPoint->month == storage[i].data.month) &&
             (newPoint->day == storage[i].data.day) &&

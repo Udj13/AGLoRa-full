@@ -150,7 +150,7 @@ String sendToPhone(DATA *package);
 #define I_WANT_TO_SEND_MY_LOCATION false  // "true" by default
 #define DATA_SENDING_INTERVAL 40000  // milliseconds
 
-#define MESH_MODE false  // "true" by default
+#define MESH_MODE true  // "true" by default
 #define TTL 3  // Data packet lifetime (for transfer between devices)
 // ============ OTHER SETTINGS ==========
 #define BLE_UPDATE_INTERVAL 30000  // milliseconds
