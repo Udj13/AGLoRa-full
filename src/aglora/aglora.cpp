@@ -51,10 +51,6 @@ void AGLORA::clearDataPacket(DATA *trackerData)
 #endif
 }
 
-// void AGLORA::request(String * request){
-//   storageManager(request);
-// };
-
 void AGLORA::printPackage(LORADATA *loraDataPacket)
 {
   // DEBUG_MODE
@@ -118,14 +114,14 @@ void AGLORA::getRequest(String request)
 
   if (request.startsWith(F("crc")))
   {
-    checkMemory();
+    checkMemoryToBLE();
     return;
   }
 
   if (request.startsWith(F("clear")))
   {
     _memory->clearAllPositions();
-    checkMemory();
+    checkMemoryToBLE();
     return;
   }
 
@@ -145,7 +141,7 @@ void AGLORA::getRequest(String request)
   }
 }
 
-void AGLORA::checkMemory()
+void AGLORA::checkMemoryToBLE()
 {
   String response = bleProtocolPrefix +
                     bleProtocolTypeMemory +
@@ -213,8 +209,17 @@ void AGLORA::sendPackageToBLEFromStorage(unsigned int index)
 #if DEBUG_MODE && DEBUG_AGLORA
     Serial.println(F("- error 🚨 empty memory 🚨"));
 #endif
+
+    String response = bleProtocolPrefix +
+                      bleProtocolTypeMemory +
+                      bleProtocolVersion;
+    response += bleProtocolParamMemorySize + _memory->getSize();
+    response += bleProtocolParamMemoryIndex + _memory->getIndex();
+    response += bleProtocolParamMemoryOverwrite + _memory->getStorageOverwrite();
+    response += bleProtocolDivider;
+    _ble->send(&response);
+
     return;
-    // TODO: send error
   }
 
   unsigned int maxIndex = _memory->getStorageOverwrite() ? _memory->getSize() : _memory->getIndex();

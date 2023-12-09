@@ -23,8 +23,8 @@ class AGLORA
 public:
   AGLORA(IMemory * memory, BLE_HM10 * ble);
   void hello();
+  void checkMemoryToBLE();
   void clearDataPacket(DATA * trackerData);
-//  void updateName(DATA * loraDataPacket);
   void updateSensors(DATA * trackerData);
   void printPackage(LORADATA * loraDataPacket);
   void getRequest(String request);
@@ -33,7 +33,6 @@ public:
 private:
   IMemory * _memory;
   BLE_HM10 * _ble;
-  void checkMemory();
   void sendAllPackagesToBLE();
   void sendPackageToBLEFromStorage(unsigned int index);
 

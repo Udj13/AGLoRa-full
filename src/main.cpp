@@ -1,3 +1,16 @@
+/*
+Project AGLoRa (abbreviation of Arduino + GPS + LoRa)
+Tiny and chip LoRa GPS tracker
+
+Copyright © 2021-2023 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
+License: http://opensource.org/licenses/MIT
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty 
+
+*/
+
+
 // First, open "settings.h" and setup
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -95,9 +108,9 @@ void loop()
 
   // if the time checker is over some prescribed amount
   // let the user know there is no incoming data
-  if ((_timeOfLastReceivedPacket) < millis() - BLE_UPDATE_INTERVAL)
+  if ((_timeOfLastReceivedPacket) + BLE_UPDATE_INTERVAL < millis() )
   {
-    // ble.sendInfo();
+    aglora.checkMemoryToBLE();
     _timeOfLastReceivedPacket = millis();
   }
 

@@ -1,3 +1,7 @@
+// Project AGLoRa: https://github.com/Udj13/AGLoRa/
+// Copyright © 2021-2023 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
+// License: http://opensource.org/licenses/MIT
+
 #ifndef SRAM_INCLUDED
 #define SRAM_INCLUDED
 

@@ -48,8 +48,8 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 // The first thing you need is to set up a tracker name and modules connections:
 
 // ========== NAME =======================
-#define NAME_LENGTH 6             // The same value for all devices
-const char NAME[NAME_LENGTH] = "Rick";               // Name of current tracker, NAME_LENGTH characters
+#define NAME_LENGTH 12             // The same value for all devices
+const char NAME[NAME_LENGTH] = "Morty";               // Name of current tracker, NAME_LENGTH characters
 // Example:
 // #define NAME = "Morty"; // All names length should be no longer than NAME_LENGTH
 // ========== WIRING =====================
@@ -147,18 +147,20 @@ String sendToPhone(DATA *package);
 // But the write operation is finite and usually capped at 100,000 cycles.
 // Please read: https://docs.arduino.cc/learn/programming/memory-guide
 // ============ LORA NETWORK SETTINGS ============
-#define I_WANT_TO_SEND_MY_LOCATION false  // "true" by default
-#define DATA_SENDING_INTERVAL 40000  // milliseconds
+#define I_WANT_TO_SEND_MY_LOCATION true  // "true" by default
+#define DATA_SENDING_INTERVAL 30 * 1000  // milliseconds
 
 #define MESH_MODE true  // "true" by default
 #define TTL 3  // Data packet lifetime (for transfer between devices)
 // ============ OTHER SETTINGS ==========
-#define BLE_UPDATE_INTERVAL 30000  // milliseconds
+#define BLE_UPDATE_INTERVAL 50 * 1000  // milliseconds
 // ============ SRAM STORAGE ==============
 // Maximum number of track points (struct DATA) in memory
 // Change and check free memory in "Output" after pressing "Verify".
-#define SRAM_STORAGE_SIZE 5    // DATA array size
+#define SRAM_STORAGE_SIZE 15    // DATA array size
 // not used if USE_EEPROM_MEMORY true, may be zero in this case
+// NOTE: Don't use all free memory! It's may broke BLE output. 
+// You should hold free memory for return String from "sendToPhone"
 // ============ EEPROM STORAGE ==============
 // EEPROM (non-volatile) memory
 // not used if define USE_EEPROM_MEMORY false
