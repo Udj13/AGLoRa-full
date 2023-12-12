@@ -1,7 +1,12 @@
 /*
 Project AGLoRa (abbreviation of Arduino + GPS + LoRa)
 Tiny and chip LoRa GPS tracker
-Copyright 2023 Eugeny Shlyagin (shlyagin@gmail.com)
+
+Copyright © 2021-2023 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
+License: http://opensource.org/licenses/MIT
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,6 +17,7 @@ Modules used:
 - LoRa EBYTE E220-900T22D (868 MHz) or EBYTE E32-E433T30D (433 MHz)
 - Bluetooth BLE AT-09 or HC-05
 */
+
 
 /* 
 HOW THIS SKETCH WORKS :
