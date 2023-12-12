@@ -40,7 +40,7 @@ void AGLORA::hello()
 /// @brief
 /// 1. clear
 /// 2. set name
-/// 3. set ttl
+/// 3. set default ttl
 /// @param loraDataPacket
 void AGLORA::clearDataPacket(DATA *trackerData)
 {
