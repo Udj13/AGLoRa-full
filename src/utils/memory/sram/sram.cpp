@@ -71,14 +71,14 @@ bool SRAM::checkUnique(DATA *newPoint)
 #if DEBUG_MODE && DEBUG_MEMORY
         Serial.print(F("#"));
 
-        Serial.println();
-        Serial.print(newPoint->name); Serial.print(F("\t - "));Serial.println(storage[i].data.name);
-        Serial.print(newPoint->year); Serial.print(F("\t - "));Serial.println(storage[i].data.year);
-        Serial.print(newPoint->month); Serial.print(F("\t - "));Serial.println(storage[i].data.month);
-        Serial.print(newPoint->day); Serial.print(F("\t - "));Serial.println(storage[i].data.day);
-        Serial.print(newPoint->hour); Serial.print(F("\t - "));Serial.println(storage[i].data.hour);
-        Serial.print(newPoint->minute); Serial.print(F("\t - "));Serial.println(storage[i].data.minute);
-        Serial.print(newPoint->second); Serial.print(F("\t - "));Serial.println(storage[i].data.second);
+        // Serial.println();
+        // Serial.print(newPoint->name); Serial.print(F("\t - "));Serial.println(storage[i].data.name);
+        // Serial.print(newPoint->year); Serial.print(F("\t - "));Serial.println(storage[i].data.year);
+        // Serial.print(newPoint->month); Serial.print(F("\t - "));Serial.println(storage[i].data.month);
+        // Serial.print(newPoint->day); Serial.print(F("\t - "));Serial.println(storage[i].data.day);
+        // Serial.print(newPoint->hour); Serial.print(F("\t - "));Serial.println(storage[i].data.hour);
+        // Serial.print(newPoint->minute); Serial.print(F("\t - "));Serial.println(storage[i].data.minute);
+        // Serial.print(newPoint->second); Serial.print(F("\t - "));Serial.println(storage[i].data.second);
 #endif
 
         if ((strcmp(newPoint->name, storage[i].data.name) == 0) &&

@@ -154,12 +154,12 @@ String sendToPhone(DATA *package);
 // Please read: https://docs.arduino.cc/learn/programming/memory-guide
 // ============ LORA NETWORK SETTINGS ============
 #define I_WANT_TO_SEND_MY_LOCATION true  // "true" by default
-#define DATA_SENDING_INTERVAL 30 * 1000  // milliseconds
+#define DATA_SENDING_INTERVAL 30000  // milliseconds (seconds * 1000)
 
 #define MESH_MODE true  // "true" by default
 #define TTL 3  // Data packet lifetime (for transfer between devices)
 // ============ OTHER SETTINGS ==========
-#define BLE_UPDATE_INTERVAL 50 * 1000  // milliseconds
+#define BLE_UPDATE_INTERVAL 50000  // milliseconds (seconds * 1000)
 // ============ SRAM STORAGE ==============
 // Maximum number of track points (struct DATA) in memory
 // Change and check free memory in "Output" after pressing "Verify".

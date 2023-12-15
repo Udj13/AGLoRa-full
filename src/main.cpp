@@ -110,7 +110,7 @@ void loop()
 
   // if the time checker is over some prescribed amount
   // let the user know there is no incoming data
-  if ((_timeOfLastReceivedPacket) + BLE_UPDATE_INTERVAL < millis() )
+ if ((_timeOfLastReceivedPacket + BLE_UPDATE_INTERVAL) < millis())
   {
     aglora.checkMemoryToBLE();
     _timeOfLastReceivedPacket = millis();
