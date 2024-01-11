@@ -1,4 +1,5 @@
-# AGLoRa (AVR PlatformIO project)
-https://github.com/Udj13/AGLoRa
+# AGLoRa (PlatformIO project)
 
-Full version for Arduino (AVR, C++)
+This project is the full version of https://github.com/Udj13/AGLoRa/blob/main/AGLoRa-tracker.ino 
+
+Read https://github.com/Udj13/AGLoRa for more information
