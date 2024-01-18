@@ -159,6 +159,7 @@ String sendToPhone(DATA *package);
 #define MESH_MODE true  // "true" by default
 #define TTL 3  // Data packet lifetime (for transfer between devices)
 // ============ OTHER SETTINGS ==========
+#define USE_BLE true  // use BLE output
 #define BLE_UPDATE_INTERVAL 50000  // milliseconds (seconds * 1000)
 // ============ SRAM STORAGE ==============
 // Maximum number of track points (struct DATA) in memory

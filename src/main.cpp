@@ -139,7 +139,10 @@ void processNewData(LORADATA *loraDataPackage)
 
     addedMemoryIndex = memory.save(&loraDataPackage->data);
     memory.checkCRC();
+
+#if USE_BLE
     aglora.sendPackageToBLE(&loraDataPackage->data, addedMemoryIndex); // upload data to app
+#endif
 
 // resend data to other trackers
 #if MESH_MODE
