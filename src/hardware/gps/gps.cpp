@@ -108,6 +108,7 @@ void GPS::printReadingIndication(unsigned long start, unsigned int delay)
 #endif
 }
 
+
 void GPS::updateLocation(DATA *dataPackage)
 {
 

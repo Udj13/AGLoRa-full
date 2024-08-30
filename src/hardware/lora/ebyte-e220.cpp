@@ -40,7 +40,7 @@ void LORA::setup()
     configuration.ADDL = 0x00;
     configuration.ADDH = 0x00;
     configuration.CHAN = 0x17;
-    configuration.SPED.uartBaudRate = UART_BPS_9600;
+    configuration.SPED.uartBaudRate = UART_BPS_115200;
     configuration.SPED.airDataRate = AIR_DATA_RATE_010_24;
     configuration.SPED.uartParity = MODE_00_8N1;
     configuration.OPTION.subPacketSetting = SPS_200_00;
@@ -62,6 +62,10 @@ void LORA::setup()
     Serial.print(configuration.OPTION.getTransmissionPowerDescription());
     Serial.println(F("]"));
 #endif
+
+    loraPort.end();
+    loraPort.begin(115200);
+
 }
 
 void LORA::send(LORADATA *loraDataPacket)
