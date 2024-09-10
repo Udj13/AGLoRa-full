@@ -16,10 +16,10 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 
 // ========== LORA section ==========
 
-LORA::LORA(uint8_t pinRx, uint8_t pinTx, long speed, uint8_t aux, uint8_t m0, uint8_t m1, INDICATION *indication) : loraPort(pinRx, pinTx),
+LORA::LORA(uint8_t pinRx, uint8_t pinTx, uint8_t aux, uint8_t m0, uint8_t m1, INDICATION *indication) : loraPort(pinRx, pinTx),
                                                                                                                     e220ttl(&loraPort, aux, m0, m1)
 {
-    loraPort.begin(speed);
+    loraPort.begin(LORA_START_SPEED);
     _indication = indication;
 }
 
@@ -40,7 +40,7 @@ void LORA::setup()
     configuration.ADDL = 0x00;
     configuration.ADDH = 0x00;
     configuration.CHAN = 0x17;
-    configuration.SPED.uartBaudRate = UART_BPS_115200;
+    configuration.SPED.uartBaudRate = UART_BPS_57600;
     configuration.SPED.airDataRate = AIR_DATA_RATE_010_24;
     configuration.SPED.uartParity = MODE_00_8N1;
     configuration.OPTION.subPacketSetting = SPS_200_00;
@@ -64,7 +64,7 @@ void LORA::setup()
 #endif
 
     loraPort.end();
-    loraPort.begin(115200);
+    loraPort.begin(57600);
 
 }
 

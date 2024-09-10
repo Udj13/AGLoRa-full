@@ -45,7 +45,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 TESTS tests;
 INDICATION indication(GPS_LED, LORA_LED, BLE_LED, MEMORY_LED);
 GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED, &indication);
-LORA lora(LORA_PIN_RX, LORA_PIN_TX, LORA_SPEED, LORA_PIN_AX, LORA_PIN_M0, LORA_PIN_M1, &indication);
+LORA lora(LORA_PIN_RX, LORA_PIN_TX, LORA_PIN_AX, LORA_PIN_M0, LORA_PIN_M1, &indication);
 BLE_HM10 ble;
 
 #if USE_EEPROM_MEMORY

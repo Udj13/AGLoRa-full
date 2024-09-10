@@ -43,7 +43,7 @@ class LORA
     SoftwareSerial loraPort;
     LoRa_E220 e220ttl;
 public:
-    LORA(uint8_t pinRx, uint8_t pinTx, long speed, uint8_t aux, uint8_t m0, uint8_t m1, INDICATION * indication);
+    LORA(uint8_t pinRx, uint8_t pinTx, uint8_t aux, uint8_t m0, uint8_t m1, INDICATION * indication);
     void setup();
     void send(LORADATA *loraDataPackage);
     bool hasNewData(LORADATA *loraDataPackage);

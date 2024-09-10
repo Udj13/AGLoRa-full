@@ -55,7 +55,7 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 
 // ========== NAME =======================
 #define NAME_LENGTH 12             // The same value for all devices
-const char NAME[NAME_LENGTH] = "Morty";               // Name of current tracker, NAME_LENGTH characters
+const char NAME[NAME_LENGTH] = "Rick";               // Name of current tracker, NAME_LENGTH characters
 // Example:
 // #define NAME = "Morty"; // All names length should be no longer than NAME_LENGTH
 // ========== WIRING =====================
@@ -77,7 +77,7 @@ const char NAME[NAME_LENGTH] = "Morty";               // Name of current tracker
 #define MEMORY_LED LED_BUILTIN
 // ========== MODULES SETTING=============
 #define GPS_SPEED 9600
-#define LORA_SPEED 9600
+#define LORA_START_SPEED 9600
 
 // Then install "EByte LoRa E220 by Renzo Mischianty" library
 // and "TinyGPSPlus by Mikal Hart" library

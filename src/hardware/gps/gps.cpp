@@ -120,7 +120,7 @@ void GPS::updateLocation(DATA *dataPackage)
 
     bool newData = false;
     // For three seconds we parse GPS data and report some key values
-    const unsigned int readingDelay = 3000;
+    const unsigned int readingDelay = 1000;
     for (unsigned long start = millis(); millis() - start < readingDelay;)
     {
         printReadingIndication(start, readingDelay);
