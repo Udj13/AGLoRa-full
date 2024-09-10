@@ -41,17 +41,37 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 #ifndef SETTINGS_INCLUDED
 #define SETTINGS_INCLUDED
 
-#include <TinyGPSPlus.h>      // install from Arduino IDE
+
+// Select EBYTE module
+#define EBYTE_E32 // EBYTE_E220 or EBYTE_E32
+
+
+/*  
+Then, for the correct selection of the receiver сheck the selected PlatformIO config:
+
+1. e220-nanoatmega328new
+2. e220-nanoatmega328old
+
+3. e32-nanoatmega328new
+4. e32-nanoatmega328old
+
+The configuration connects the required library.
+*/
+
+#include <TinyGPSPlus.h>    
 // Docs: http://arduiniana.org/libraries/tinygpsplus/
-#include "LoRa_E220.h"        // install from Arduino IDE
+
+#ifdef EBYTE_E32 
+#include "LoRa_E32.h"      
 // Docs: https://github.com/xreef/EByte_LoRa_E220_Series_Library
+#endif
+//or
+#ifdef EBYTE_E220 
+#include "LoRa_E220.h"        // install from Arduino IDE
+// Docs: https://github.com/xreef/LoRa_E32_Series_Library
+#endif
 
-// ...or, if you use PlatformIO, add to "platformio.ini":
-//  lib_deps = 
-//  	mikalhart/TinyGPSPlus@^1.0.3
-//  	xreef/EByte LoRa E220 library@^1.0.8
-
-// The first thing you need is to set up a tracker name and modules connections:
+// After selecting a module, you need to set up a tracker name and module connections:
 
 // ========== NAME =======================
 #define NAME_LENGTH 12             // The same value for all devices

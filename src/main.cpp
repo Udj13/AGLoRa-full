@@ -23,7 +23,15 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 #include "settings/settings.h"
 #include "aglora/aglora.h"
 #include "hardware/gps/gps.h"
+
+#ifdef EBYTE_E32 
+#include "hardware/lora/ebyte-e32.h"
+#endif
+
+#ifdef EBYTE_E220 
 #include "hardware/lora/ebyte-e220.h"
+#endif
+
 #include "hardware/lora/loraData.h"
 #include "hardware/ble/hm-10.h"
 #include "tests/tests.h"
