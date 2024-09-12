@@ -53,11 +53,14 @@ String sendToPhone(DATA *package) {
   result += F("Z");                // UTC
 
   // Sensors and additional data
-  result += F("&sat="); 
-  result += package->sat;  // satellites  1 byte
+  result += F("&gpsValid="); 
+  result += package->gpsValid;  // validity of coordinates  bool
 
-  result += F("&hdop="); 
-  result += package->hdop;  // HDOP  1 byte
+  // result += F("&sat="); 
+  // result += package->sat;  // satellites  1 byte
+
+  // result += F("&hdop="); 
+  // result += package->hdop;  // HDOP  1 byte
 
   // Add more data here if you need ...
   // result += "&speed=";       // data's name in app

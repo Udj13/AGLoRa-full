@@ -18,6 +18,9 @@ Modules used:
 - Bluetooth BLE AT-09 or HC-05
 */
 
+#ifndef SETTINGS_INCLUDED
+#define SETTINGS_INCLUDED
+
 
 /* 
 HOW THIS SKETCH WORKS :
@@ -38,16 +41,14 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 // ========================================
 // ==== Settings LEVEL 1 (required) =======
 // ========================================
-#ifndef SETTINGS_INCLUDED
-#define SETTINGS_INCLUDED
 
-
-// Select EBYTE module
-#define EBYTE_E32 // EBYTE_E220 or EBYTE_E32
+// First of all, select EBYTE module:
+#define EBYTE_E220 // EBYTE_E220 or EBYTE_E32
 
 
 /*  
-Then, for the correct selection of the receiver сheck the selected PlatformIO config:
+Then, for the correct selection of the receiver сheck the selected PlatformIO config.
+There are 4 options now:
 
 1. e220-nanoatmega328new
 2. e220-nanoatmega328old
@@ -56,18 +57,20 @@ Then, for the correct selection of the receiver сheck the selected PlatformIO c
 4. e32-nanoatmega328old
 
 The configuration connects the required library.
+The libraries will be installed automatically.
 */
 
-#include <TinyGPSPlus.h>    
-// Docs: http://arduiniana.org/libraries/tinygpsplus/
-
+// Here are the libraries that I used in this project, thanks to their author Renzo Mischianti!
+// Please, give him a donation if you also think he did a great job!
+// https://github.com/xreef
+// https://mischianti.org/
 #ifdef EBYTE_E32 
 #include "LoRa_E32.h"      
 // Docs: https://github.com/xreef/EByte_LoRa_E220_Series_Library
 #endif
 //or
 #ifdef EBYTE_E220 
-#include "LoRa_E220.h"        // install from Arduino IDE
+#include "LoRa_E220.h"
 // Docs: https://github.com/xreef/LoRa_E32_Series_Library
 #endif
 
@@ -110,7 +113,7 @@ const char NAME[NAME_LENGTH] = "Rick";               // Name of current tracker,
 // "debug mode" through the serial port.
 // Don't forget to disconnect the bluetooth module.
 // Then open “Tools” -> ”Serial monitor” in Arduino IDE.
-#define DEBUG_MODE true  // change "false" to "true" to enable
+#define DEBUG_MODE false  // change "false" to "true" to enable
 // Next, logs levels for comfortable deallbugging, 
 // if DEBUG_MODE == false, logs level are not important 
 #define DEBUG_BLE false  // bluetooth low energy
@@ -143,11 +146,14 @@ struct DATA {
   unsigned char minute;
   unsigned char second;
 
-  unsigned char sat;
-  unsigned char hdop;
+  bool gpsValid;
+
+
 
   // Add more data fields here if you need
   // ...
+  //unsigned char sat;
+  //unsigned char hdop;
   unsigned char battery;
   // unsigned char speed;
   // unsigned char sensor1;

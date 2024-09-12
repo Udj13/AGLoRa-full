@@ -34,12 +34,11 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 
 // install from Arduino IDE or PlatformIO
 // Docs: http://arduiniana.org/libraries/tinygpsplus/
-#include <TinyGPSPlus.h>
+//#include <TinyGPSPlus.h>
 
 class GPS
 {
     SoftwareSerial gpsPort;
-    TinyGPSPlus gpsModule;
 public:
     GPS(uint8_t pinRx, uint8_t pinTx, long speed, INDICATION * indication);
     void setup();
@@ -49,9 +48,11 @@ public:
 private:
     bool _debugMode;
     INDICATION * _indication;
-    void printGPSInfo();
     void printReadingIndication(unsigned long start, unsigned int delay);
     char _readingIndicator = 0;
+    bool processRMCSentence(String sentence, DATA *dataPackage);
+    bool processGGASentence(String sentence, DATA *dataPackage);
+    float convertDegMinToDecDeg(float degMin);
 };
 
 #endif

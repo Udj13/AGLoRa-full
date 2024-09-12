@@ -8,7 +8,7 @@ Copyright © 2021-2023 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
 License: http://opensource.org/licenses/MIT
 
 This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty 
+but WITHOUT ANY WARRANTY; without even the implied warranty
 
 */
 
@@ -72,16 +72,22 @@ void AGLORA::printPackage(LORADATA *loraDataPacket)
   Serial.println(F("🟢[AGLoRa: loraDataPacket now contains ↴]"));
   Serial.print(F("     Name: "));
   Serial.print(loraDataPacket->data.name);
-  Serial.print(F(", lat: "));
+  Serial.print(F(", 🌎 lat: "));
   Serial.print(loraDataPacket->data.lat, 6);
   Serial.print(F(", lon: "));
   Serial.print(loraDataPacket->data.lon, 6);
-  Serial.print(F(", sat: "));
-  Serial.print(loraDataPacket->data.sat);
-  Serial.print(F(", hdop: "));
-  Serial.print(loraDataPacket->data.hdop);
 
-  Serial.print(F(", date: "));
+  if (loraDataPacket->data.gpsValid)
+    Serial.print(F(", GPS 🆗"));
+  else
+    Serial.print(F(", GPS ❌"));
+
+  // Serial.print(F(", sat: "));
+  // Serial.print(loraDataPacket->data.sat);   // example
+  // Serial.print(F(", hdop: "));
+  // Serial.print(loraDataPacket->data.hdop);  // example
+
+  Serial.print(F(", 📆 date: "));
   Serial.print(loraDataPacket->data.year);
   Serial.print(F("/"));
   if (loraDataPacket->data.month < 10)
@@ -92,7 +98,7 @@ void AGLORA::printPackage(LORADATA *loraDataPacket)
     Serial.print(F("0"));
   Serial.print(loraDataPacket->data.day);
 
-  Serial.print(F(", time: "));
+  Serial.print(F(", 🕰️ time: "));
   Serial.print(loraDataPacket->data.hour);
   Serial.print(F(":"));
   if (loraDataPacket->data.minute < 10)
@@ -104,7 +110,7 @@ void AGLORA::printPackage(LORADATA *loraDataPacket)
   Serial.print(loraDataPacket->data.second);
   Serial.print(F(" (UTC)"));
 
-  Serial.print(F(" TTL="));
+  Serial.print(F(" 📦 TTL="));
   Serial.print(loraDataPacket->ttl);
 
   Serial.println();
