@@ -23,6 +23,8 @@ id=name&lat={0}&lon={1}&timestamp={2}&speed={3}&altitude={4}
 String sendToPhone(DATA *package) {
 
   String result;
+  result += F("&dev_batt=");  //battery of your device
+  result += F("100"); //implement voltage acquisition
 
   result += F("&name=");  //other tracker's name
   result += package->name;  //NAME_LENGTH bytes
@@ -56,24 +58,18 @@ String sendToPhone(DATA *package) {
   result += F("&gpsValid="); 
   result += package->gpsValid;  // validity of coordinates  bool
 
-  // result += F("&sat="); 
-  // result += package->sat;  // satellites  1 byte
-
-  // result += F("&hdop="); 
-  // result += package->hdop;  // HDOP  1 byte
-
   // Add more data here if you need ...
-  // result += "&speed=";       // data's name in app
-  // result += package->speed;   // value
+  // result += "&speed=";       
+  // result += package->speed;   
 
   result += "&batt=";
   result += package->battery;
 
-  // result += "&alienSensor=";
-  // result += package->sensor1;
+  // result += "&course=";
+  // result += package->course;
 
-  // result += "&C-137-level=";
-  // result += package->sensor2;
+  // result += "&C-137-level=";  // data's name in app
+  // result += package->sensor2; // value
 
   return result;
 }

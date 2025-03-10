@@ -48,7 +48,9 @@ private:
   IMemory * _memory;
   BLE_HM10 * _ble;
   void sendAllPackagesToBLE();
+  void sendLastPackagesToBLE();
   void sendPackageToBLEFromStorage(unsigned int index);
+  bool isDataMoreRecent(DATA * newData, DATA * oldData);
 
 };
 

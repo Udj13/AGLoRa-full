@@ -18,7 +18,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 const String bleProtocolPrefix = "AGLoRa-";
 const String bleProtocolTypePoint = "point";
 const String bleProtocolTypeMemory = "memory";
-const String bleProtocolVersion = "&ver=2.1";
+const String bleProtocolVersion = "&ver=2.2";
 const String bleProtocolParamCRC = "&crc=";
 const String bleProtocolOK = "ok";
 const String bleProtocolError = "error";
@@ -26,6 +26,9 @@ const String bleProtocolError = "error";
 const String bleProtocolParamMemorySize = "&memsize=";
 const String bleProtocolParamMemoryOverwrite = "&overwrite=";
 const String bleProtocolParamMemoryIndex = "&index=";
+
+const String bleProtocolDeviceName = "&dev_name=" + String(NAME);
+
 
 const String bleProtocolDivider = "\r\n";
 
@@ -147,6 +150,7 @@ void AGLORA::getRequest(String request)
 
   if (request.startsWith(F("all")))
   {
+    checkMemoryToBLE();
     sendAllPackagesToBLE();
     return;
   }
@@ -167,6 +171,7 @@ void AGLORA::checkMemoryToBLE()
                     bleProtocolTypeMemory +
                     bleProtocolVersion;
   response += bleProtocolParamCRC;
+  response += bleProtocolDeviceName;
   response += _memory->checkCRC() ? bleProtocolOK : bleProtocolError;
   response += bleProtocolParamMemorySize + _memory->getSize();
   response += bleProtocolParamMemoryIndex + _memory->getIndex();
@@ -253,4 +258,73 @@ void AGLORA::sendPackageToBLEFromStorage(unsigned int index)
   }
 
   sendPackageToBLE(_memory->load(index), index);
+}
+
+
+void AGLORA::sendLastPackagesToBLE()
+{
+    const unsigned int MAX_TRACKERS = 10; // Max trackers in memory
+    struct TrackerData {
+        char name[NAME_LENGTH];
+        DATA* lastData;
+    };
+    TrackerData lastDataArray[MAX_TRACKERS];
+    unsigned int trackerCount = 0; 
+
+    unsigned int maxIndex = _memory->getStorageOverwrite() ? _memory->getSize() : _memory->getIndex();
+
+    for (unsigned int i = 0; i < maxIndex; ++i)
+    {
+        DATA* data = _memory->load(i);
+        if (data == nullptr) continue;
+
+        bool found = false;
+        for (unsigned int j = 0; j < trackerCount; ++j)
+        {
+            if (strncmp(lastDataArray[j].name, data->name, NAME_LENGTH) == 0)
+            {
+                if (isDataMoreRecent(data, lastDataArray[j].lastData))
+                {
+                    lastDataArray[j].lastData = data;
+                }
+                found = true;
+                break;
+            }
+        }
+
+        if (!found && trackerCount < MAX_TRACKERS)
+        {
+            strncpy(lastDataArray[trackerCount].name, data->name, NAME_LENGTH);
+            lastDataArray[trackerCount].lastData = data;
+            trackerCount++;
+        }
+    }
+
+    for (unsigned int i = 0; i < trackerCount; ++i)
+    {
+        sendPackageToBLE(lastDataArray[i].lastData, 0);
+    }
+  } 
+
+bool AGLORA::isDataMoreRecent(DATA * newData, DATA * oldData)
+{
+    if (newData->year > oldData->year) return true;
+    if (newData->year < oldData->year) return false;
+
+    if (newData->month > oldData->month) return true;
+    if (newData->month < oldData->month) return false;
+
+    if (newData->day > oldData->day) return true;
+    if (newData->day < oldData->day) return false;
+
+    if (newData->hour > oldData->hour) return true;
+    if (newData->hour < oldData->hour) return false;
+
+    if (newData->minute > oldData->minute) return true;
+    if (newData->minute < oldData->minute) return false;
+
+    if (newData->second > oldData->second) return true;
+    if (newData->second < oldData->second) return false;
+
+    return false;
 }

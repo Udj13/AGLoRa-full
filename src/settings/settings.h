@@ -44,6 +44,7 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 
 // First of all, select EBYTE module:
 #define EBYTE_E220 // EBYTE_E220 or EBYTE_E32
+//#define EBYTE_E32 // EBYTE_E220 or EBYTE_E32
 
 
 /*  
@@ -78,7 +79,7 @@ The libraries will be installed automatically.
 
 // ========== NAME =======================
 #define NAME_LENGTH 12             // The same value for all devices
-const char NAME[NAME_LENGTH] = "Rick";               // Name of current tracker, NAME_LENGTH characters
+const char NAME[NAME_LENGTH] = "Morty";               // Name of current tracker, NAME_LENGTH characters
 // Example:
 // #define NAME = "Morty"; // All names length should be no longer than NAME_LENGTH
 // ========== WIRING =====================
