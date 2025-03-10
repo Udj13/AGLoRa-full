@@ -171,8 +171,8 @@ void AGLORA::checkMemoryToBLE()
                     bleProtocolTypeMemory +
                     bleProtocolVersion;
   response += bleProtocolParamCRC;
-  response += bleProtocolDeviceName;
   response += _memory->checkCRC() ? bleProtocolOK : bleProtocolError;
+  response += bleProtocolDeviceName;
   response += bleProtocolParamMemorySize + _memory->getSize();
   response += bleProtocolParamMemoryIndex + _memory->getIndex();
   response += bleProtocolParamMemoryOverwrite + _memory->getStorageOverwrite();
