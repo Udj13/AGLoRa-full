@@ -62,11 +62,11 @@ String sendToPhone(DATA *package) {
   // result += "&speed=";       
   // result += package->speed;   
 
-  result += "&batt=";
-  result += package->battery;
-
   // result += "&course=";
   // result += package->course;
+
+  result += "&batt=";
+  result += package->battery;
 
   // result += "&C-137-level=";  // data's name in app
   // result += package->sensor2; // value
@@ -74,4 +74,14 @@ String sendToPhone(DATA *package) {
   return result;
 }
 
+
+String sendBatteryToPhone() {
+
+  String result;
+  
+  result += "&dev_bat=";
+  result += 100;
+
+  return result;
+}
 

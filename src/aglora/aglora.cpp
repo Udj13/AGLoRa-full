@@ -173,6 +173,7 @@ void AGLORA::checkMemoryToBLE()
   response += bleProtocolParamCRC;
   response += _memory->checkCRC() ? bleProtocolOK : bleProtocolError;
   response += bleProtocolDeviceName;
+  response += sendBatteryToPhone();
   response += bleProtocolParamMemorySize + _memory->getSize();
   response += bleProtocolParamMemoryIndex + _memory->getIndex();
   response += bleProtocolParamMemoryOverwrite + _memory->getStorageOverwrite();
@@ -187,6 +188,7 @@ void AGLORA::sendPackageToBLE(DATA *trackerData, int index)
                     bleProtocolVersion;
 
   response += sendToPhone(trackerData);
+  response += sendBatteryToPhone();
   response += bleProtocolParamMemoryIndex + index;
   response += bleProtocolParamCRC;
   response += _memory->checkCRC(index) ? bleProtocolOK : bleProtocolError;

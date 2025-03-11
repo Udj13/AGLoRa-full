@@ -168,6 +168,7 @@ Data packets are sent using OsmAnd-like protocol:
 id=name&lat={0}&lon={1}&timestamp={2}&speed={3}&altitude={4}
 */
 String sendToPhone(DATA *package); 
+String sendBatteryToPhone(); 
 // find it in the code and customize if you need
 
 // ========================================
