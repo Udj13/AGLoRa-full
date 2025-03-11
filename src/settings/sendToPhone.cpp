@@ -62,9 +62,6 @@ String sendToPhone(DATA *package) {
   // result += "&speed=";       
   // result += package->speed;   
 
-  // result += "&course=";
-  // result += package->course;
-
   result += "&battery=";
   result += package->battery;
 
