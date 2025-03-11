@@ -65,7 +65,7 @@ String sendToPhone(DATA *package) {
   // result += "&course=";
   // result += package->course;
 
-  result += "&batt=";
+  result += "&battery=";
   result += package->battery;
 
   // result += "&C-137-level=";  // data's name in app
