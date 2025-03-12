@@ -36,6 +36,8 @@ String sendToPhone(DATA *package) {
   result += F("122");         // altitude, meters 
   result += F("&spd=");       // record separator, optional value
   result += F("20.7");         // speed, kilometers per hour 
+  result += F("&crs=");       // record separator, optional value
+  result += F("146");         // course, degrees from north clockwise 
   result += F("&sat=");       // number of visible satellites, optional value
   result += F("4");           // implement number acquisition
 
