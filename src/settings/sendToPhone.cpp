@@ -23,19 +23,24 @@ id=name&lat={0}&lon={1}&timestamp={2}&speed={3}&altitude={4}
 String sendToPhone(DATA *package) {
 
   String result;
-  result += F("&dev_batt=");  //battery of your device
-  result += F("100"); //implement voltage acquisition
-
-  result += F("&name=");  //other tracker's name
+  result += F("name=");  //tracker's name
   result += package->name;  //NAME_LENGTH bytes
+  result += F("&dev_bat=");  //battery of the device you connected to, optional value
+  result += F("100"); //implement voltage acquisition, 0-100 (min max)
 
-  result += F("&lat=");       // cordinates
+  result += F("&lat=");       // coordinates
   result += String(package->lat, 6);  // latitude
   result += F("&lon=");       // record separator
   result += String(package->lon, 6);  // longitute
+  result += F("&alt=");       // record separator, optional value
+  result += F("122");         // altitude, meters 
+  result += F("&spd=");       // record separator, optional value
+  result += F("20.7");         // speed, kilometers per hour 
+  result += F("&sat=");       // number of visible satellites, optional value
+  result += F("4");           // implement number acquisition
 
   //Date and time format: 2023-06-07T15:21:00Z
-  result += F("&timestamp=");      // record separator
+  result += F("&ts=");      // record separator
   result += package->year + 2000;  // year
   result += F("-");                // data separator
   if (package->month < 10) result += F("0");
@@ -55,15 +60,15 @@ String sendToPhone(DATA *package) {
   result += F("Z");                // UTC
 
   // Sensors and additional data
-  result += F("&gpsValid="); 
+  result += F("&gps_valid=");   //optional value
   result += package->gpsValid;  // validity of coordinates  bool
+
+  result += "&bat=";              //optional value
+  result += package->battery;     //tracker's battery, 0-100 (min max)
 
   // Add more data here if you need ...
   // result += "&speed=";       
   // result += package->speed;   
-
-  result += "&battery=";
-  result += package->battery;
 
   // result += "&C-137-level=";  // data's name in app
   // result += package->sensor2; // value
