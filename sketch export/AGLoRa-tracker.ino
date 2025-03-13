@@ -62,7 +62,7 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 // After selecting a module, you need to set up a tracker name and module connections:
 
 // ========== NAME =======================
-#define NAME_LENGTH 6             // The same value for all devices
+#define NAME_LENGTH 12             // The same value for all devices
 const char NAME[NAME_LENGTH] = "Morty";               // Name of current tracker, NAME_LENGTH characters
 // Example:
 // #define NAME = "Rick"; // All names length should be no longer than NAME_LENGTH
