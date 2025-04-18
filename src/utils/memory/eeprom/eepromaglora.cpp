@@ -71,7 +71,10 @@ void EEPROMAglora::setup()
             break;
         }
 
-        if (abs(eepromdata.counter - prevIncCounter) > 1)
+//        if (abs(eepromdata.counter - prevIncCounter) > 1)
+        if ((eepromdata.counter > prevIncCounter ? 
+            eepromdata.counter - prevIncCounter : 
+            prevIncCounter - eepromdata.counter) > 1)
         { // not in sequence
             if (i != 0)
             {

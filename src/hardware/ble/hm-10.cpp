@@ -12,16 +12,19 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 
 */
 
-#include <Arduino.h>
-#include "hm-10.h"
 #include "../../settings/settings.h"
 
+#if defined(ARDUINO_AVR_EBYTE_E32) || defined(ARDUINO_AVR_EBYTE_E220)
 
-BLE_HM10::BLE_HM10()
+#include <Arduino.h>
+#include "hm-10.h"
+
+
+BLE::BLE()
 {
 }
 
-void BLE_HM10::setup()
+void BLE::setup()
 {
 #if DEBUG_MODE && DEBUG_BLE
     Serial.print(F("📲[BLE: ready for work ✅. Maximum Transmission Unit (MTU) = "));
@@ -35,7 +38,7 @@ void BLE_HM10::setup()
 #endif
 }
 
-String BLE_HM10::read()
+String BLE::read()
 {
     String result = "";
     while (Serial.available())
@@ -47,7 +50,7 @@ String BLE_HM10::read()
     return result;
 }
 
-void BLE_HM10::send(String *package)
+void BLE::send(String *package)
 {
 #if DEBUG_MODE && DEBUG_BLE
     Serial.print(F("📲[BLE: 📫 Sending: "));
@@ -73,11 +76,9 @@ void BLE_HM10::send(String *package)
         package->remove(0, MTU);
         isStringNotEmpty = package->length() != 0;
 
-#if !DEBUG_MODE && !DEBUG_BLE
         // important part
         Serial.print(nextSendMTU); //  here we send data to BLE
         delay(10);
-#endif
 
 #if DEBUG_MODE && DEBUG_BLE
         if (isStringNotEmpty)
@@ -86,7 +87,7 @@ void BLE_HM10::send(String *package)
     }
 }
 
-void BLE_HM10::sendCommand(const String command)
+void BLE::sendCommand(const String command)
 {
     Serial.println(command);
     delay(200); // wait some time
@@ -95,3 +96,5 @@ void BLE_HM10::sendCommand(const String command)
         Serial.read();
     }
 }
+
+#endif

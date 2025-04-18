@@ -62,6 +62,12 @@ String sendToPhone(DATA *package) {
   // result += "&speed=";       
   // result += package->speed;   
 
+  result += "&sat=";
+  result += package->sats;
+
+  result += "&alt=";
+  result += String(package->altitude, 1);
+
   result += "&battery=";
   result += package->battery;
 

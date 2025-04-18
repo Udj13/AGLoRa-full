@@ -15,7 +15,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 
 #include "ebyte-e220.h"
 
-#ifdef EBYTE_E220 
+#ifdef ARDUINO_AVR_EBYTE_E220 
 
 
 // ========== LORA section ==========

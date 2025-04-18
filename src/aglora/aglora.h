@@ -18,9 +18,17 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 #include "../settings/settings.h"
 #include "../hardware/lora/loraData.h"
 #include "../hardware/gps/gps.h"
-#include "../hardware/ble/hm-10.h"
 #include "../utils/memory/sram/sram.h"
 #include "../utils/memory/eeprom/eepromaglora.h"
+
+#if defined(ARDUINO_AVR_EBYTE_E32) || defined(ARDUINO_AVR_EBYTE_E220)
+#include "hardware/ble/hm-10.h"
+#endif
+
+#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220)
+#include "hardware/ble/esp32-ble.h"
+#endif
+
 
 
 /*****************************************************
@@ -35,7 +43,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 class AGLORA
 {
 public:
-  AGLORA(IMemory * memory, BLE_HM10 * ble);
+  AGLORA(IMemory * memory, BLE * ble);
   void hello();
   void checkMemoryToBLE();
   void clearDataPacket(DATA * trackerData);
@@ -46,7 +54,7 @@ public:
 
 private:
   IMemory * _memory;
-  BLE_HM10 * _ble;
+  BLE * _ble;
   void sendAllPackagesToBLE();
   void sendLastPackagesToBLE();
   void sendPackageToBLEFromStorage(unsigned int index);

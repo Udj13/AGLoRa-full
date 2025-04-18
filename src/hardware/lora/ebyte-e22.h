@@ -14,7 +14,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 #include "../../settings/settings.h"
 
 
-#ifdef ARDUINO_AVR_EBYTE_E32 
+#ifdef ARDUINO_AVR_EBYTE_E22 
 
 
 #ifndef LORA_INCLUDED
@@ -40,12 +40,12 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 
 // install from Arduino IDE or PlatformIO
 // Docs: https://github.com/xreef/EByte_LoRa_E220_Series_Library
-#include "LoRa_E32.h"
+#include "LoRa_E22.h"
 
 class LORA
 {
     SoftwareSerial loraPort;
-    LoRa_E32 e32ttl;
+    LoRa_E22 e22ttl;
 public:
     LORA(uint8_t pinRx, uint8_t pinTx, uint8_t aux, uint8_t m0, uint8_t m1, INDICATION * indication);
     void setup();

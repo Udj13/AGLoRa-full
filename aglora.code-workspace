@@ -1,9 +1,6 @@
 {
 	"folders": [
 		{
-			"path": "../hardglide-3display-timer"
-		},
-		{
 			"name": "AGLoRa-AVR",
 			"path": "."
 		}

@@ -14,14 +14,13 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 #include "../../settings/settings.h"
 
 
-#ifdef ARDUINO_AVR_EBYTE_E32 
+#ifdef ESP32_C3_EBYTE_E32
 
 
 #ifndef LORA_INCLUDED
 #define LORA_INCLUDED
 
 #include <Arduino.h>
-#include <SoftwareSerial.h>
 
 #include "loraData.h"
 #include "../indication/indication.h"
@@ -39,12 +38,12 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 */
 
 // install from Arduino IDE or PlatformIO
-// Docs: https://github.com/xreef/EByte_LoRa_E220_Series_Library
+// Docs: https://github.com/xreef/EByte_LoRa_E32_Series_Library
 #include "LoRa_E32.h"
 
 class LORA
 {
-    SoftwareSerial loraPort;
+    HardwareSerial loraPort;
     LoRa_E32 e32ttl;
 public:
     LORA(uint8_t pinRx, uint8_t pinTx, uint8_t aux, uint8_t m0, uint8_t m1, INDICATION * indication);
@@ -56,6 +55,8 @@ public:
 private:
     bool _debugMode;
     uint8_t _ledPin;
+    uint8_t _pinRx;
+    uint8_t _pinTx;
     INDICATION * _indication;
     ResponseStructContainer rsc;
 };

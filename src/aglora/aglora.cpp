@@ -18,7 +18,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 const String bleProtocolPrefix = "AGLoRa-";
 const String bleProtocolTypePoint = "point";
 const String bleProtocolTypeMemory = "memory";
-const String bleProtocolVersion = "&ver=2.2";
+const String bleProtocolVersion = "&ver=2.3";
 const String bleProtocolParamCRC = "&crc=";
 const String bleProtocolOK = "ok";
 const String bleProtocolError = "error";
@@ -27,12 +27,12 @@ const String bleProtocolParamMemorySize = "&memsize=";
 const String bleProtocolParamMemoryOverwrite = "&overwrite=";
 const String bleProtocolParamMemoryIndex = "&index=";
 
-const String bleProtocolDeviceName = "&dev_name=" + String(NAME);
+const String bleProtocolDeviceName = "&dev_name=" + String(NAME); // added in version 2.3
 
 
 const String bleProtocolDivider = "\r\n";
 
-AGLORA::AGLORA(IMemory *memory, BLE_HM10 *ble)
+AGLORA::AGLORA(IMemory *memory, BLE *ble)
 {
   _ble = ble;
   _memory = memory;
@@ -50,7 +50,9 @@ void AGLORA::hello()
     delay(50);
   }
   Serial.println();
-  Serial.println(F("AGLORA tracker started..."));
+  Serial.print(F("AGLORA tracker '"));
+  Serial.print(NAME);
+  Serial.println(F("'  — online."));
 #endif
 }
 
@@ -79,6 +81,10 @@ void AGLORA::printPackage(LORADATA *loraDataPacket)
   Serial.print(loraDataPacket->data.lat, 6);
   Serial.print(F(", lon: "));
   Serial.print(loraDataPacket->data.lon, 6);
+  Serial.print(F(", alt: "));
+  Serial.print(loraDataPacket->data.altitude, 1);
+  Serial.print(F(", sats: "));
+  Serial.print(loraDataPacket->data.sats);
 
   if (loraDataPacket->data.gpsValid)
     Serial.print(F(", GPS 🆗"));

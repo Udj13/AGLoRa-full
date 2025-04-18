@@ -12,17 +12,20 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 
 */
 
-#include "ebyte-e32.h"
+#include "esp32-ebyte-e32.h"
 
-#ifdef ARDUINO_AVR_EBYTE_E32 
+#ifdef ESP32_C3_EBYTE_E32
 
 // ========== LORA section ==========
 
-LORA::LORA(uint8_t pinRx, uint8_t pinTx, uint8_t aux, uint8_t m0, uint8_t m1, INDICATION *indication) : loraPort(pinRx, pinTx),
-                                                                                                                    e32ttl(&loraPort, aux, m0, m1)
+const int hardware_uart = 1;
+
+LORA::LORA(uint8_t pinRx, uint8_t pinTx, uint8_t aux, uint8_t m0, uint8_t m1, INDICATION *indication) : loraPort(hardware_uart),
+                                                                                                                    e32ttl(pinRx, pinTx, &loraPort, aux, m0, m1, UART_BPS_RATE_9600)
 {
-    loraPort.begin(LORA_START_SPEED);
     _indication = indication;
+    _pinRx = pinRx;
+    _pinTx = pinTx;
 }
 
 void LORA::setup()
@@ -34,19 +37,22 @@ void LORA::setup()
     e32ttl.begin();
     e32ttl.resetModule();
 
+    e32ttl.begin();
+    e32ttl.resetModule();
+
     ResponseStructContainer c;
     c = e32ttl.getConfiguration();
     Configuration configuration = *(Configuration *)c.data;
     delay(100);
 
+    //#define E32_TTL_1W // define for 1W modules
     configuration.ADDL = 0x0;
     configuration.ADDH = 0x1;
     configuration.CHAN = 0x17;                                             // Channel. (410 + CHAN*1MHz) MHz. Default 17H (433MHz)
     configuration.OPTION.fec = FEC_1_ON;                                   // FEC_0_OFF / FEC_1_ON (default)  - Forward Error Correction Switch
     configuration.OPTION.fixedTransmission = FT_TRANSPARENT_TRANSMISSION;  // FT_TRANSPARENT_TRANSMISSION (default) / FT_FIXED_TRANSMISSION
     configuration.OPTION.ioDriveMode = IO_D_MODE_PUSH_PULLS_PULL_UPS;      // IO_D_MODE_OPEN_COLLECTOR / IO_D_MODE_PUSH_PULLS_PULL_UPS
-    //#define E32_TTL_1W // define for 1W modules
-    configuration.OPTION.transmissionPower = POWER_20;                   // 21/24/27/30 dBm if define E32_TTL_1W
+    configuration.OPTION.transmissionPower = POWER_21;                     // 21/24/27/30 dBm if define E32_TTL_1W
     configuration.OPTION.wirelessWakeupTime = WAKE_UP_250;                 // 250 (default)/500/750/1000/1250/1500/1750/2000 
     configuration.SPED.airDataRate = AIR_DATA_RATE_010_24;                 // AIR_DATA_RATE_000_03 - 0.3kbps
                                                                            // AIR_DATA_RATE_001_12 - 1.2kbps
@@ -56,7 +62,9 @@ void LORA::setup()
                                                                            // AIR_DATA_RATE_101_192 - 19.2kbps
                                                                            // AIR_DATA_RATE_110_192 - 19.2kbps (same 101)
                                                                            // AIR_DATA_RATE_111_192 - 19.2kbps (same 101)
-    configuration.SPED.uartBaudRate = UART_BPS_57600;
+    
+                                                                           
+    configuration.SPED.uartBaudRate = UART_BPS_19200;                      // new UART speed
     configuration.SPED.uartParity = MODE_00_8N1;
 
 
@@ -76,13 +84,11 @@ void LORA::setup()
 #endif
 
     loraPort.end();
-    loraPort.begin(57600);
-
+    loraPort.begin(19200, SERIAL_8N1, _pinTx, _pinRx);  // Correct initialization for ESP32
 }
 
 void LORA::send(LORADATA *loraDataPacket)
 {
-    loraPort.listen();
     const byte LORADATASIZE = sizeof(LORADATA);
 
 #if DEBUG_MODE && DEBUG_LORA

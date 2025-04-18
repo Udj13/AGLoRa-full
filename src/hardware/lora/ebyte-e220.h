@@ -14,7 +14,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 
 #include "../../settings/settings.h"
 
-#ifdef EBYTE_E220 
+#ifdef ARDUINO_AVR_EBYTE_E220 
 
 
 #ifndef LORA_INCLUDED

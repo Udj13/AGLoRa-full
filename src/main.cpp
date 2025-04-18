@@ -24,16 +24,24 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 #include "aglora/aglora.h"
 #include "hardware/gps/gps.h"
 
-#ifdef EBYTE_E32 
+#ifdef ARDUINO_AVR_EBYTE_E32 
 #include "hardware/lora/ebyte-e32.h"
 #endif
 
-#ifdef EBYTE_E220 
+#ifdef ARDUINO_AVR_EBYTE_E220 
 #include "hardware/lora/ebyte-e220.h"
 #endif
 
+#ifdef ESP32_C3_EBYTE_E32 // EBYTE_E32
+#include "hardware/lora/esp32-ebyte-e32.h"
+#endif
+
+#ifdef ESP32_C3_EBYTE_E220 // EBYTE_E220
+#include "hardware/lora/esp32-ebyte-e220.h"
+#endif
+
+
 #include "hardware/lora/loraData.h"
-#include "hardware/ble/hm-10.h"
 #include "tests/tests.h"
 #include "utils/memory/sram/sram.h"
 #include "utils/memory/eeprom/eepromaglora.h"
@@ -54,7 +62,16 @@ TESTS tests;
 INDICATION indication(GPS_LED, LORA_LED, BLE_LED, MEMORY_LED);
 GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED, &indication);
 LORA lora(LORA_PIN_RX, LORA_PIN_TX, LORA_PIN_AX, LORA_PIN_M0, LORA_PIN_M1, &indication);
-BLE_HM10 ble;
+
+#if defined(ARDUINO_AVR_EBYTE_E32) || defined(ARDUINO_AVR_EBYTE_E220)
+#include "hardware/ble/hm-10.h"
+#endif
+
+#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220)
+#include "hardware/ble/esp32-ble.h"
+#endif
+
+BLE ble;
 
 #if USE_EEPROM_MEMORY
 EEPROMAglora memory;

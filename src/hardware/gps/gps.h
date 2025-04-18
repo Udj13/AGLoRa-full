@@ -39,6 +39,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 class GPS
 {
     SoftwareSerial gpsPort;
+    //HardwareSerial gpsPort;
 public:
     GPS(uint8_t pinRx, uint8_t pinTx, long speed, INDICATION * indication);
     void setup();

@@ -12,9 +12,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 
 */
 
-
-#if defined(ARDUINO_AVR_EBYTE_E32) || defined(ARDUINO_AVR_EBYTE_E220)
-
+#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220)
 
 #ifndef BLE_INCLUDED
 #define BLE_INCLUDED
@@ -43,7 +41,8 @@ public:
 
 private:
     const byte MTU = 20;
-    void sendCommand(const String command);
+    void sendWithMTU(String * package);
+    void sendWithoutMTU(String * package);
 };
 
 #endif
