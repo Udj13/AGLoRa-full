@@ -7,6 +7,13 @@ Read https://github.com/Udj13/AGLoRa for more information
 
 Remember to choose the right configuration in PlatformIO and settings.h!
 
+<img width="555" alt="Screenshot 2025-04-18 at 11 32 25 AM" src="https://github.com/user-attachments/assets/0c66c949-1fb8-4560-a10c-3195c0f86614" />
+
+<img width="469" alt="Screenshot 2025-04-18 at 11 32 37 AM" src="https://github.com/user-attachments/assets/7b8781b9-4d77-43fc-86cd-e2dfd893ddc6" />
+
+<img width="459" alt="Screenshot 2025-04-18 at 11 33 13 AM" src="https://github.com/user-attachments/assets/8e9d75e1-f483-4835-bc96-83b8bace9e7d" />
+
+
 ## Current version - 2.3
 
 ### 25-04-18: Major Project Update!
