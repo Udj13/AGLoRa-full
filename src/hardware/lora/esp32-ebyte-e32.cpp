@@ -78,7 +78,7 @@ void LORA::setup()
     Serial.print(configuration.getChannelDescription());
 
     Serial.print(F(" , airDataRate = "));
-    Serial.print(configuration.SPED.getAirDataRateDescription());
+    Serial.print(configuration.SPED.getAirDataRate());
 
 
     Serial.print(F(" , transmissionPower = "));
