@@ -14,7 +14,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 #include "../../settings/settings.h"
 
 
-#ifdef ESP32_C3_EBYTE_E32
+#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_EBYTE_E32)
 
 
 #ifndef LORA_INCLUDED

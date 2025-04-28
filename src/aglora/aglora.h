@@ -25,7 +25,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
   #include "hardware/ble/hm-10.h"
 #endif
 
-#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220) || defined(ESP32_SX126X)
+#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220) || defined(ESP32_EBYTE_E220) || defined(ESP32_EBYTE_E32)
   #include "hardware/ble/esp32-ble.h"
 #endif
 

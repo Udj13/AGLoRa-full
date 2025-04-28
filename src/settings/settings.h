@@ -46,7 +46,8 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 //#define ARDUINO_AVR_EBYTE_E32 // Arduino AVR + EBYTE_E32
 //#define ARDUINO_AVR_EBYTE_E22 // Arduino AVR + EBYTE_E22
 //#define ESP32_C3_EBYTE_E32 // ESP32C3 + EBYTE_E32
-#define ESP32_C3_EBYTE_E220 // ESP32C3 + EBYTE_E220
+//#define ESP32_C3_EBYTE_E220 // ESP32C3 + EBYTE_E220
+#define ESP32_EBYTE_E220 // ESP32 + EBYTE_E220
 
 /*  
 Then, for the correct selection of the receiver сheck the selected PlatformIO config.
@@ -102,6 +103,16 @@ The libraries will be installed automatically.
   // Docs: https://github.com/xreef/LoRa_E32_Series_Library
 #endif
 
+#ifdef ESP32_EBYTE_E32
+  #include "LoRa_E32.h"      
+  // Docs: https://github.com/xreef/EByte_LoRa_E220_Series_Library
+#endif
+
+#ifdef ESP32_EBYTE_E220
+  #include "LoRa_E220.h"
+  // Docs: https://github.com/xreef/LoRa_E32_Series_Library
+#endif
+
 
 
 
@@ -109,11 +120,11 @@ The libraries will be installed automatically.
 
 // ========== NAME =======================
 #define NAME_LENGTH 12             // The same value for all devices
-const char NAME[NAME_LENGTH] = "Mabel";               // Name of current tracker, NAME_LENGTH characters
+const char NAME[NAME_LENGTH] = "Stan";               // Name of current tracker, NAME_LENGTH characters
 // Example:
 // #define NAME = "Morty"; // All names length should be no longer than NAME_LENGTH
 
-#define BLE_NAME "AGLoRa-Mabel"
+#define BLE_NAME "AGLoRa-Stan"
 // ========== WIRING =====================
 
 #if defined(ARDUINO_AVR_EBYTE_E32) || defined(ARDUINO_AVR_EBYTE_E220) || defined(ARDUINO_AVR_EBYTE_E22) 
@@ -200,33 +211,64 @@ const char NAME[NAME_LENGTH] = "Mabel";               // Name of current tracker
 #endif
 
 
-#if defined(ESP32_SX126X)
-  // ---------- ESP32 LilyGo TTGO T-Beam pins example --------------
-  //SPI LORA T-Beam
-  #define LORA_PIN_RESET 23       // LORA RESET
-  #define PIN_LORA_PIN_NSS 18     // LORA SPI NSS/CS
-  #define PIN_LORA_PIN_DIO_1 26  // LORA DIO_1
-  //#define PIN_LORA_PIN_BUSY 33   // LORA SPI BUSY
-  // #define RADIO_PIN_TXEN 26      // LORA ANTENNA TX ENABLE
-  // #define RADIO_PIN_RXEN 27      // LORA ANTENNA RX ENABLE
-  // #define PIN_LORA_PIN_SCLK 5   // LORA SPI CLK
-  // #define PIN_LORA_PIN_MISO 19   // LORA SPI MISO
-  // #define PIN_LORA_PIN_MOSI 27   // LORA SPI MOSI
 
-  //UART GPS T-Beam
-  #define GPS_PIN_RX 12 // RX GPS T-Beam
-  #define GPS_PIN_TX 34 // TX GPS T-Beam
+#if defined(ESP32_EBYTE_E32) || defined(ESP32_EBYTE_E220)
+  // ---------------- esp32 pins example --------------
+  //UART EBYTE LORA -> ESP32
+  #define LORA_PIN_RX 14
+  #define LORA_PIN_TX 12
+  #define LORA_PIN_M0 26
+  #define LORA_PIN_M1 27
+  #define LORA_PIN_AX 13
+  #define LORA_START_SPEED 9600
+  //#define E32_TTL_1W // define for 1W modules
+
+  //UART GPS ->  ESP32
+  #define GPS_PIN_RX 5  // GPIO4 or D2
+  #define GPS_PIN_TX 4  // GPIO5 or D3
+
   #define GPS_SPEED 9600
-  #define USE_HARDWARE_GPS_UART true
+  #define USE_HARDWARE_GPS_UART false
   #if USE_HARDWARE_GPS_UART
     const int gps_hardware_uart = 1; // hardware port
   #endif
 
   // Leds
-  #define LORA_LED LED_BUILTIN
-  #define GPS_LED LED_BUILTIN
-  #define BLE_LED LED_BUILTIN
-  #define MEMORY_LED LED_BUILTIN
+  #define LORA_LED 2 // GPIO2 or D0
+  #define GPS_LED 2 // GPIO2 or D0
+  #define BLE_LED 2 // GPIO2 or D0
+  #define MEMORY_LED 2 // GPIO2 or D0
+
+  /*
+  // ---------- esp32-c3-devkitm-1 pins example --------------
+  //UART EBYTE LORA -> ESP32-C3 Super Mini Development Board
+  #define LORA_PIN_RX 3
+  #define LORA_PIN_TX 2
+  #define LORA_PIN_M0 0
+  #define LORA_PIN_M1 1
+  #define LORA_PIN_AX 4
+  #define LORA_START_SPEED 9600
+  //#define E32_TTL_1W // define for 1W modules
+
+
+  //UART GPS ->  ESP32-C3 Super Mini Development Board
+  // #define GPS_PIN_RX 5  // GPIO4 or D2
+  // #define GPS_PIN_TX 4  // GPIO5 or D3
+  #define GPS_PIN_RX 21 // RX GPS ESP32
+  #define GPS_PIN_TX 20 // TX GPS ESP32
+
+  #define GPS_SPEED 9600
+  #define USE_HARDWARE_GPS_UART false
+  #if USE_HARDWARE_GPS_UART
+    const int gps_hardware_uart = 0; // hardware port
+  #endif
+
+  // Leds
+  #define LORA_LED 5 // GPIO2 or D0
+  #define GPS_LED 5 // GPIO2 or D0
+  #define BLE_LED 5 // GPIO2 or D0
+  #define MEMORY_LED 5 // GPIO2 or D0
+  */
 #endif
 
 

@@ -44,9 +44,14 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
   #include "hardware/lora/esp32-ebyte-e220.h"
 #endif
 
-#ifdef ESP32_SX126X // SX 126x
-  #include "hardware/lora/liligo-sx126x.h"
+#ifdef ESP32_EBYTE_E32 // EBYTE_E32
+  #include "hardware/lora/esp32-ebyte-e32.h"
 #endif
+
+#ifdef ESP32_EBYTE_E220 // EBYTE_E220
+  #include "hardware/lora/esp32-ebyte-e220.h"
+#endif
+
 
 
 
@@ -71,17 +76,13 @@ TESTS tests;
 INDICATION indication(GPS_LED, LORA_LED, BLE_LED, MEMORY_LED);
 GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED, &indication);
 
-#if defined(ESP32_SX126X)
-  LORA lora(LORA_PIN_RESET, PIN_LORA_PIN_NSS, PIN_LORA_PIN_DIO_1, &indication);
-#else
-  LORA lora(LORA_PIN_RX, LORA_PIN_TX, LORA_PIN_AX, LORA_PIN_M0, LORA_PIN_M1, &indication);
-#endif
+LORA lora(LORA_PIN_TX, LORA_PIN_RX, LORA_PIN_AX, LORA_PIN_M0, LORA_PIN_M1, &indication);
 
 #if defined(ARDUINO_AVR_EBYTE_E32) || defined(ARDUINO_AVR_EBYTE_E220) || defined(ARDUINO_AVR_EBYTE_E22) 
   #include "hardware/ble/hm-10.h"
 #endif
 
-#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220) || defined(ESP32_SX126X)
+#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220) || defined(ESP32_EBYTE_E220) || defined(ESP32_EBYTE_E32)
   #include "hardware/ble/esp32-ble.h"
 #endif
 

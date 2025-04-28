@@ -12,7 +12,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 
 */
 
-#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220) || defined(ESP32_SX126X)
+#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220) || defined(ESP32_EBYTE_E32) || defined(ESP32_EBYTE_E220)
 
 #ifndef BLE_INCLUDED
 #define BLE_INCLUDED

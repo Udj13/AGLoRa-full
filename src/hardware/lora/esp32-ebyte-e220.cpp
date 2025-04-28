@@ -15,7 +15,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 
 #include "esp32-ebyte-e220.h"
 
-#ifdef ESP32_C3_EBYTE_E220
+#if defined(ESP32_C3_EBYTE_E220) || defined(ESP32_EBYTE_E220)
 
 
 // ========== LORA section ==========
