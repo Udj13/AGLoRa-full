@@ -4,7 +4,7 @@ Tiny and chip LoRa GPS tracker
 
 https://github.com/Udj13/AGLoRa/
 
-Copyright © 2021-2023 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
+Copyright © 2021-2025 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
 License: http://opensource.org/licenses/MIT
 
 This program is distributed in the hope that it will be useful,
@@ -25,20 +25,29 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 #include "hardware/gps/gps.h"
 
 #ifdef ARDUINO_AVR_EBYTE_E32 
-#include "hardware/lora/ebyte-e32.h"
+  #include "hardware/lora/ebyte-e32.h"
+#endif
+
+#ifdef ARDUINO_AVR_EBYTE_E22 
+  #include "hardware/lora/ebyte-e22.h"
 #endif
 
 #ifdef ARDUINO_AVR_EBYTE_E220 
-#include "hardware/lora/ebyte-e220.h"
+  #include "hardware/lora/ebyte-e220.h"
 #endif
 
 #ifdef ESP32_C3_EBYTE_E32 // EBYTE_E32
-#include "hardware/lora/esp32-ebyte-e32.h"
+  #include "hardware/lora/esp32-ebyte-e32.h"
 #endif
 
 #ifdef ESP32_C3_EBYTE_E220 // EBYTE_E220
-#include "hardware/lora/esp32-ebyte-e220.h"
+  #include "hardware/lora/esp32-ebyte-e220.h"
 #endif
+
+#ifdef ESP32_SX126X // SX 126x
+  #include "hardware/lora/liligo-sx126x.h"
+#endif
+
 
 
 #include "hardware/lora/loraData.h"
@@ -61,22 +70,27 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 TESTS tests;
 INDICATION indication(GPS_LED, LORA_LED, BLE_LED, MEMORY_LED);
 GPS gps(GPS_PIN_RX, GPS_PIN_TX, GPS_SPEED, &indication);
-LORA lora(LORA_PIN_RX, LORA_PIN_TX, LORA_PIN_AX, LORA_PIN_M0, LORA_PIN_M1, &indication);
 
-#if defined(ARDUINO_AVR_EBYTE_E32) || defined(ARDUINO_AVR_EBYTE_E220)
-#include "hardware/ble/hm-10.h"
+#if defined(ESP32_SX126X)
+  LORA lora(LORA_PIN_RESET, PIN_LORA_PIN_NSS, PIN_LORA_PIN_DIO_1, &indication);
+#else
+  LORA lora(LORA_PIN_RX, LORA_PIN_TX, LORA_PIN_AX, LORA_PIN_M0, LORA_PIN_M1, &indication);
 #endif
 
-#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220)
-#include "hardware/ble/esp32-ble.h"
+#if defined(ARDUINO_AVR_EBYTE_E32) || defined(ARDUINO_AVR_EBYTE_E220) || defined(ARDUINO_AVR_EBYTE_E22) 
+  #include "hardware/ble/hm-10.h"
+#endif
+
+#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220) || defined(ESP32_SX126X)
+  #include "hardware/ble/esp32-ble.h"
 #endif
 
 BLE ble;
 
 #if USE_EEPROM_MEMORY
-EEPROMAglora memory;
+  EEPROMAglora memory;
 #else
-SRAM memory;
+  SRAM memory;
 #endif
 
 LORADATA loraDataPackage;
@@ -106,16 +120,16 @@ void loop()
 {
   if (_timeToSendMyLocation < millis())
   {
-#if I_WANT_TO_SEND_MY_LOCATION
-    aglora.clearDataPacket(&loraDataPackage.data); // clear structure before reading new data
-    aglora.updateSensors(&loraDataPackage.data);   // add sensors
-    gps.updateLocation(&loraDataPackage.data);     // add locations
-    loraDataPackage.ttl = TTL;                     // time to live (for mesh network)
+    #if I_WANT_TO_SEND_MY_LOCATION
+        aglora.clearDataPacket(&loraDataPackage.data); // clear structure before reading new data
+        aglora.updateSensors(&loraDataPackage.data);   // add sensors
+        gps.updateLocation(&loraDataPackage.data);     // add locations
+        loraDataPackage.ttl = TTL;                     // time to live (for mesh network)
 
-    aglora.printPackage(&loraDataPackage);
+        aglora.printPackage(&loraDataPackage);
 
-    lora.send(&loraDataPackage); // send location to other trackers
-#endif
+        lora.send(&loraDataPackage); // send location to other trackers
+    #endif
 
     _timeToSendMyLocation += DATA_SENDING_INTERVAL;
   }
@@ -126,12 +140,12 @@ void loop()
     processNewData(&loraDataPackage);
   }
 
-#if TEST_LORA_DATA
-  if (tests.hasNewDataEveryXSec(&loraDataPackage, &gps, 10))
-  {
-    processNewData(&loraDataPackage);
-  }
-#endif
+  #if TEST_LORA_DATA
+    if (tests.hasNewDataEveryXSec(&loraDataPackage, &gps, 10))
+    {
+      processNewData(&loraDataPackage);
+    }
+  #endif
 
   // if the time checker is over some prescribed amount
   // let the user know there is no incoming data
@@ -165,18 +179,18 @@ void processNewData(LORADATA *loraDataPackage)
     addedMemoryIndex = memory.save(&loraDataPackage->data);
     memory.checkCRC();
 
-#if USE_BLE
-    aglora.sendPackageToBLE(&loraDataPackage->data, addedMemoryIndex); // upload data to app
-#endif
+    #if USE_BLE
+        aglora.sendPackageToBLE(&loraDataPackage->data, addedMemoryIndex); // upload data to app
+    #endif
 
-// resend data to other trackers
-#if MESH_MODE
-    if (--ttl > 0)
-    {
-      loraDataPackage->ttl = ttl;
-      lora.send(loraDataPackage);
-    }
-#endif
+    // resend data to other trackers
+    #if MESH_MODE
+        if (--ttl > 0)
+        {
+          loraDataPackage->ttl = ttl;
+          lora.send(loraDataPackage);
+        }
+    #endif
   }
 
   _timeOfLastReceivedPacket = millis(); // if you got data, update the checker

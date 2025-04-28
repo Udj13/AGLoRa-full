@@ -4,7 +4,7 @@ Tiny and chip LoRa GPS tracker
 
 https://github.com/Udj13/AGLoRa/
 
-Copyright © 2021-2023 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
+Copyright © 2021-2025 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
 License: http://opensource.org/licenses/MIT
 
 This program is distributed in the hope that it will be useful,
@@ -40,20 +40,20 @@ AGLORA::AGLORA(IMemory *memory, BLE *ble)
 
 void AGLORA::hello()
 {
-#if DEBUG_MODE && DEBUG_AGLORA
-  Serial.println(F("[power on]"));
+  #if DEBUG_MODE && DEBUG_AGLORA
+    Serial.println(F("[power on]"));
 
-  Serial.print(F("Waiting | "));
-  for (int i = 0; i < 50; i++)
-  {
-    Serial.print(F("#"));
-    delay(50);
-  }
-  Serial.println();
-  Serial.print(F("AGLORA tracker '"));
-  Serial.print(NAME);
-  Serial.println(F("'  — online."));
-#endif
+    Serial.print(F("Waiting | "));
+    for (int i = 0; i < 50; i++)
+    {
+      Serial.print(F("#"));
+      delay(50);
+    }
+    Serial.println();
+    Serial.print(F("AGLORA tracker '"));
+    Serial.print(NAME);
+    Serial.println(F("'  — online."));
+  #endif
 }
 
 /// @brief
@@ -65,65 +65,65 @@ void AGLORA::clearDataPacket(DATA *trackerData)
 {
   memset(trackerData, 0, sizeof(&trackerData));
   strcpy(trackerData->name, NAME);
-#if DEBUG_MODE && DEBUG_AGLORA
-  Serial.println(F("🟢[AGLoRa: time to send your location📍, new loraDataPacket prepared 📦]"));
-#endif
+  #if DEBUG_MODE && DEBUG_AGLORA
+    Serial.println(F("🟢[AGLoRa: time to send your location📍, new loraDataPacket prepared 📦]"));
+  #endif
 }
 
 void AGLORA::printPackage(LORADATA *loraDataPacket)
 {
   // DEBUG_MODE
-#if DEBUG_MODE && DEBUG_AGLORA // dump out what was just received
-  Serial.println(F("🟢[AGLoRa: loraDataPacket now contains ↴]"));
-  Serial.print(F("     Name: "));
-  Serial.print(loraDataPacket->data.name);
-  Serial.print(F(", 🌎 lat: "));
-  Serial.print(loraDataPacket->data.lat, 6);
-  Serial.print(F(", lon: "));
-  Serial.print(loraDataPacket->data.lon, 6);
-  Serial.print(F(", alt: "));
-  Serial.print(loraDataPacket->data.altitude, 1);
-  Serial.print(F(", sats: "));
-  Serial.print(loraDataPacket->data.sats);
+  #if DEBUG_MODE && DEBUG_AGLORA // dump out what was just received
+    Serial.println(F("🟢[AGLoRa: loraDataPacket now contains ↴]"));
+    Serial.print(F("     Name: "));
+    Serial.print(loraDataPacket->data.name);
+    Serial.print(F(", 🌎 lat: "));
+    Serial.print(loraDataPacket->data.lat, 6);
+    Serial.print(F(", lon: "));
+    Serial.print(loraDataPacket->data.lon, 6);
+    Serial.print(F(", alt: "));
+    Serial.print(loraDataPacket->data.altitude, 1);
+    Serial.print(F(", sats: "));
+    Serial.print(loraDataPacket->data.sats);
 
-  if (loraDataPacket->data.gpsValid)
-    Serial.print(F(", GPS 🆗"));
-  else
-    Serial.print(F(", GPS ❌"));
+    if (loraDataPacket->data.gpsValid)
+      Serial.print(F(", GPS 🆗"));
+    else
+      Serial.print(F(", GPS ❌"));
 
-  // Serial.print(F(", sat: "));
-  // Serial.print(loraDataPacket->data.sat);   // example
-  // Serial.print(F(", hdop: "));
-  // Serial.print(loraDataPacket->data.hdop);  // example
+    // Serial.print(F(", sat: "));
+    // Serial.print(loraDataPacket->data.sat);   // example
+    // Serial.print(F(", hdop: "));
+    // Serial.print(loraDataPacket->data.hdop);  // example
 
-  Serial.print(F(", 📆 date: "));
-  Serial.print(loraDataPacket->data.year);
-  Serial.print(F("/"));
-  if (loraDataPacket->data.month < 10)
-    Serial.print(F("0"));
-  Serial.print(loraDataPacket->data.month);
-  Serial.print(F("/"));
-  if (loraDataPacket->data.day < 10)
-    Serial.print(F("0"));
-  Serial.print(loraDataPacket->data.day);
+    Serial.print(F(", 📆 date: "));
+    Serial.print(loraDataPacket->data.year);
+    Serial.print(F("/"));
+    if (loraDataPacket->data.month < 10)
+      Serial.print(F("0"));
+    Serial.print(loraDataPacket->data.month);
+    Serial.print(F("/"));
+    if (loraDataPacket->data.day < 10)
+      Serial.print(F("0"));
+    Serial.print(loraDataPacket->data.day);
 
-  Serial.print(F(", 🕰️ time: "));
-  Serial.print(loraDataPacket->data.hour);
-  Serial.print(F(":"));
-  if (loraDataPacket->data.minute < 10)
-    Serial.print(F("0"));
-  Serial.print(loraDataPacket->data.minute);
-  Serial.print(F(":"));
-  if (loraDataPacket->data.second < 10)
-    Serial.print(F("0"));
-  Serial.print(loraDataPacket->data.second);
-  Serial.print(F(" (UTC)"));
+    Serial.print(F(", 🕰️ time: "));
+    Serial.print(loraDataPacket->data.hour);
+    Serial.print(F(":"));
+    if (loraDataPacket->data.minute < 10)
+      Serial.print(F("0"));
+    Serial.print(loraDataPacket->data.minute);
+    Serial.print(F(":"));
+    if (loraDataPacket->data.second < 10)
+      Serial.print(F("0"));
+    Serial.print(loraDataPacket->data.second);
+    Serial.print(F(" (UTC)"));
 
-  Serial.print(F(" 📦 TTL="));
-  Serial.print(loraDataPacket->ttl);
+    Serial.print(F(" 📦 TTL="));
+    Serial.print(loraDataPacket->ttl);
 
-  Serial.println();
-#endif
+    Serial.println();
+  #endif
 }
 
 void AGLORA::getRequest(String request)
@@ -133,13 +133,13 @@ void AGLORA::getRequest(String request)
     return;
   }
 
-#if DEBUG_MODE && DEBUG_AGLORA
-  Serial.println();
-  Serial.print(F("🟢[AGLoRa: 📭 BLE request received <<"));
-  Serial.print(request);
-  Serial.println(F(">> received]"));
-  Serial.println();
-#endif
+  #if DEBUG_MODE && DEBUG_AGLORA
+    Serial.println();
+    Serial.print(F("🟢[AGLoRa: 📭 BLE request received <<"));
+    Serial.print(request);
+    Serial.println(F(">> received]"));
+    Serial.println();
+  #endif
 
   if (request.startsWith(F("crc")))
   {
@@ -200,10 +200,10 @@ void AGLORA::sendPackageToBLE(DATA *trackerData, int index)
   response += _memory->checkCRC(index) ? bleProtocolOK : bleProtocolError;
   response += bleProtocolDivider;
 
-#if DEBUG_MODE && DEBUG_AGLORA
-  Serial.print(F("🟢AGLoRa: send point 📦 to BLE → "));
-  Serial.print(response);
-#endif
+  #if DEBUG_MODE && DEBUG_AGLORA
+    Serial.print(F("🟢AGLoRa: send point 📦 to BLE → "));
+    Serial.print(response);
+  #endif
 
   _ble->send(&response);
 }

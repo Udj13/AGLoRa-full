@@ -4,7 +4,7 @@ Tiny and chip LoRa GPS tracker
 
 https://github.com/Udj13/AGLoRa/
 
-Copyright © 2021-2023 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
+Copyright © 2021-2025 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
 License: http://opensource.org/licenses/MIT
 
 This program is distributed in the hope that it will be useful,
@@ -38,10 +38,13 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 
 class GPS
 {
-    SoftwareSerial gpsPort;
-    //HardwareSerial gpsPort;
+    #if USE_HARDWARE_GPS_UART   
+        HardwareSerial gpsPort;
+    #else
+        SoftwareSerial gpsPort;
+    #endif
 public:
-    GPS(uint8_t pinRx, uint8_t pinTx, long speed, INDICATION * indication);
+    GPS(uint8_t pinRx, uint8_t pinTx, uint32_t speed, INDICATION * indication);
     void setup();
     void updateLocation(DATA *dataPackage);
 

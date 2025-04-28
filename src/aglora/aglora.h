@@ -4,7 +4,7 @@ Tiny and chip LoRa GPS tracker
 
 https://github.com/Udj13/AGLoRa/
 
-Copyright © 2021-2023 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
+Copyright © 2021-2025 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
 License: http://opensource.org/licenses/MIT
 
 This program is distributed in the hope that it will be useful,
@@ -21,12 +21,12 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 #include "../utils/memory/sram/sram.h"
 #include "../utils/memory/eeprom/eepromaglora.h"
 
-#if defined(ARDUINO_AVR_EBYTE_E32) || defined(ARDUINO_AVR_EBYTE_E220)
-#include "hardware/ble/hm-10.h"
+#if defined(ARDUINO_AVR_EBYTE_E32) || defined(ARDUINO_AVR_EBYTE_E220) || defined(ARDUINO_AVR_EBYTE_E22)
+  #include "hardware/ble/hm-10.h"
 #endif
 
-#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220)
-#include "hardware/ble/esp32-ble.h"
+#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220) || defined(ESP32_SX126X)
+  #include "hardware/ble/esp32-ble.h"
 #endif
 
 

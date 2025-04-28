@@ -2,7 +2,7 @@
 Project AGLoRa (abbreviation of Arduino + GPS + LoRa)
 Tiny and chip LoRa GPS tracker
 
-Copyright © 2021-2023 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
+Copyright © 2021-2025 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
 License: http://opensource.org/licenses/MIT
 
 This program is distributed in the hope that it will be useful,
@@ -47,7 +47,6 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 //#define ARDUINO_AVR_EBYTE_E22 // Arduino AVR + EBYTE_E22
 //#define ESP32_C3_EBYTE_E32 // ESP32C3 + EBYTE_E32
 #define ESP32_C3_EBYTE_E220 // ESP32C3 + EBYTE_E220
-//#define ESP32_SX126X // SX126x (LILYGO TTGO T-Beam Devices)
 
 /*  
 Then, for the correct selection of the receiver сheck the selected PlatformIO config.
@@ -73,37 +72,34 @@ The configuration connects the required library.
 The libraries will be installed automatically.
 */
 
-// Here are the libraries that I used in this project, thanks to their author Renzo Mischianti!
+// Here are the libraries that I used in this project, thanks to their authors!
 // Please, give him a donation if you also think he did a great job!
-// https://github.com/xreef
-// https://mischianti.org/
+// https://github.com/xreef | https://mischianti.org/
+// https://github.com/jgromes
 #ifdef ARDUINO_AVR_EBYTE_E32 
-#include "LoRa_E32.h"      
-// Docs: https://github.com/xreef/EByte_LoRa_E220_Series_Library
+  #include "LoRa_E32.h"      
+  // Docs: https://github.com/xreef/EByte_LoRa_E220_Series_Library
 #endif
+
 #ifdef ARDUINO_AVR_EBYTE_E22 
-#include "LoRa_E22.h"
-// Docs: https://github.com/xreef/EByte_LoRa_E22_Series_Library
+  #include "LoRa_E22.h"
+  // Docs: https://github.com/xreef/EByte_LoRa_E22_Series_Library
 #endif
-//or
+
 #ifdef ARDUINO_AVR_EBYTE_E220 
-#include "LoRa_E220.h"
-// Docs: https://github.com/xreef/LoRa_E32_Series_Library
+  #include "LoRa_E220.h"
+  // Docs: https://github.com/xreef/LoRa_E32_Series_Library
 #endif
-//or
-#ifdef ESP32_SX126X
-#include "SX126x-Arduino.h"
-#include <SPI.h>
-// Docs: https://github.com/beegee-tokyo/SX126x-Arduino
-#endif
-//or
+
+
 #ifdef ESP32_C3_EBYTE_E32
-#include "LoRa_E32.h"      
-// Docs: https://github.com/xreef/EByte_LoRa_E220_Series_Library
+  #include "LoRa_E32.h"      
+  // Docs: https://github.com/xreef/EByte_LoRa_E220_Series_Library
 #endif
+
 #ifdef ESP32_C3_EBYTE_E220
-#include "LoRa_E220.h"
-// Docs: https://github.com/xreef/LoRa_E32_Series_Library
+  #include "LoRa_E220.h"
+  // Docs: https://github.com/xreef/LoRa_E32_Series_Library
 #endif
 
 
@@ -113,84 +109,130 @@ The libraries will be installed automatically.
 
 // ========== NAME =======================
 #define NAME_LENGTH 12             // The same value for all devices
-const char NAME[NAME_LENGTH] = "Dipper";               // Name of current tracker, NAME_LENGTH characters
+const char NAME[NAME_LENGTH] = "Mabel";               // Name of current tracker, NAME_LENGTH characters
 // Example:
 // #define NAME = "Morty"; // All names length should be no longer than NAME_LENGTH
+
+#define BLE_NAME "AGLoRa-Mabel"
 // ========== WIRING =====================
-/* 
-// ---------- Arduino pins example --------------
-//UART LORA ARDUINO
-#define LORA_PIN_RX 2
-#define LORA_PIN_TX 3
-#define LORA_PIN_M0 4
-#define LORA_PIN_M1 5
-#define LORA_PIN_AX 6
 
-//UART GPS ARDUINO
-#define GPS_PIN_RX 8 // RX GPS ARDUINO
-#define GPS_PIN_TX 7 // TX GPS ARDUINO
+#if defined(ARDUINO_AVR_EBYTE_E32) || defined(ARDUINO_AVR_EBYTE_E220) || defined(ARDUINO_AVR_EBYTE_E22) 
+  // ---------- Arduino pins example --------------
+  //UART LORA ARDUINO
+  #define LORA_PIN_RX 2
+  #define LORA_PIN_TX 3
+  #define LORA_PIN_M0 4
+  #define LORA_PIN_M1 5
+  #define LORA_PIN_AX 6
+  #define LORA_START_SPEED 9600
+  //#define E32_TTL_1W // define for 1W modules
 
-// Leds
-#define LORA_LED LED_BUILTIN
-#define GPS_LED LED_BUILTIN
-#define BLE_LED LED_BUILTIN
-#define MEMORY_LED LED_BUILTIN
-*/
+  //UART GPS ARDUINO
+  #define GPS_PIN_RX 8 // RX GPS ARDUINO
+  #define GPS_PIN_TX 7 // TX GPS ARDUINO
+  #define GPS_SPEED 9600
+  #define USE_HARDWARE_GPS_UART false
 
-/**/ 
-// ---------- seeed xiao esp32c3 pins example --------------
-//UART EBYTE LORA -> ESP32C3 SEED XIAO
-#define LORA_PIN_RX 21  // GPIO20 or D7
-#define LORA_PIN_TX 20  // GPIO21 or D6
-#define LORA_PIN_M0 9   // GPIO9 or D9
-#define LORA_PIN_M1 10  // GPIO10 or D10
-#define LORA_PIN_AX 8   // GPIO8 or D8
+  // Leds
+  #define LORA_LED LED_BUILTIN
+  #define GPS_LED LED_BUILTIN
+  #define BLE_LED LED_BUILTIN
+  #define MEMORY_LED LED_BUILTIN
+#endif
 
-//UART GPS ->  ESP32C3 SEED XIAO
-#define GPS_PIN_RX 5  // GPIO4 or D2
-#define GPS_PIN_TX 4  // GPIO5 or D3
+#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220)
+  // ---------- seeed xiao esp32c3 pins example --------------
+  //UART EBYTE LORA -> ESP32C3 SEED XIAO
+  #define LORA_PIN_RX 21  // GPIO20 or D7
+  #define LORA_PIN_TX 20  // GPIO21 or D6
+  #define LORA_PIN_M0 9   // GPIO9 or D9
+  #define LORA_PIN_M1 10  // GPIO10 or D10
+  #define LORA_PIN_AX 8   // GPIO8 or D8
+  #define LORA_START_SPEED 9600
+  //#define E32_TTL_1W // define for 1W modules
 
-// Leds
-#define LORA_LED 2 // GPIO2 or D0
-#define GPS_LED 2 // GPIO2 or D0
-#define BLE_LED 2 // GPIO2 or D0
-#define MEMORY_LED 2 // GPIO2 or D0
-/**/
+  //UART GPS ->  ESP32C3 SEED XIAO
+  #define GPS_PIN_RX 5  // GPIO4 or D2
+  #define GPS_PIN_TX 4  // GPIO5 or D3
 
+  #define GPS_SPEED 9600
+  #define USE_HARDWARE_GPS_UART false
+  #if USE_HARDWARE_GPS_UART
+    const int gps_hardware_uart = 0; // hardware port
+  #endif
 
-/*
-// ---------- esp32-c3-devkitm-1 pins example --------------
-//UART EBYTE LORA -> ESP32-C3 Super Mini Development Board
-#define LORA_PIN_RX 3
-#define LORA_PIN_TX 2
-#define LORA_PIN_M0 0
-#define LORA_PIN_M1 1
-#define LORA_PIN_AX 4
+  // Leds
+  #define LORA_LED 2 // GPIO2 or D0
+  #define GPS_LED 2 // GPIO2 or D0
+  #define BLE_LED 2 // GPIO2 or D0
+  #define MEMORY_LED 2 // GPIO2 or D0
 
-//UART GPS ->  ESP32-C3 Super Mini Development Board
-// #define GPS_PIN_RX 5  // GPIO4 or D2
-// #define GPS_PIN_TX 4  // GPIO5 or D3
-#define GPS_PIN_RX 21 // RX GPS ESP32
-#define GPS_PIN_TX 20 // TX GPS ESP32
-
-// Leds
-#define LORA_LED 5 // GPIO2 or D0
-#define GPS_LED 5 // GPIO2 or D0
-#define BLE_LED 5 // GPIO2 or D0
-#define MEMORY_LED 5 // GPIO2 or D0
-*/
-
-
+  /*
+  // ---------- esp32-c3-devkitm-1 pins example --------------
+  //UART EBYTE LORA -> ESP32-C3 Super Mini Development Board
+  #define LORA_PIN_RX 3
+  #define LORA_PIN_TX 2
+  #define LORA_PIN_M0 0
+  #define LORA_PIN_M1 1
+  #define LORA_PIN_AX 4
+  #define LORA_START_SPEED 9600
+  //#define E32_TTL_1W // define for 1W modules
 
 
-// ========== MODULES SETTING=============
-#define GPS_SPEED 9600
-#define USE_HARDWARE_GPS_UART false
+  //UART GPS ->  ESP32-C3 Super Mini Development Board
+  // #define GPS_PIN_RX 5  // GPIO4 or D2
+  // #define GPS_PIN_TX 4  // GPIO5 or D3
+  #define GPS_PIN_RX 21 // RX GPS ESP32
+  #define GPS_PIN_TX 20 // TX GPS ESP32
 
-#define LORA_START_SPEED 9600
+  #define GPS_SPEED 9600
+  #define USE_HARDWARE_GPS_UART false
+  #if USE_HARDWARE_GPS_UART
+    const int gps_hardware_uart = 0; // hardware port
+  #endif
 
-// Then install "EByte LoRa E220 by Renzo Mischianty" library
-// and "TinyGPSPlus by Mikal Hart" library
+  // Leds
+  #define LORA_LED 5 // GPIO2 or D0
+  #define GPS_LED 5 // GPIO2 or D0
+  #define BLE_LED 5 // GPIO2 or D0
+  #define MEMORY_LED 5 // GPIO2 or D0
+  */
+#endif
+
+
+#if defined(ESP32_SX126X)
+  // ---------- ESP32 LilyGo TTGO T-Beam pins example --------------
+  //SPI LORA T-Beam
+  #define LORA_PIN_RESET 23       // LORA RESET
+  #define PIN_LORA_PIN_NSS 18     // LORA SPI NSS/CS
+  #define PIN_LORA_PIN_DIO_1 26  // LORA DIO_1
+  //#define PIN_LORA_PIN_BUSY 33   // LORA SPI BUSY
+  // #define RADIO_PIN_TXEN 26      // LORA ANTENNA TX ENABLE
+  // #define RADIO_PIN_RXEN 27      // LORA ANTENNA RX ENABLE
+  // #define PIN_LORA_PIN_SCLK 5   // LORA SPI CLK
+  // #define PIN_LORA_PIN_MISO 19   // LORA SPI MISO
+  // #define PIN_LORA_PIN_MOSI 27   // LORA SPI MOSI
+
+  //UART GPS T-Beam
+  #define GPS_PIN_RX 12 // RX GPS T-Beam
+  #define GPS_PIN_TX 34 // TX GPS T-Beam
+  #define GPS_SPEED 9600
+  #define USE_HARDWARE_GPS_UART true
+  #if USE_HARDWARE_GPS_UART
+    const int gps_hardware_uart = 1; // hardware port
+  #endif
+
+  // Leds
+  #define LORA_LED LED_BUILTIN
+  #define GPS_LED LED_BUILTIN
+  #define BLE_LED LED_BUILTIN
+  #define MEMORY_LED LED_BUILTIN
+#endif
+
+
+
+// If you see these settings in an Arduino sketch in the Arduino IDE, 
+// install "EByte LoRa E220 by Renzo Mischianty" library
 // from Arduino IDE library manager ("Tools" -> "Manage Libraries")
 
 // Now you can upload this sketch to Arduino
@@ -224,10 +266,10 @@ Note that all software version must be the same for all trackers.
 */
 #pragma pack(push, 1) 
 struct DATA {
-  char name[NAME_LENGTH];  // name
+  char name[NAME_LENGTH];  // name (NAME_LENGTH bytes)
 
-  float lat;  // coordinates
-  float lon;
+  float lat;  // coordinates 
+  float lon;  // (4 + 4 bytes)
 
   unsigned char year;  // the Year minus 2000
   unsigned char month;
@@ -235,16 +277,16 @@ struct DATA {
 
   unsigned char hour;
   unsigned char minute;
-  unsigned char second;
+  unsigned char second; // ( Date + time: 6 byte )
 
-  bool gpsValid;
+  bool gpsValid; // 1 bit
 
   // Add more data fields here if you need
   // ...
-  unsigned char sats;
+  unsigned char sats; // 1 byte
   //unsigned char hdop;
   float altitude;
-  unsigned char battery;
+  unsigned char battery; // 1 byte
   // unsigned char speed;
   // unsigned char sensor1;
   // unsigned char sensor2;

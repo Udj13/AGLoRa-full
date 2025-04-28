@@ -4,7 +4,7 @@ Tiny and chip LoRa GPS tracker
 
 https://github.com/Udj13/AGLoRa/
 
-Copyright © 2021-2023 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
+Copyright © 2021-2025 Eugeny Shlyagin. Contacts: <shlyagin@gmail.com>
 License: http://opensource.org/licenses/MIT
 
 This program is distributed in the hope that it will be useful,
@@ -12,7 +12,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty
 
 */
 
-#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220)
+#if defined(ESP32_C3_EBYTE_E32) || defined(ESP32_C3_EBYTE_E220) || defined(ESP32_SX126X)
 
 #ifndef BLE_INCLUDED
 #define BLE_INCLUDED
