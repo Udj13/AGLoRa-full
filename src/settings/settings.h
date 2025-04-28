@@ -118,7 +118,7 @@ const char NAME[NAME_LENGTH] = "Dipper";               // Name of current tracke
 // #define NAME = "Morty"; // All names length should be no longer than NAME_LENGTH
 // ========== WIRING =====================
 /* 
-// ---------- Arduino pins --------------
+// ---------- Arduino pins example --------------
 //UART LORA ARDUINO
 #define LORA_PIN_RX 2
 #define LORA_PIN_TX 3
@@ -138,7 +138,7 @@ const char NAME[NAME_LENGTH] = "Dipper";               // Name of current tracke
 */
 
 /**/ 
-// ---------- seeed xiao esp32c3 pins --------------
+// ---------- seeed xiao esp32c3 pins example --------------
 //UART EBYTE LORA -> ESP32C3 SEED XIAO
 #define LORA_PIN_RX 21  // GPIO20 or D7
 #define LORA_PIN_TX 20  // GPIO21 or D6
@@ -159,7 +159,7 @@ const char NAME[NAME_LENGTH] = "Dipper";               // Name of current tracke
 
 
 /*
-// ---------- esp32-c3-devkitm-1 pins --------------
+// ---------- esp32-c3-devkitm-1 pins example --------------
 //UART EBYTE LORA -> ESP32-C3 Super Mini Development Board
 #define LORA_PIN_RX 3
 #define LORA_PIN_TX 2
