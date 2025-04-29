@@ -47,7 +47,9 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 //#define ARDUINO_AVR_EBYTE_E22 // Arduino AVR + EBYTE_E22
 //#define ESP32_C3_EBYTE_E32 // ESP32C3 + EBYTE_E32
 //#define ESP32_C3_EBYTE_E220 // ESP32C3 + EBYTE_E220
-#define ESP32_EBYTE_E220 // ESP32 + EBYTE_E220
+//#define ESP32_EBYTE_E220 // ESP32 + EBYTE_E220
+#define ESP32_EBYTE_E32 // ESP32 + EBYTE_E32
+
 
 /*  
 Then, for the correct selection of the receiver сheck the selected PlatformIO config.
