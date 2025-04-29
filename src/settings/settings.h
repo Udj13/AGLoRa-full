@@ -217,11 +217,11 @@ const char NAME[NAME_LENGTH] = "Stan";               // Name of current tracker,
 #if defined(ESP32_EBYTE_E32) || defined(ESP32_EBYTE_E220)
   // ---------------- esp32 pins example --------------
   //UART EBYTE LORA -> ESP32
-  #define LORA_PIN_RX 14
-  #define LORA_PIN_TX 12
-  #define LORA_PIN_M0 26
-  #define LORA_PIN_M1 27
-  #define LORA_PIN_AX 13
+  #define LORA_PIN_RX 16
+  #define LORA_PIN_TX 17
+  #define LORA_PIN_M0 32
+  #define LORA_PIN_M1 33
+  #define LORA_PIN_AX 4
   #define LORA_START_SPEED 9600
   //#define E32_TTL_1W // define for 1W modules
 
