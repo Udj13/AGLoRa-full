@@ -44,11 +44,11 @@ NOTE: GPS is valid, if LED_BUILTIN is HIGH
 // First of all, select the LORA module and the platform:
 //#define ARDUINO_AVR_EBYTE_E220 // Arduino AVR + EBYTE_E220
 //#define ARDUINO_AVR_EBYTE_E32 // Arduino AVR + EBYTE_E32
-//#define ARDUINO_AVR_EBYTE_E22 // Arduino AVR + EBYTE_E22
+#define ARDUINO_AVR_EBYTE_E22 // Arduino AVR + EBYTE_E22
 //#define ESP32_C3_EBYTE_E32 // ESP32C3 + EBYTE_E32
 //#define ESP32_C3_EBYTE_E220 // ESP32C3 + EBYTE_E220
 //#define ESP32_EBYTE_E220 // ESP32 + EBYTE_E220
-#define ESP32_EBYTE_E32 // ESP32 + EBYTE_E32
+//#define ESP32_EBYTE_E32 // ESP32 + EBYTE_E32
 
 
 /*  

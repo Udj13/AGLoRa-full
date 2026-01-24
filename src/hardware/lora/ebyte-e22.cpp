@@ -51,7 +51,7 @@ void LORA::setup()
     
     configuration.OPTION.subPacketSetting = SPS_240_00;
     configuration.OPTION.RSSIAmbientNoise = RSSI_AMBIENT_NOISE_DISABLED;
-    configuration.OPTION.transmissionPower = POWER_30; // 21/24/27/30  if define E22_30
+    configuration.OPTION.transmissionPower = POWER_22; //POWER_22, POWER_17, POWER_13, POWER_10, define E22_30
 
     configuration.TRANSMISSION_MODE.enableRSSI = RSSI_DISABLED;
     configuration.TRANSMISSION_MODE.fixedTransmission = FT_TRANSPARENT_TRANSMISSION;
